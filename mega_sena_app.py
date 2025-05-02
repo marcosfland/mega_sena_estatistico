@@ -25,6 +25,10 @@ import requests
 from collections import Counter
 import random
 import logging
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from scipy.stats import chisquare
 
 # Configurações
 DB_PATH = os.getenv('MEGASENA_DB_PATH', 'megasena.db')
@@ -171,6 +175,60 @@ def get_weighted(draws, k: int = 6):
         chosen.update(picks)
     return sorted(chosen)
 
+def plot_frequency(draws):
+    counter = Counter()
+    for _, nums in draws:
+        counter.update(nums)
+    numbers, frequencies = zip(*sorted(counter.items()))
+    plt.bar(numbers, frequencies)
+    plt.title('Frequência dos Números Sorteados')
+    plt.xlabel('Números')
+    plt.ylabel('Frequência')
+    plt.show()
+
+def monte_carlo_simulation(draws, simulations=10000):
+    all_nums = list(range(1, 61))
+    simulated_counts = Counter()
+    for _ in range(simulations):
+        simulated_draw = np.random.choice(all_nums, size=6, replace=False)
+        simulated_counts.update(simulated_draw)
+    real_counts = Counter()
+    for _, nums in draws:
+        real_counts.update(nums)
+    
+    # Retorna os 6 números mais frequentes simulados e reais
+    most_simulated = simulated_counts.most_common(6)
+    most_real = real_counts.most_common(6)
+    return most_simulated, most_real
+
+def calculate_correlation(draws):
+    data = []
+    for _, nums in draws:
+        data.append([1 if i in nums else 0 for i in range(1, 61)])
+    df = pd.DataFrame(data, columns=[f'Num_{i}' for i in range(1, 61)])
+    correlation_matrix = df.corr()
+    return correlation_matrix
+
+def analyze_probability_distribution(draws):
+    counter = Counter()
+    for _, nums in draws:
+        counter.update(nums)
+    observed = [counter[i] for i in range(1, 61)]
+    expected = [sum(observed) / 60] * 60
+    chi2, p = chisquare(observed, expected)
+    return chi2, p
+
+def analyze_time_series(draws):
+    dates = [d for d, _ in draws]
+    frequencies = Counter(dates)
+    sorted_dates = sorted(frequencies.keys())
+    counts = [frequencies[date] for date in sorted_dates]
+    plt.plot(sorted_dates, counts)
+    plt.title('Tendência de Sorteios ao Longo do Tempo')
+    plt.xlabel('Data')
+    plt.ylabel('Frequência de Sorteios')
+    plt.show()
+
 # ---------------------
 # Interface de Linha de Comando
 # ---------------------
@@ -182,6 +240,11 @@ def main():
     parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')
     parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')
     parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')
+    parser.add_argument('--plot', action='store_true', help='Visualizar frequência dos números')
+    parser.add_argument('--montecarlo', action='store_true', help='Simulação de Monte Carlo')
+    parser.add_argument('--correlation', action='store_true', help='Calcular correlação entre números')
+    parser.add_argument('--timeseries', action='store_true', help='Análise de séries temporais')
+    parser.add_argument('--distribution', action='store_true', help='Análise de distribuição de probabilidade')
     args = parser.parse_args()
 
     global DB_PATH
@@ -203,6 +266,21 @@ def main():
         print('Top 6 do último ano:', get_most_frequent_period(draws))
     elif args.stat:
         print('Conjunto estatístico:', get_weighted(draws))
+    elif args.plot:
+        plot_frequency(draws)
+    elif args.montecarlo:
+        simulated, real = monte_carlo_simulation(draws)
+        print('Simulação de Monte Carlo - Números mais frequentes:')
+        print('Simulados:', simulated)
+        print('Reais:', real)
+    elif args.correlation:
+        correlation_matrix = calculate_correlation(draws)
+        print('Matriz de Correlação:', correlation_matrix)
+    elif args.timeseries:
+        analyze_time_series(draws)
+    elif args.distribution:
+        chi2, p = analyze_probability_distribution(draws)
+        print(f'Chi2: {chi2}, p-valor: {p}')
     else:
         parser.print_help()
 

@@ -80,6 +80,41 @@
         "documentation": {}
     },
     {
+        "label": "matplotlib.pyplot",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "matplotlib.pyplot",
+        "description": "matplotlib.pyplot",
+        "detail": "matplotlib.pyplot",
+        "documentation": {}
+    },
+    {
+        "label": "numpy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "numpy",
+        "description": "numpy",
+        "detail": "numpy",
+        "documentation": {}
+    },
+    {
+        "label": "pandas",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pandas",
+        "description": "pandas",
+        "detail": "pandas",
+        "documentation": {}
+    },
+    {
+        "label": "chisquare",
+        "importPath": "scipy.stats",
+        "description": "scipy.stats",
+        "isExtraImport": true,
+        "detail": "scipy.stats",
+        "documentation": {}
+    },
+    {
         "label": "init_db",
         "kind": 2,
         "importPath": "mega_sena_app",
@@ -161,11 +196,56 @@
         "documentation": {}
     },
     {
+        "label": "plot_frequency",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def plot_frequency(draws):\n    counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    numbers, frequencies = zip(*sorted(counter.items()))\n    plt.bar(numbers, frequencies)\n    plt.title('Frequência dos Números Sorteados')\n    plt.xlabel('Números')\n    plt.ylabel('Frequência')\n    plt.show()",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "monte_carlo_simulation",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def monte_carlo_simulation(draws, simulations=10000):\n    all_nums = list(range(1, 61))\n    simulated_counts = Counter()\n    for _ in range(simulations):\n        simulated_draw = np.random.choice(all_nums, size=6, replace=False)\n        simulated_counts.update(simulated_draw)\n    real_counts = Counter()\n    for _, nums in draws:\n        real_counts.update(nums)\n    # Retorna os 6 números mais frequentes simulados e reais",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "calculate_correlation",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def calculate_correlation(draws):\n    data = []\n    for _, nums in draws:\n        data.append([1 if i in nums else 0 for i in range(1, 61)])\n    df = pd.DataFrame(data, columns=[f'Num_{i}' for i in range(1, 61)])\n    correlation_matrix = df.corr()\n    return correlation_matrix\ndef analyze_probability_distribution(draws):\n    counter = Counter()\n    for _, nums in draws:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_probability_distribution",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def analyze_probability_distribution(draws):\n    counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    observed = [counter[i] for i in range(1, 61)]\n    expected = [sum(observed) / 60] * 60\n    chi2, p = chisquare(observed, expected)\n    return chi2, p\ndef analyze_time_series(draws):\n    dates = [d for d, _ in draws]",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_time_series",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def analyze_time_series(draws):\n    dates = [d for d, _ in draws]\n    frequencies = Counter(dates)\n    sorted_dates = sorted(frequencies.keys())\n    counts = [frequencies[date] for date in sorted_dates]\n    plt.plot(sorted_dates, counts)\n    plt.title('Tendência de Sorteios ao Longo do Tempo')\n    plt.xlabel('Data')\n    plt.ylabel('Frequência de Sorteios')\n    plt.show()",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "main",
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')\n    parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')\n    parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')\n    parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')\n    parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')\n    parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')\n    args = parser.parse_args()\n    global DB_PATH\n    if args.db_path:",
+        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')\n    parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')\n    parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')\n    parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')\n    parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')\n    parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')\n    parser.add_argument('--plot', action='store_true', help='Visualizar frequência dos números')\n    parser.add_argument('--montecarlo', action='store_true', help='Simulação de Monte Carlo')\n    parser.add_argument('--correlation', action='store_true', help='Calcular correlação entre números')",
         "detail": "mega_sena_app",
         "documentation": {}
     },
