@@ -1,5 +1,78 @@
 [
     {
+        "label": "tkinter",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "tkinter",
+        "description": "tkinter",
+        "detail": "tkinter",
+        "documentation": {}
+    },
+    {
+        "label": "messagebox",
+        "importPath": "tkinter",
+        "description": "tkinter",
+        "isExtraImport": true,
+        "detail": "tkinter",
+        "documentation": {}
+    },
+    {
+        "label": "filedialog",
+        "importPath": "tkinter",
+        "description": "tkinter",
+        "isExtraImport": true,
+        "detail": "tkinter",
+        "documentation": {}
+    },
+    {
+        "label": "load_all_draws",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_most_frequent",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_most_frequent_period",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_weighted",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "monte_carlo_simulation",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "plot_frequency",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "argparse",
         "kind": 6,
         "isExtraImport": true,
@@ -115,11 +188,65 @@
         "documentation": {}
     },
     {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "csv",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "csv",
+        "description": "csv",
+        "detail": "csv",
+        "documentation": {}
+    },
+    {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
+        "label": "run_analysis",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def run_analysis(option):\n    draws = load_all_draws()\n    if not draws:\n        messagebox.showerror(\"Erro\", \"Base de dados vazia. Execute a atualização primeiro.\")\n        return\n    if option == \"alltime\":\n        result = get_most_frequent(draws)\n        messagebox.showinfo(\"Top 6 de Todos os Tempos\", f\"Números: {result}\")\n    elif option == \"lastyear\":\n        result = get_most_frequent_period(draws)",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "create_gui",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def create_gui():\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    tk.Label(root, text=\"Escolha uma análise:\").pack(pady=10)\n    tk.Button(root, text=\"Top 6 de Todos os Tempos\", command=lambda: run_analysis(\"alltime\")).pack(pady=5)\n    tk.Button(root, text=\"Top 6 do Último Ano\", command=lambda: run_analysis(\"lastyear\")).pack(pady=5)\n    tk.Button(root, text=\"Conjunto Estatístico Ponderado\", command=lambda: run_analysis(\"weighted\")).pack(pady=5)\n    tk.Button(root, text=\"Visualizar Frequência\", command=lambda: run_analysis(\"plot\")).pack(pady=5)\n    tk.Button(root, text=\"Simulação de Monte Carlo\", command=lambda: run_analysis(\"montecarlo\")).pack(pady=5)\n    root.mainloop()",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
         "label": "init_db",
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
         "peekOfCode": "def init_db(path: str = DB_PATH):\n    conn = sqlite3.connect(path)\n    cursor = conn.cursor()\n    cursor.execute('''\n        CREATE TABLE IF NOT EXISTS megasena (\n            concurso INTEGER PRIMARY KEY,\n            data TEXT,\n            dez1 INTEGER, dez2 INTEGER, dez3 INTEGER,\n            dez4 INTEGER, dez5 INTEGER, dez6 INTEGER\n        )",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_lottery_data",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def fetch_lottery_data(lottery=\"megasena\", concurso=None):\n    url = f\"{API_LOTERIAS[lottery]}/{concurso}\" if concurso else f\"{API_LOTERIAS[lottery]}/latest\"\n    try:\n        resp = requests.get(url)\n        resp.raise_for_status()\n        return resp.json()\n    except requests.RequestException as e:\n        logging.error(f\"Erro ao buscar dados da API para {lottery}: {e}\")\n        raise\ndef fetch_concurso(concurso: int = None) -> dict:",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -241,6 +368,24 @@
         "documentation": {}
     },
     {
+        "label": "export_results",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def export_results(data, file_format=\"csv\", filename=\"results\"):\n    if file_format == \"csv\":\n        with open(f\"{filename}.csv\", \"w\", newline=\"\") as csvfile:\n            writer = csv.writer(csvfile)\n            writer.writerow([\"Número\", \"Frequência\"])\n            writer.writerows(data)\n    elif file_format == \"json\":\n        with open(f\"{filename}.json\", \"w\") as jsonfile:\n            json.dump(data, jsonfile, indent=4)\n    print(f\"Resultados exportados para {filename}.{file_format}\")",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "schedule_task",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def schedule_task():\n    task_name = \"MegaSenaUpdate\"\n    command = f\"schtasks /create /tn {task_name} /tr 'python {os.path.abspath(__file__)} --update' /sc daily /st 12:00\"\n    subprocess.run(command, shell=True)\n    print(f\"Tarefa agendada com sucesso: {task_name}\")\n# ---------------------\n# Interface de Linha de Comando\n# ---------------------\ndef main():\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "main",
         "kind": 2,
         "importPath": "mega_sena_app",
@@ -264,6 +409,15 @@
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
         "peekOfCode": "API_BASE = 'https://loteriascaixa-api.herokuapp.com/api/megasena'\n# Configuração de logging\nlogging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')\n# ---------------------\n# Banco de Dados\n# ---------------------\ndef init_db(path: str = DB_PATH):\n    conn = sqlite3.connect(path)\n    cursor = conn.cursor()\n    cursor.execute('''",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "API_LOTERIAS",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "API_LOTERIAS = {\n    \"megasena\": \"https://loteriascaixa-api.herokuapp.com/api/megasena\",\n    \"quina\": \"https://loteriascaixa-api.herokuapp.com/api/quina\",\n    \"lotofacil\": \"https://loteriascaixa-api.herokuapp.com/api/lotofacil\"\n}\ndef fetch_lottery_data(lottery=\"megasena\", concurso=None):\n    url = f\"{API_LOTERIAS[lottery]}/{concurso}\" if concurso else f\"{API_LOTERIAS[lottery]}/latest\"\n    try:\n        resp = requests.get(url)\n        resp.raise_for_status()",
         "detail": "mega_sena_app",
         "documentation": {}
     }

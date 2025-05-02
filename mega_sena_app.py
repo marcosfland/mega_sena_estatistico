@@ -29,6 +29,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.stats import chisquare
+import json
+import csv
+import subprocess
 
 # Configurações
 DB_PATH = os.getenv('MEGASENA_DB_PATH', 'megasena.db')
@@ -58,6 +61,22 @@ def init_db(path: str = DB_PATH):
 # ---------------------
 # API Integration
 # ---------------------
+
+API_LOTERIAS = {
+    "megasena": "https://loteriascaixa-api.herokuapp.com/api/megasena",
+    "quina": "https://loteriascaixa-api.herokuapp.com/api/quina",
+    "lotofacil": "https://loteriascaixa-api.herokuapp.com/api/lotofacil"
+}
+
+def fetch_lottery_data(lottery="megasena", concurso=None):
+    url = f"{API_LOTERIAS[lottery]}/{concurso}" if concurso else f"{API_LOTERIAS[lottery]}/latest"
+    try:
+        resp = requests.get(url)
+        resp.raise_for_status()
+        return resp.json()
+    except requests.RequestException as e:
+        logging.error(f"Erro ao buscar dados da API para {lottery}: {e}")
+        raise
 
 def fetch_concurso(concurso: int = None) -> dict:
     """Busca JSON de um concurso específico ou último se concurso=None"""
@@ -229,6 +248,23 @@ def analyze_time_series(draws):
     plt.ylabel('Frequência de Sorteios')
     plt.show()
 
+def export_results(data, file_format="csv", filename="results"):
+    if file_format == "csv":
+        with open(f"{filename}.csv", "w", newline="") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["Número", "Frequência"])
+            writer.writerows(data)
+    elif file_format == "json":
+        with open(f"{filename}.json", "w") as jsonfile:
+            json.dump(data, jsonfile, indent=4)
+    print(f"Resultados exportados para {filename}.{file_format}")
+
+def schedule_task():
+    task_name = "MegaSenaUpdate"
+    command = f"schtasks /create /tn {task_name} /tr 'python {os.path.abspath(__file__)} --update' /sc daily /st 12:00"
+    subprocess.run(command, shell=True)
+    print(f"Tarefa agendada com sucesso: {task_name}")
+
 # ---------------------
 # Interface de Linha de Comando
 # ---------------------
@@ -245,6 +281,7 @@ def main():
     parser.add_argument('--correlation', action='store_true', help='Calcular correlação entre números')
     parser.add_argument('--timeseries', action='store_true', help='Análise de séries temporais')
     parser.add_argument('--distribution', action='store_true', help='Análise de distribuição de probabilidade')
+    parser.add_argument('--export', type=str, help='Exportar resultados para CSV ou JSON')
     args = parser.parse_args()
 
     global DB_PATH
@@ -261,11 +298,14 @@ def main():
         sys.exit(1)
 
     if args.alltime:
-        print('Top 6 de todos os tempos:', get_most_frequent(draws))
+        result = get_most_frequent(draws)
+        print('Top 6 de todos os tempos:', result)
     elif args.lastyear:
-        print('Top 6 do último ano:', get_most_frequent_period(draws))
+        result = get_most_frequent_period(draws)
+        print('Top 6 do último ano:', result)
     elif args.stat:
-        print('Conjunto estatístico:', get_weighted(draws))
+        result = get_weighted(draws)
+        print('Conjunto estatístico:', result)
     elif args.plot:
         plot_frequency(draws)
     elif args.montecarlo:
@@ -281,6 +321,9 @@ def main():
     elif args.distribution:
         chi2, p = analyze_probability_distribution(draws)
         print(f'Chi2: {chi2}, p-valor: {p}')
+    elif args.export:
+        file_format = args.export.split('.')[-1]
+        export_results(draws, file_format, args.export.rsplit('.', 1)[0])
     else:
         parser.print_help()
 
