@@ -1,0 +1,190 @@
+[
+    {
+        "label": "argparse",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "argparse",
+        "description": "argparse",
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "datetime",
+        "description": "datetime",
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "sqlite3",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlite3",
+        "description": "sqlite3",
+        "detail": "sqlite3",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "Counter",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "random",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "random",
+        "description": "random",
+        "detail": "random",
+        "documentation": {}
+    },
+    {
+        "label": "logging",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "logging",
+        "description": "logging",
+        "detail": "logging",
+        "documentation": {}
+    },
+    {
+        "label": "init_db",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def init_db(path: str = DB_PATH):\n    conn = sqlite3.connect(path)\n    cursor = conn.cursor()\n    cursor.execute('''\n        CREATE TABLE IF NOT EXISTS megasena (\n            concurso INTEGER PRIMARY KEY,\n            data TEXT,\n            dez1 INTEGER, dez2 INTEGER, dez3 INTEGER,\n            dez4 INTEGER, dez5 INTEGER, dez6 INTEGER\n        )",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_concurso",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def fetch_concurso(concurso: int = None) -> dict:\n    \"\"\"Busca JSON de um concurso específico ou último se concurso=None\"\"\"\n    url = f\"{API_BASE}/{concurso}\" if concurso else API_BASE + '/latest'\n    try:\n        resp = requests.get(url)\n        resp.raise_for_status()\n        data = resp.json()\n        if not validate_api_data(data):\n            raise ValueError(f\"Dados inválidos recebidos para o concurso {concurso}\")\n        return data",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "validate_api_data",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def validate_api_data(data: dict) -> bool:\n    \"\"\"Valida os dados retornados pela API\"\"\"\n    required_keys = {'concurso', 'data', 'dezenas'}\n    if not all(key in data for key in required_keys):\n        return False\n    if not isinstance(data['dezenas'], list) or len(data['dezenas']) != 6:\n        return False\n    return True\n# ---------------------\n# Atualização de Dados",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_last_db_concurso",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def get_last_db_concurso(path: str = DB_PATH) -> int:\n    conn = sqlite3.connect(path)\n    cursor = conn.cursor()\n    cursor.execute('SELECT MAX(concurso) FROM megasena')\n    row = cursor.fetchone()\n    conn.close()\n    return row[0] or 0\ndef update_db(path: str = DB_PATH):\n    init_db(path)\n    ultimo_db = get_last_db_concurso(path)",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "update_db",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def update_db(path: str = DB_PATH):\n    init_db(path)\n    ultimo_db = get_last_db_concurso(path)\n    try:\n        data_last = fetch_concurso(None)\n        ultimo_api = int(data_last['concurso'])\n    except Exception as e:\n        logging.error(f\"Erro ao obter último concurso da API: {e}\")\n        return\n    if ultimo_api <= ultimo_db:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "load_all_draws",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def load_all_draws(path: str = DB_PATH):\n    conn = sqlite3.connect(path)\n    cursor = conn.cursor()\n    cursor.execute('SELECT data, dez1, dez2, dez3, dez4, dez5, dez6 FROM megasena')\n    rows = cursor.fetchall()\n    conn.close()\n    draws = []\n    for data_str, *dez in rows:\n        date = datetime.datetime.strptime(data_str, '%d/%m/%Y').date()\n        draws.append((date, tuple(dez)))",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_most_frequent",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def get_most_frequent(draws, k: int = 6):\n    counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    return [num for num, _ in counter.most_common(k)]\ndef get_most_frequent_period(draws, days: int = 365, k: int = 6):\n    today = datetime.date.today()\n    cutoff = today - datetime.timedelta(days=days)\n    filtered = [(d, nums) for d, nums in draws if d >= cutoff]\n    return get_most_frequent(filtered, k)",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_most_frequent_period",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def get_most_frequent_period(draws, days: int = 365, k: int = 6):\n    today = datetime.date.today()\n    cutoff = today - datetime.timedelta(days=days)\n    filtered = [(d, nums) for d, nums in draws if d >= cutoff]\n    return get_most_frequent(filtered, k)\ndef get_weighted(draws, k: int = 6):\n    counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    all_nums = list(range(1, 61))",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_weighted",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def get_weighted(draws, k: int = 6):\n    counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    all_nums = list(range(1, 61))\n    weights = [counter[n] for n in all_nums]\n    if sum(weights) == 0:\n        return random.sample(all_nums, k)\n    probs = [w/sum(weights) for w in weights]\n    chosen = set()",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')\n    parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')\n    parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')\n    parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')\n    parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')\n    parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')\n    args = parser.parse_args()\n    global DB_PATH\n    if args.db_path:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "DB_PATH",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "DB_PATH = os.getenv('MEGASENA_DB_PATH', 'megasena.db')\nAPI_BASE = 'https://loteriascaixa-api.herokuapp.com/api/megasena'\n# Configuração de logging\nlogging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')\n# ---------------------\n# Banco de Dados\n# ---------------------\ndef init_db(path: str = DB_PATH):\n    conn = sqlite3.connect(path)\n    cursor = conn.cursor()",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "API_BASE",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "API_BASE = 'https://loteriascaixa-api.herokuapp.com/api/megasena'\n# Configuração de logging\nlogging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')\n# ---------------------\n# Banco de Dados\n# ---------------------\ndef init_db(path: str = DB_PATH):\n    conn = sqlite3.connect(path)\n    cursor = conn.cursor()\n    cursor.execute('''",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    }
+]
