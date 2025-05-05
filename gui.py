@@ -65,7 +65,7 @@ def show_help():
     messagebox.showinfo("Ajuda", help_text)
 
 def open_github():
-    webbrowser.open("https://github.com/seu-repositorio/mega_sena_estatistico")
+    webbrowser.open("https://github.com/marcosfland/mega_sena_estatistico")
 
 def show_about():
     about_text = "Mega-Sena Estatístico\nVersão 1.0\nDesenvolvido por Marcos\nAnálise estatística de sorteios da Mega-Sena."

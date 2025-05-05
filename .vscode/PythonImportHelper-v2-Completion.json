@@ -303,7 +303,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def open_github():\n    webbrowser.open(\"https://github.com/seu-repositorio/mega_sena_estatistico\")\ndef show_about():\n    about_text = \"Mega-Sena Estatístico\\nVersão 1.0\\nDesenvolvido por Marcos\\nAnálise estatística de sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre\", about_text)\ndef create_gui():\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    # Menu superior\n    menu_bar = Menu(root)",
+        "peekOfCode": "def open_github():\n    webbrowser.open(\"https://github.com/marcosfland/mega_sena_estatistico\")\ndef show_about():\n    about_text = \"Mega-Sena Estatístico\\nVersão 1.0\\nDesenvolvido por Marcos\\nAnálise estatística de sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre\", about_text)\ndef create_gui():\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    # Menu superior\n    menu_bar = Menu(root)",
         "detail": "gui",
         "documentation": {}
     },
