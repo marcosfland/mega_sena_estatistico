@@ -33,6 +33,14 @@
         "documentation": {}
     },
     {
+        "label": "simpledialog",
+        "importPath": "tkinter",
+        "description": "tkinter",
+        "isExtraImport": true,
+        "detail": "tkinter",
+        "documentation": {}
+    },
+    {
         "label": "load_all_draws",
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
@@ -121,6 +129,54 @@
         "documentation": {}
     },
     {
+        "label": "get_most_frequent_pairs",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_most_frequent_triplets",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "conditional_probability",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "filter_draws_by_period",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "export_advanced_v2",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "sanitize_filename",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "webbrowser",
         "kind": 6,
         "isExtraImport": true,
@@ -130,12 +186,28 @@
         "documentation": {}
     },
     {
-        "label": "argparse",
+        "label": "Counter",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "Counter",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "os",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "argparse",
-        "description": "argparse",
-        "detail": "argparse",
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
         "documentation": {}
     },
     {
@@ -148,12 +220,12 @@
         "documentation": {}
     },
     {
-        "label": "os",
+        "label": "argparse",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "os",
-        "description": "os",
-        "detail": "os",
+        "importPath": "argparse",
+        "description": "argparse",
+        "detail": "argparse",
         "documentation": {}
     },
     {
@@ -181,14 +253,6 @@
         "importPath": "requests",
         "description": "requests",
         "detail": "requests",
-        "documentation": {}
-    },
-    {
-        "label": "Counter",
-        "importPath": "collections",
-        "description": "collections",
-        "isExtraImport": true,
-        "detail": "collections",
         "documentation": {}
     },
     {
@@ -272,6 +336,47 @@
         "documentation": {}
     },
     {
+        "label": "combinations",
+        "importPath": "itertools",
+        "description": "itertools",
+        "isExtraImport": true,
+        "detail": "itertools",
+        "documentation": {}
+    },
+    {
+        "label": "Flask",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "jsonify",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "request",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
         "label": "Optional",
         "importPath": "typing",
         "description": "typing",
@@ -294,6 +399,15 @@
         "importPath": "gui",
         "description": "gui",
         "peekOfCode": "def export_data():\n    draws = load_all_draws()\n    if not draws:\n        messagebox.showerror(\"Erro\", \"Base de dados vazia. Execute a atualização primeiro.\")\n        return\n    file_path = filedialog.asksaveasfilename(defaultextension=\".csv\", filetypes=[(\"CSV files\", \"*.csv\"), (\"JSON files\", \"*.json\")])\n    if file_path:\n        file_format = file_path.split('.')[-1]\n        export_results(draws, file_format, file_path.rsplit('.', 1)[0])\n        messagebox.showinfo(\"Exportação\", f\"Dados exportados para {file_path}\")",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "export_advanced_gui",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def export_advanced_gui():\n    draws = load_all_draws()\n    if not draws:\n        messagebox.showerror(\"Erro\", \"Base de dados vazia. Execute a atualização primeiro.\")\n        return\n    tipo = simpledialog.askstring(\"Exportação Avançada\", \"Tipo (frequencia, pares, trios, correlacao):\")\n    arquivo = filedialog.asksaveasfilename(defaultextension=\".csv\", filetypes=[(\"CSV files\", \"*.csv\")])\n    if not tipo or not arquivo:\n        return\n    nome = sanitize_filename(os.path.splitext(os.path.basename(arquivo))[0])",
         "detail": "gui",
         "documentation": {}
     },
@@ -469,11 +583,29 @@
         "documentation": {}
     },
     {
+        "label": "sanitize_filename",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def sanitize_filename(filename):\n    # Permite apenas letras, números, underline, hífen, ponto e espaço\n    filename = os.path.basename(filename)\n    if not re.match(r'^[\\w\\-. ]+$', filename):\n        raise ValueError(\"Nome de arquivo inválido.\")\n    return filename\ndef export_results(data, file_format=\"csv\", filename=\"results\"):\n    filename = sanitize_filename(filename)\n    if file_format == \"csv\":\n        with open(f\"{filename}.csv\", \"w\", newline=\"\") as csvfile:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "export_results",
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def export_results(data, file_format=\"csv\", filename=\"results\"):\n    if file_format == \"csv\":\n        with open(f\"{filename}.csv\", \"w\", newline=\"\") as csvfile:\n            writer = csv.writer(csvfile)\n            writer.writerow([\"Número\", \"Frequência\"])\n            writer.writerows(data)\n    elif file_format == \"json\":\n        with open(f\"{filename}.json\", \"w\") as jsonfile:\n            json.dump(data, jsonfile, indent=4)\n    print(f\"Resultados exportados para {filename}.{file_format}\")",
+        "peekOfCode": "def export_results(data, file_format=\"csv\", filename=\"results\"):\n    filename = sanitize_filename(filename)\n    if file_format == \"csv\":\n        with open(f\"{filename}.csv\", \"w\", newline=\"\") as csvfile:\n            writer = csv.writer(csvfile)\n            writer.writerow([\"Número\", \"Frequência\"])\n            writer.writerows(data)\n    elif file_format == \"json\":\n        with open(f\"{filename}.json\", \"w\") as jsonfile:\n            json.dump(data, jsonfile, indent=4)",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "export_advanced_v2",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def export_advanced_v2(data, file_format=\"csv\", filename=\"results\", header=None):\n    filename = sanitize_filename(filename)\n    if file_format == \"csv\":\n        with open(f\"{filename}.csv\", \"w\", newline=\"\") as csvfile:\n            writer = csv.writer(csvfile)\n            if header:\n                writer.writerow(header)\n            writer.writerows(data)\n    elif file_format == \"json\":\n        with open(f\"{filename}.json\", \"w\") as jsonfile:",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -482,7 +614,79 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def schedule_task():\n    task_name = \"MegaSenaUpdate\"\n    command = f\"schtasks /create /tn {task_name} /tr 'python {os.path.abspath(__file__)} --update' /sc daily /st 12:00\"\n    subprocess.run(command, shell=True)\n    print(f\"Tarefa agendada com sucesso: {task_name}\")\n# ---------------------\n# Interface de Linha de Comando\n# ---------------------\ndef main():\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')",
+        "peekOfCode": "def schedule_task():\n    task_name = \"MegaSenaUpdate\"\n    command = f\"schtasks /create /tn {task_name} /tr 'python {os.path.abspath(__file__)} --update' /sc daily /st 12:00\"\n    subprocess.run(command, shell=True)\n    print(f\"Tarefa agendada com sucesso: {task_name}\")\n# ---------------------\n# Novas Funcionalidades\n# ---------------------\ndef filter_draws_by_period(draws, start_date=None, end_date=None):\n    if not start_date and not end_date:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "filter_draws_by_period",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def filter_draws_by_period(draws, start_date=None, end_date=None):\n    if not start_date and not end_date:\n        return draws\n    filtered = []\n    for d, nums in draws:\n        if start_date and d < start_date:\n            continue\n        if end_date and d > end_date:\n            continue\n        filtered.append((d, nums))",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_most_frequent_pairs",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def get_most_frequent_pairs(draws, k=6):\n    counter = Counter()\n    for _, nums in draws:\n        for pair in combinations(sorted(nums), 2):\n            counter[pair] += 1\n    return counter.most_common(k)\ndef get_most_frequent_triplets(draws, k=6):\n    counter = Counter()\n    for _, nums in draws:\n        for triplet in combinations(sorted(nums), 3):",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_most_frequent_triplets",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def get_most_frequent_triplets(draws, k=6):\n    counter = Counter()\n    for _, nums in draws:\n        for triplet in combinations(sorted(nums), 3):\n            counter[triplet] += 1\n    return counter.most_common(k)\ndef conditional_probability(draws, given, target):\n    count_given = 0\n    count_both = 0\n    for _, nums in draws:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "conditional_probability",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def conditional_probability(draws, given, target):\n    count_given = 0\n    count_both = 0\n    for _, nums in draws:\n        if given in nums:\n            count_given += 1\n            if target in nums:\n                count_both += 1\n    if count_given == 0:\n        return 0.0",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "export_advanced",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def export_advanced(data, file_format=\"csv\", filename=\"results\", header=None):\n    filename = sanitize_filename(filename)\n    if file_format == \"csv\":\n        with open(f\"{filename}.csv\", \"w\", newline=\"\") as csvfile:\n            writer = csv.writer(csvfile)\n            if header:\n                writer.writerow(header)\n            writer.writerows(data)\n    elif file_format == \"json\":\n        with open(f\"{filename}.json\", \"w\") as jsonfile:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "schedule_task_crossplatform",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def schedule_task_crossplatform():\n    import platform\n    if platform.system() == \"Windows\":\n        schedule_task()\n    else:\n        cron_line = f\"0 12 * * * python3 {os.path.abspath(__file__)} --update\"\n        print(\"Adicione a seguinte linha ao seu crontab (Linux/macOS):\")\n        print(cron_line)\ndef connect_external_db(conn_str):\n    # Exemplo inicial para SQLite, pode ser adaptado para outros bancos",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "connect_external_db",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def connect_external_db(conn_str):\n    # Exemplo inicial para SQLite, pode ser adaptado para outros bancos\n    return sqlite3.connect(conn_str)\ndef run_web_interface(draws):\n    app = Flask(__name__)\n    @app.route(\"/frequencia\")\n    def frequencia():\n        top = int(request.args.get(\"top\", 6))\n        result = get_most_frequent(draws, top)\n        return jsonify(result)",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "run_web_interface",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def run_web_interface(draws):\n    app = Flask(__name__)\n    @app.route(\"/frequencia\")\n    def frequencia():\n        top = int(request.args.get(\"top\", 6))\n        result = get_most_frequent(draws, top)\n        return jsonify(result)\n    @app.route(\"/pares\")\n    def pares():\n        top = int(request.args.get(\"top\", 6))",
         "detail": "mega_sena_app",
         "documentation": {}
     },

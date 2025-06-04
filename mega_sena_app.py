@@ -32,6 +32,9 @@ from scipy.stats import chisquare
 import json
 import csv
 import subprocess
+from itertools import combinations
+from flask import Flask, jsonify, request
+import re
 
 # Configurações
 DB_PATH = os.getenv('MEGASENA_DB_PATH', 'megasena.db')
@@ -250,7 +253,15 @@ def analyze_time_series(draws):
     plt.ylabel('Frequência de Sorteios')
     plt.show()
 
+def sanitize_filename(filename):
+    # Permite apenas letras, números, underline, hífen, ponto e espaço
+    filename = os.path.basename(filename)
+    if not re.match(r'^[\w\-. ]+$', filename):
+        raise ValueError("Nome de arquivo inválido.")
+    return filename
+
 def export_results(data, file_format="csv", filename="results"):
+    filename = sanitize_filename(filename)
     if file_format == "csv":
         with open(f"{filename}.csv", "w", newline="") as csvfile:
             writer = csv.writer(csvfile)
@@ -261,11 +272,121 @@ def export_results(data, file_format="csv", filename="results"):
             json.dump(data, jsonfile, indent=4)
     print(f"Resultados exportados para {filename}.{file_format}")
 
+def export_advanced_v2(data, file_format="csv", filename="results", header=None):
+    filename = sanitize_filename(filename)
+    if file_format == "csv":
+        with open(f"{filename}.csv", "w", newline="") as csvfile:
+            writer = csv.writer(csvfile)
+            if header:
+                writer.writerow(header)
+            writer.writerows(data)
+    elif file_format == "json":
+        with open(f"{filename}.json", "w") as jsonfile:
+            json.dump(data, jsonfile, indent=4)
+    print(f"Resultados exportados para {filename}.{file_format}")
+
+# No trecho de exportação de correlação:
+# Substitua:
+# corr.to_csv(f"{arquivo}.csv")
+# Por:
+# corr.to_csv(f"{sanitize_filename(arquivo)}.csv")
+
 def schedule_task():
     task_name = "MegaSenaUpdate"
     command = f"schtasks /create /tn {task_name} /tr 'python {os.path.abspath(__file__)} --update' /sc daily /st 12:00"
     subprocess.run(command, shell=True)
     print(f"Tarefa agendada com sucesso: {task_name}")
+
+# ---------------------
+# Novas Funcionalidades
+# ---------------------
+
+def filter_draws_by_period(draws, start_date=None, end_date=None):
+    if not start_date and not end_date:
+        return draws
+    filtered = []
+    for d, nums in draws:
+        if start_date and d < start_date:
+            continue
+        if end_date and d > end_date:
+            continue
+        filtered.append((d, nums))
+    return filtered
+
+def get_most_frequent_pairs(draws, k=6):
+    counter = Counter()
+    for _, nums in draws:
+        for pair in combinations(sorted(nums), 2):
+            counter[pair] += 1
+    return counter.most_common(k)
+
+def get_most_frequent_triplets(draws, k=6):
+    counter = Counter()
+    for _, nums in draws:
+        for triplet in combinations(sorted(nums), 3):
+            counter[triplet] += 1
+    return counter.most_common(k)
+
+def conditional_probability(draws, given, target):
+    count_given = 0
+    count_both = 0
+    for _, nums in draws:
+        if given in nums:
+            count_given += 1
+            if target in nums:
+                count_both += 1
+    if count_given == 0:
+        return 0.0
+    return count_both / count_given
+
+def export_advanced(data, file_format="csv", filename="results", header=None):
+    filename = sanitize_filename(filename)
+    if file_format == "csv":
+        with open(f"{filename}.csv", "w", newline="") as csvfile:
+            writer = csv.writer(csvfile)
+            if header:
+                writer.writerow(header)
+            writer.writerows(data)
+    elif file_format == "json":
+        with open(f"{filename}.json", "w") as jsonfile:
+            json.dump(data, jsonfile, indent=4)
+    print(f"Resultados exportados para {filename}.{file_format}")
+
+def schedule_task_crossplatform():
+    import platform
+    if platform.system() == "Windows":
+        schedule_task()
+    else:
+        cron_line = f"0 12 * * * python3 {os.path.abspath(__file__)} --update"
+        print("Adicione a seguinte linha ao seu crontab (Linux/macOS):")
+        print(cron_line)
+
+def connect_external_db(conn_str):
+    # Exemplo inicial para SQLite, pode ser adaptado para outros bancos
+    return sqlite3.connect(conn_str)
+
+def run_web_interface(draws):
+    app = Flask(__name__)
+
+    @app.route("/frequencia")
+    def frequencia():
+        top = int(request.args.get("top", 6))
+        result = get_most_frequent(draws, top)
+        return jsonify(result)
+
+    @app.route("/pares")
+    def pares():
+        top = int(request.args.get("top", 6))
+        result = get_most_frequent_pairs(draws, top)
+        return jsonify(result)
+
+    @app.route("/trios")
+    def trios():
+        top = int(request.args.get("top", 6))
+        result = get_most_frequent_triplets(draws, top)
+        return jsonify(result)
+
+    app.run(port=5000)
 
 # ---------------------
 # Interface de Linha de Comando
@@ -284,11 +405,23 @@ def main():
     parser.add_argument('--timeseries', action='store_true', help='Análise de séries temporais')
     parser.add_argument('--distribution', action='store_true', help='Análise de distribuição de probabilidade')
     parser.add_argument('--export', type=str, help='Exportar resultados para CSV ou JSON')
+    # Novos argumentos
+    parser.add_argument('--period', nargs=2, metavar=('INICIO', 'FIM'), help='Filtrar por período (formato: YYYY-MM-DD)')
+    parser.add_argument('--pairs', action='store_true', help='Exibe pares mais frequentes')
+    parser.add_argument('--triplets', action='store_true', help='Exibe trios mais frequentes')
+    parser.add_argument('--conditional', nargs=2, type=int, metavar=('GIVEN', 'TARGET'), help='Probabilidade de TARGET dado GIVEN')
+    parser.add_argument('--export-advanced', nargs=2, metavar=('TIPO', 'ARQUIVO'), help='Exporta análise avançada (frequencia, pares, trios, correlacao)')
+    parser.add_argument('--schedule', action='store_true', help='Agendar atualização diária (crossplatform)')
+    parser.add_argument('--external-db', type=str, help='String de conexão para banco de dados externo')
+    parser.add_argument('--web', action='store_true', help='Inicia interface web Flask')
     args = parser.parse_args()
 
     global DB_PATH
     if args.db_path:
         DB_PATH = args.db_path
+    if args.external_db:
+        conn = connect_external_db(args.external_db)
+        # Adapte as funções para usar conn conforme necessário
 
     if args.update:
         update_db()
@@ -298,6 +431,12 @@ def main():
     if not draws:
         logging.error('Base vazia: execute com --update primeiro')
         sys.exit(1)
+
+    # Filtro por período customizado
+    if args.period:
+        start = datetime.datetime.strptime(args.period[0], "%Y-%m-%d").date()
+        end = datetime.datetime.strptime(args.period[1], "%Y-%m-%d").date()
+        draws = filter_draws_by_period(draws, start, end)
 
     if args.alltime:
         result = get_most_frequent(draws)
@@ -323,6 +462,39 @@ def main():
     elif args.distribution:
         chi2, p = analyze_probability_distribution(draws)
         print(f'Chi2: {chi2}, p-valor: {p}')
+    elif args.pairs:
+        result = get_most_frequent_pairs(draws)
+        print('Pares mais frequentes:', result)
+    elif args.triplets:
+        result = get_most_frequent_triplets(draws)
+        print('Trios mais frequentes:', result)
+    elif args.conditional:
+        given, target = args.conditional
+        prob = conditional_probability(draws, given, target)
+        print(f'P({target}|{given}) = {prob:.4f}')
+    elif args.export_advanced:
+        tipo, arquivo = args.export_advanced
+        if tipo == "frequencia":
+            data = Counter()
+            for _, nums in draws:
+                data.update(nums)
+            export_advanced_v2(data.most_common(), "csv", arquivo, header=["Número", "Frequência"])
+        elif tipo == "pares":
+            data = get_most_frequent_pairs(draws, 20)
+            export_advanced_v2(data, "csv", arquivo, header=["Par", "Frequência"])
+        elif tipo == "trios":
+            data = get_most_frequent_triplets(draws, 20)
+            export_advanced_v2(data, "csv", arquivo, header=["Trio", "Frequência"])
+        elif tipo == "correlacao":
+            corr = calculate_correlation(draws)
+            corr.to_csv(f"{sanitize_filename(arquivo)}.csv")
+            print(f"Correlação exportada para {arquivo}.csv")
+        else:
+            print("Tipo de exportação não suportado.")
+    elif args.schedule:
+        schedule_task_crossplatform()
+    elif args.web:
+        run_web_interface(draws)
     elif args.export:
         file_format = args.export.split('.')[-1]
         export_results(draws, file_format, args.export.rsplit('.', 1)[0])
