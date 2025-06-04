@@ -11,104 +11,147 @@ import webbrowser
 from collections import Counter
 import os
 import datetime
+import logging
+import subprocess
+
+# Configuração de logging para ações do usuário
+logging.basicConfig(filename="gui_actions.log", level=logging.INFO, format="%(asctime)s %(message)s")
 
 def run_analysis(option):
-    draws = load_all_draws()
-    if not draws:
-        messagebox.showerror("Erro", "Base de dados vazia. Execute a atualização primeiro.")
-        return
-
-    if option == "alltime":
-        result = get_most_frequent(draws)
-        messagebox.showinfo("Top 6 de Todos os Tempos", f"Números: {result}")
-    elif option == "lastyear":
-        result = get_most_frequent_period(draws)
-        messagebox.showinfo("Top 6 do Último Ano", f"Números: {result}")
-    elif option == "weighted":
-        result = get_weighted(draws)
-        messagebox.showinfo("Conjunto Estatístico Ponderado", f"Números: {result}")
-    elif option == "plot":
-        plot_frequency(draws)
-    elif option == "montecarlo":
-        simulated, real = monte_carlo_simulation(draws)
-        messagebox.showinfo("Monte Carlo", f"Simulados: {simulated}\nReais: {real}")
-    elif option == "correlation":
-        correlation_matrix = calculate_correlation(draws)
-        messagebox.showinfo("Correlação", f"Matriz de Correlação:\n{correlation_matrix}")
-    elif option == "timeseries":
-        analyze_time_series(draws)
-    elif option == "distribution":
-        chi2, p = analyze_probability_distribution(draws)
-        messagebox.showinfo("Distribuição de Probabilidade", f"Chi2: {chi2}, p-valor: {p}")
-    elif option == "pairs":
-        result = get_most_frequent_pairs(draws, 10)
-        messagebox.showinfo("Pares Mais Frequentes", f"{result}")
-    elif option == "triplets":
-        result = get_most_frequent_triplets(draws, 10)
-        messagebox.showinfo("Trios Mais Frequentes", f"{result}")
-    elif option == "conditional":
-        # Solicita ao usuário os números
-        given = simpledialog.askinteger("Probabilidade Condicional", "Informe o número dado (GIVEN):")
-        target = simpledialog.askinteger("Probabilidade Condicional", "Informe o número alvo (TARGET):")
-        if given and target:
-            prob = conditional_probability(draws, given, target)
-            messagebox.showinfo("Probabilidade Condicional", f"P({target}|{given}) = {prob:.4f}")
-    elif option == "period":
-        # Solicita datas ao usuário
-        start = simpledialog.askstring("Filtro por Período", "Data inicial (YYYY-MM-DD):")
-        end = simpledialog.askstring("Filtro por Período", "Data final (YYYY-MM-DD):")
-        if not start or not end:
-            messagebox.showerror("Erro", "Datas não podem ser vazias.")
+    try:
+        draws = load_all_draws()
+        if not draws:
+            messagebox.showerror("Erro", "Base de dados vazia. Execute a atualização primeiro.")
             return
-        try:
-            start_date = datetime.datetime.strptime(start, "%Y-%m-%d").date()
-            end_date = datetime.datetime.strptime(end, "%Y-%m-%d").date()
-            filtered = filter_draws_by_period(draws, start_date, end_date)
-            result = get_most_frequent(filtered)
-            messagebox.showinfo("Top 6 no Período", f"Números: {result}")
-        except Exception as e:
-            messagebox.showerror("Erro", f"Datas inválidas: {e}")
+
+        if option == "alltime":
+            result = get_most_frequent(draws)
+            messagebox.showinfo("Top 6 de Todos os Tempos", f"Números: {result}")
+        elif option == "lastyear":
+            result = get_most_frequent_period(draws)
+            messagebox.showinfo("Top 6 do Último Ano", f"Números: {result}")
+        elif option == "weighted":
+            result = get_weighted(draws)
+            messagebox.showinfo("Conjunto Estatístico Ponderado", f"Números: {result}")
+        elif option == "plot":
+            plot_frequency(draws)
+        elif option == "montecarlo":
+            simulated, real = monte_carlo_simulation(draws)
+            messagebox.showinfo("Monte Carlo", f"Simulados: {simulated}\nReais: {real}")
+        elif option == "correlation":
+            correlation_matrix = calculate_correlation(draws)
+            messagebox.showinfo("Correlação", f"Matriz de Correlação:\n{correlation_matrix}")
+        elif option == "timeseries":
+            analyze_time_series(draws)
+        elif option == "distribution":
+            chi2, p = analyze_probability_distribution(draws)
+            messagebox.showinfo("Distribuição de Probabilidade", f"Chi2: {chi2}, p-valor: {p}")
+        elif option == "pairs":
+            result = get_most_frequent_pairs(draws, 10)
+            messagebox.showinfo("Pares Mais Frequentes", f"{result}")
+        elif option == "triplets":
+            result = get_most_frequent_triplets(draws, 10)
+            messagebox.showinfo("Trios Mais Frequentes", f"{result}")
+        elif option == "conditional":
+            given = simpledialog.askinteger("Probabilidade Condicional", "Informe o número dado (GIVEN):")
+            target = simpledialog.askinteger("Probabilidade Condicional", "Informe o número alvo (TARGET):")
+            if given is not None and target is not None:
+                prob = conditional_probability(draws, given, target)
+                messagebox.showinfo("Probabilidade Condicional", f"P({target}|{given}) = {prob:.4f}")
+        elif option == "period":
+            start = simpledialog.askstring("Filtro por Período", "Data inicial (YYYY-MM-DD):")
+            end = simpledialog.askstring("Filtro por Período", "Data final (YYYY-MM-DD):")
+            if not start or not end:
+                messagebox.showerror("Erro", "Datas não podem ser vazias.")
+                return
+            try:
+                start_date = datetime.datetime.strptime(start, "%Y-%m-%d").date()
+                end_date = datetime.datetime.strptime(end, "%Y-%m-%d").date()
+                filtered = filter_draws_by_period(draws, start_date, end_date)
+                if not filtered:
+                    messagebox.showinfo("Sem Resultados", "Nenhum sorteio encontrado no período informado.")
+                    return
+                result = get_most_frequent(filtered)
+                messagebox.showinfo("Top 6 no Período", f"Números: {result}")
+            except Exception as e:
+                messagebox.showerror("Erro", f"Datas inválidas: {e}")
+        logging.info(f"Análise executada: {option}")
+    except Exception as e:
+        logging.error(f"Erro ao executar análise {option}: {e}")
+        messagebox.showerror("Erro", f"Ocorreu um erro: {e}")
 
 def export_data():
-    draws = load_all_draws()
-    if not draws:
-        messagebox.showerror("Erro", "Base de dados vazia. Execute a atualização primeiro.")
-        return
+    try:
+        draws = load_all_draws()
+        if not draws:
+            messagebox.showerror("Erro", "Base de dados vazia. Execute a atualização primeiro.")
+            return
 
-    file_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv"), ("JSON files", "*.json")])
-    if file_path:
-        file_format = file_path.split('.')[-1]
-        export_results(draws, file_format, file_path.rsplit('.', 1)[0])
-        messagebox.showinfo("Exportação", f"Dados exportados para {file_path}")
+        file_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv"), ("JSON files", "*.json")])
+        if file_path:
+            file_format = file_path.split('.')[-1]
+            export_results(draws, file_format, file_path.rsplit('.', 1)[0])
+            messagebox.showinfo("Exportação", f"Dados exportados para {file_path}")
+            open_file_location(file_path)
+        logging.info(f"Exportação simples realizada: {file_path}")
+    except Exception as e:
+        logging.error(f"Erro na exportação simples: {e}")
+        messagebox.showerror("Erro", f"Ocorreu um erro na exportação: {e}")
 
 def export_advanced_gui():
-    draws = load_all_draws()
-    if not draws:
-        messagebox.showerror("Erro", "Base de dados vazia. Execute a atualização primeiro.")
-        return
-    tipo = simpledialog.askstring("Exportação Avançada", "Tipo (frequencia, pares, trios, correlacao):")
-    arquivo = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
-    if not tipo or not arquivo:
-        return
-    nome = sanitize_filename(os.path.splitext(os.path.basename(arquivo))[0])
-    if tipo == "frequencia":
-        data = Counter()
-        for _, nums in draws:
-            data.update(nums)
-        export_advanced_v2(data.most_common(), "csv", nome, header=["Número", "Frequência"])
-    elif tipo == "pares":
-        data = get_most_frequent_pairs(draws, 20)
-        export_advanced_v2(data, "csv", nome, header=["Par", "Frequência"])
-    elif tipo == "trios":
-        data = get_most_frequent_triplets(draws, 20)
-        export_advanced_v2(data, "csv", nome, header=["Trio", "Frequência"])
-    elif tipo == "correlacao":
-        corr = calculate_correlation(draws)
-        corr.to_csv(f"{nome}.csv")
-    else:
-        messagebox.showerror("Erro", "Tipo de exportação não suportado.")
-        return
-    messagebox.showinfo("Exportação", f"Dados exportados para {nome}.csv")
+    try:
+        draws = load_all_draws()
+        if not draws:
+            messagebox.showerror("Erro", "Base de dados vazia. Execute a atualização primeiro.")
+            return
+        tipo = simpledialog.askstring("Exportação Avançada", "Tipo (frequencia, pares, trios, correlacao):")
+        arquivo = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
+        if not tipo or not arquivo:
+            return
+        nome = sanitize_filename(os.path.splitext(os.path.basename(arquivo))[0])
+        if tipo == "frequencia":
+            data = Counter()
+            for _, nums in draws:
+                data.update(nums)
+            export_advanced_v2(data.most_common(), "csv", nome, header=["Número", "Frequência"])
+        elif tipo == "pares":
+            data = get_most_frequent_pairs(draws, 20)
+            export_advanced_v2(data, "csv", nome, header=["Par", "Frequência"])
+        elif tipo == "trios":
+            data = get_most_frequent_triplets(draws, 20)
+            export_advanced_v2(data, "csv", nome, header=["Trio", "Frequência"])
+        elif tipo == "correlacao":
+            corr = calculate_correlation(draws)
+            corr.to_csv(f"{nome}.csv")
+        else:
+            messagebox.showerror("Erro", "Tipo de exportação não suportado.")
+            return
+        messagebox.showinfo("Exportação", f"Dados exportados para {nome}.csv")
+        open_file_location(f"{nome}.csv")
+        logging.info(f"Exportação avançada realizada: {tipo} em {nome}.csv")
+    except Exception as e:
+        logging.error(f"Erro na exportação avançada: {e}")
+        messagebox.showerror("Erro", f"Ocorreu um erro na exportação avançada: {e}")
+
+def open_file_location(filepath):
+    # Abre o explorador de arquivos na pasta do arquivo exportado
+    try:
+        folder = os.path.dirname(os.path.abspath(filepath))
+        if os.name == 'nt':
+            os.startfile(folder)
+        elif os.name == 'posix':
+            subprocess.Popen(['xdg-open', folder])
+    except Exception as e:
+        logging.warning(f"Não foi possível abrir o local do arquivo: {e}")
+
+def update_db_gui():
+    try:
+        update_db()
+        messagebox.showinfo("Atualização", "Base de dados atualizada com sucesso!")
+        logging.info("Base de dados atualizada pelo usuário.")
+    except Exception as e:
+        logging.error(f"Erro ao atualizar base de dados: {e}")
+        messagebox.showerror("Erro", f"Ocorreu um erro ao atualizar a base: {e}")
 
 def show_help():
     help_text = """
@@ -122,6 +165,7 @@ def show_help():
     - Séries Temporais: Exibe a tendência de sorteios ao longo do tempo.
     - Distribuição de Probabilidade: Realiza um teste qui-quadrado para verificar a uniformidade.
     - Exportar Resultados: Exporta os dados para arquivos CSV ou JSON.
+    - Exportação Avançada: Exporta pares, trios, frequência ou correlação.
     """
     messagebox.showinfo("Ajuda", help_text)
 
@@ -142,7 +186,7 @@ def create_gui():
 
     # Menu Arquivo
     file_menu = Menu(menu_bar, tearoff=0)
-    file_menu.add_command(label="Atualizar Base de Dados", command=update_db)
+    file_menu.add_command(label="Atualizar Base de Dados", command=update_db_gui)
     file_menu.add_command(label="Exportar Dados", command=export_data)
     file_menu.add_command(label="Exportação Avançada", command=export_advanced_gui)
     file_menu.add_separator()
