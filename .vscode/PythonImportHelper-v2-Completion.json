@@ -272,6 +272,14 @@
         "documentation": {}
     },
     {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "run_analysis",
         "kind": 2,
         "importPath": "gui",
@@ -339,7 +347,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def fetch_lottery_data(lottery=\"megasena\", concurso=None):\n    url = f\"{API_LOTERIAS[lottery]}/{concurso}\" if concurso else f\"{API_LOTERIAS[lottery]}/latest\"\n    try:\n        resp = requests.get(url)\n        resp.raise_for_status()\n        return resp.json()\n    except requests.RequestException as e:\n        logging.error(f\"Erro ao buscar dados da API para {lottery}: {e}\")\n        raise\ndef fetch_concurso(concurso: int = None) -> dict:",
+        "peekOfCode": "def fetch_lottery_data(lottery=\"megasena\", concurso=None):\n    url = f\"{API_LOTERIAS[lottery]}/{concurso}\" if concurso else f\"{API_LOTERIAS[lottery]}/latest\"\n    try:\n        resp = requests.get(url)\n        resp.raise_for_status()\n        return resp.json()\n    except requests.RequestException as e:\n        logging.error(f\"Erro ao buscar dados da API para {lottery}: {e}\")\n        raise\nfrom typing import Optional",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -348,7 +356,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def fetch_concurso(concurso: int = None) -> dict:\n    \"\"\"Busca JSON de um concurso específico ou último se concurso=None\"\"\"\n    url = f\"{API_BASE}/{concurso}\" if concurso else API_BASE + '/latest'\n    try:\n        resp = requests.get(url)\n        resp.raise_for_status()\n        data = resp.json()\n        if not validate_api_data(data):\n            raise ValueError(f\"Dados inválidos recebidos para o concurso {concurso}\")\n        return data",
+        "peekOfCode": "def fetch_concurso(concurso: Optional[int] = None) -> dict:\n    \"\"\"Busca JSON de um concurso específico ou último se concurso=None\"\"\"\n    url = f\"{API_BASE}/{concurso}\" if concurso else API_BASE + '/latest'\n    try:\n        resp = requests.get(url)\n        resp.raise_for_status()\n        data = resp.json()\n        if not validate_api_data(data):\n            raise ValueError(f\"Dados inválidos recebidos para o concurso {concurso}\")\n        return data",
         "detail": "mega_sena_app",
         "documentation": {}
     },

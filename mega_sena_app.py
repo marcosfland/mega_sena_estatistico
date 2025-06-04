@@ -78,7 +78,9 @@ def fetch_lottery_data(lottery="megasena", concurso=None):
         logging.error(f"Erro ao buscar dados da API para {lottery}: {e}")
         raise
 
-def fetch_concurso(concurso: int = None) -> dict:
+from typing import Optional
+
+def fetch_concurso(concurso: Optional[int] = None) -> dict:
     """Busca JSON de um concurso específico ou último se concurso=None"""
     url = f"{API_BASE}/{concurso}" if concurso else API_BASE + '/latest'
     try:
