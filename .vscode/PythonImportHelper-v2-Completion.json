@@ -41,6 +41,14 @@
         "documentation": {}
     },
     {
+        "label": "ttk",
+        "importPath": "tkinter",
+        "description": "tkinter",
+        "isExtraImport": true,
+        "detail": "tkinter",
+        "documentation": {}
+    },
+    {
         "label": "load_all_draws",
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
@@ -154,14 +162,6 @@
     },
     {
         "label": "filter_draws_by_period",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "export_advanced_v2",
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
         "isExtraImport": true,
@@ -238,6 +238,24 @@
         "documentation": {}
     },
     {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
         "label": "argparse",
         "kind": 6,
         "isExtraImport": true,
@@ -256,65 +274,12 @@
         "documentation": {}
     },
     {
-        "label": "sys",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "sys",
-        "description": "sys",
-        "detail": "sys",
-        "documentation": {}
-    },
-    {
-        "label": "requests",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "requests",
-        "description": "requests",
-        "detail": "requests",
-        "documentation": {}
-    },
-    {
         "label": "random",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "random",
         "description": "random",
         "detail": "random",
-        "documentation": {}
-    },
-    {
-        "label": "matplotlib.pyplot",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "matplotlib.pyplot",
-        "description": "matplotlib.pyplot",
-        "detail": "matplotlib.pyplot",
-        "documentation": {}
-    },
-    {
-        "label": "numpy",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "numpy",
-        "description": "numpy",
-        "detail": "numpy",
-        "documentation": {}
-    },
-    {
-        "label": "pandas",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "pandas",
-        "description": "pandas",
-        "detail": "pandas",
-        "documentation": {}
-    },
-    {
-        "label": "chisquare",
-        "importPath": "scipy.stats",
-        "description": "scipy.stats",
-        "isExtraImport": true,
-        "detail": "scipy.stats",
         "documentation": {}
     },
     {
@@ -336,6 +301,15 @@
         "documentation": {}
     },
     {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
         "label": "combinations",
         "importPath": "itertools",
         "description": "itertools",
@@ -344,36 +318,35 @@
         "documentation": {}
     },
     {
-        "label": "Flask",
-        "importPath": "flask",
-        "description": "flask",
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
         "isExtraImport": true,
-        "detail": "flask",
+        "detail": "typing",
         "documentation": {}
     },
     {
-        "label": "jsonify",
-        "importPath": "flask",
-        "description": "flask",
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
         "isExtraImport": true,
-        "detail": "flask",
+        "detail": "typing",
         "documentation": {}
     },
     {
-        "label": "request",
-        "importPath": "flask",
-        "description": "flask",
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
         "isExtraImport": true,
-        "detail": "flask",
+        "detail": "typing",
         "documentation": {}
     },
     {
-        "label": "re",
-        "kind": 6,
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
         "isExtraImport": true,
-        "importPath": "re",
-        "description": "re",
-        "detail": "re",
+        "detail": "typing",
         "documentation": {}
     },
     {
@@ -385,29 +358,11 @@
         "documentation": {}
     },
     {
-        "label": "run_analysis",
+        "label": "show_message",
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def run_analysis(option):\n    try:\n        draws = load_all_draws()\n        if not draws:\n            messagebox.showerror(\"Erro\", \"Base de dados vazia. Execute a atualização primeiro.\")\n            return\n        if option == \"alltime\":\n            result = get_most_frequent(draws)\n            messagebox.showinfo(\"Top 6 de Todos os Tempos\", f\"Números: {result}\")\n        elif option == \"lastyear\":",
-        "detail": "gui",
-        "documentation": {}
-    },
-    {
-        "label": "export_data",
-        "kind": 2,
-        "importPath": "gui",
-        "description": "gui",
-        "peekOfCode": "def export_data():\n    try:\n        draws = load_all_draws()\n        if not draws:\n            messagebox.showerror(\"Erro\", \"Base de dados vazia. Execute a atualização primeiro.\")\n            return\n        file_path = filedialog.asksaveasfilename(defaultextension=\".csv\", filetypes=[(\"CSV files\", \"*.csv\"), (\"JSON files\", \"*.json\")])\n        if file_path:\n            file_format = file_path.split('.')[-1]\n            export_results(draws, file_format, file_path.rsplit('.', 1)[0])",
-        "detail": "gui",
-        "documentation": {}
-    },
-    {
-        "label": "export_advanced_gui",
-        "kind": 2,
-        "importPath": "gui",
-        "description": "gui",
-        "peekOfCode": "def export_advanced_gui():\n    try:\n        draws = load_all_draws()\n        if not draws:\n            messagebox.showerror(\"Erro\", \"Base de dados vazia. Execute a atualização primeiro.\")\n            return\n        tipo = simpledialog.askstring(\"Exportação Avançada\", \"Tipo (frequencia, pares, trios, correlacao):\")\n        arquivo = filedialog.asksaveasfilename(defaultextension=\".csv\", filetypes=[(\"CSV files\", \"*.csv\")])\n        if not tipo or not arquivo:\n            return",
+        "peekOfCode": "def show_message(title, message, is_error=False):\n    \"\"\"Exibe uma messagebox e atualiza o status bar.\"\"\"\n    status_bar.config(text=message)\n    if is_error:\n        logging.error(message)\n        messagebox.showerror(title, message)\n    else:\n        logging.info(message)\n        messagebox.showinfo(title, message)\n    # Clear status bar after a short delay",
         "detail": "gui",
         "documentation": {}
     },
@@ -416,7 +371,34 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def open_file_location(filepath):\n    # Abre o explorador de arquivos na pasta do arquivo exportado\n    try:\n        folder = os.path.dirname(os.path.abspath(filepath))\n        if os.name == 'nt':\n            os.startfile(folder)\n        elif os.name == 'posix':\n            subprocess.Popen(['xdg-open', folder])\n    except Exception as e:\n        logging.warning(f\"Não foi possível abrir o local do arquivo: {e}\")",
+        "peekOfCode": "def open_file_location(filepath):\n    \"\"\"Abre o explorador de arquivos na pasta do arquivo exportado.\"\"\"\n    try:\n        folder = os.path.dirname(os.path.abspath(filepath))\n        if os.name == 'nt':  # Windows\n            os.startfile(folder)\n        elif os.name == 'posix':  # Linux/macOS\n            subprocess.Popen(['xdg-open', folder])\n    except Exception as e:\n        show_message(\"Erro\", f\"Não foi possível abrir o local do arquivo: {e}\", True)",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "run_in_thread",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def run_in_thread(func, *args, **kwargs):\n    \"\"\"Executa uma função em uma thread separada para evitar que a GUI congele.\"\"\"\n    status_bar.config(text=\"Processando... Por favor, aguarde.\")\n    thread = threading.Thread(target=lambda: func(*args, **kwargs))\n    thread.start()\n# --- Funções de Lógica de Negócios (adaptadas para a GUI) ---\ndef run_analysis_gui(option):\n    \"\"\"Wrapper para executar as análises e exibir resultados na GUI.\"\"\"\n    def _run():\n        try:",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "run_analysis_gui",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def run_analysis_gui(option):\n    \"\"\"Wrapper para executar as análises e exibir resultados na GUI.\"\"\"\n    def _run():\n        try:\n            draws = load_all_draws()\n            if not draws:\n                show_message(\"Erro\", \"Base de dados vazia. Execute a atualização primeiro.\", True)\n                return\n            result_message = \"\"\n            plot_needed = False",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "export_data_gui",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def export_data_gui(advanced=False):\n    \"\"\"\n    Função unificada para exportação simples e avançada.\n    Se 'advanced' for True, solicita tipo de análise para exportar.\n    \"\"\"\n    def _export():\n        try:\n            draws = load_all_draws()\n            if not draws:\n                show_message(\"Erro\", \"Base de dados vazia. Execute a atualização primeiro.\", True)",
         "detail": "gui",
         "documentation": {}
     },
@@ -425,7 +407,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def update_db_gui():\n    try:\n        update_db()\n        messagebox.showinfo(\"Atualização\", \"Base de dados atualizada com sucesso!\")\n        logging.info(\"Base de dados atualizada pelo usuário.\")\n    except Exception as e:\n        logging.error(f\"Erro ao atualizar base de dados: {e}\")\n        messagebox.showerror(\"Erro\", f\"Ocorreu um erro ao atualizar a base: {e}\")\ndef show_help():\n    help_text = \"\"\"",
+        "peekOfCode": "def update_db_gui():\n    \"\"\"Atualiza a base de dados via GUI.\"\"\"\n    def _update():\n        try:\n            update_db()\n            show_message(\"Atualização\", \"Base de dados atualizada com sucesso!\", False)\n        except Exception as e:\n            show_message(\"Erro na Atualização\", f\"Ocorreu um erro ao atualizar a base de dados: {e}\", True)\n    run_in_thread(_update)\ndef show_help():",
         "detail": "gui",
         "documentation": {}
     },
@@ -434,7 +416,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def show_help():\n    help_text = \"\"\"\n    - Atualizar Base de Dados: Atualiza os resultados da Mega-Sena.\n    - Top 6 de Todos os Tempos: Mostra os números mais frequentes em todos os sorteios.\n    - Top 6 do Último Ano: Mostra os números mais frequentes nos últimos 365 dias.\n    - Conjunto Estatístico Ponderado: Calcula números baseados em ponderação estatística.\n    - Visualizar Frequência: Exibe um gráfico de frequência dos números sorteados.\n    - Simulação de Monte Carlo: Simula sorteios para estimar números frequentes.\n    - Correlação: Calcula a correlação entre os números sorteados.\n    - Séries Temporais: Exibe a tendência de sorteios ao longo do tempo.",
+        "peekOfCode": "def show_help():\n    \"\"\"Exibe informações de ajuda.\"\"\"\n    help_text = \"\"\"\n    **Mega-Sena Analyzer GUI**\n    - **Atualizar Base de Dados**: Busca os últimos resultados da Mega-Sena e os armazena localmente.\n    - **Top 6 de Todos os Tempos**: Mostra os números sorteados com maior frequência em todo o histórico.\n    - **Top 6 do Último Ano**: Identifica os números mais frequentes nos últimos 365 dias.\n    - **Conjunto Estatístico Ponderado**: Sugere um conjunto de 6 números baseado na frequência histórica, dando mais peso aos números mais sorteados.\n    - **Visualizar Frequência**: Abre um gráfico de barras mostrando a frequência de cada número (1 a 60).\n    - **Simulação de Monte Carlo**: Simula milhares de sorteios aleatórios para comparar as frequências simuladas com as reais.",
         "detail": "gui",
         "documentation": {}
     },
@@ -443,7 +425,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def open_github():\n    webbrowser.open(\"https://github.com/marcosfland/mega_sena_estatistico\")\ndef show_about():\n    about_text = \"Mega-Sena Estatístico\\nVersão 1.0\\nDesenvolvido por Marcos\\nAnálise estatística de sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre\", about_text)\ndef create_gui():\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    # Menu superior\n    menu_bar = Menu(root)",
+        "peekOfCode": "def open_github():\n    \"\"\"Abre o repositório do GitHub no navegador padrão.\"\"\"\n    webbrowser.open(\"https://github.com/marcosfland/mega_sena_estatistico\")\n    show_message(\"Informação\", \"Repositório do GitHub aberto no navegador.\", False)\ndef show_about():\n    \"\"\"Exibe informações sobre o aplicativo.\"\"\"\n    about_text = \"Mega-Sena Analyzer\\nVersão 1.1 (GUI Aprimorada)\\nDesenvolvido por Marcos\\n\\nFerramenta de análise estatística para os sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre o Mega-Sena Analyzer\", about_text)\n# --- Criação da Interface Gráfica (GUI) ---\ndef create_gui():",
         "detail": "gui",
         "documentation": {}
     },
@@ -452,7 +434,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def show_about():\n    about_text = \"Mega-Sena Estatístico\\nVersão 1.0\\nDesenvolvido por Marcos\\nAnálise estatística de sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre\", about_text)\ndef create_gui():\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    # Menu superior\n    menu_bar = Menu(root)\n    root.config(menu=menu_bar)\n    # Menu Arquivo",
+        "peekOfCode": "def show_about():\n    \"\"\"Exibe informações sobre o aplicativo.\"\"\"\n    about_text = \"Mega-Sena Analyzer\\nVersão 1.1 (GUI Aprimorada)\\nDesenvolvido por Marcos\\n\\nFerramenta de análise estatística para os sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre o Mega-Sena Analyzer\", about_text)\n# --- Criação da Interface Gráfica (GUI) ---\ndef create_gui():\n    global root, status_bar # Make root and status_bar accessible globally for updates\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"600x750\") # Adjust window size for better layout",
         "detail": "gui",
         "documentation": {}
     },
@@ -461,7 +443,16 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def create_gui():\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    # Menu superior\n    menu_bar = Menu(root)\n    root.config(menu=menu_bar)\n    # Menu Arquivo\n    file_menu = Menu(menu_bar, tearoff=0)\n    file_menu.add_command(label=\"Atualizar Base de Dados\", command=update_db_gui)\n    file_menu.add_command(label=\"Exportar Dados\", command=export_data)",
+        "peekOfCode": "def create_gui():\n    global root, status_bar # Make root and status_bar accessible globally for updates\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"600x750\") # Adjust window size for better layout\n    root.resizable(False, False) # Prevent resizing for simplicity\n    root.iconphoto(False, tk.PhotoImage(file=get_resource_path(\"icon.png\"))) # Optional: Add an icon\n    # Theme configuration\n    style = ttk.Style()\n    style.theme_use('clam') # 'clam', 'alt', 'default', 'classic'",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "get_resource_path",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def get_resource_path(relative_path):\n    \"\"\"Obtém o caminho absoluto para um recurso.\"\"\"\n    base_path = getattr(sys, '_MEIPASS', os.path.abspath(\".\"))  # Use _MEIPASS if it exists, else current dir\n    return os.path.join(base_path, relative_path)\nimport sys # Import sys for PyInstaller compatibility\nif __name__ == \"__main__\":\n    # Create a dummy icon.png if it doesn't exist for testing.\n    # In a real deployment, you'd include a proper icon file.\n    if not os.path.exists(\"icon.png\"):\n        try:",
         "detail": "gui",
         "documentation": {}
     },
@@ -470,34 +461,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def init_db(path: str = DB_PATH):\n    conn = sqlite3.connect(path)\n    cursor = conn.cursor()\n    cursor.execute('''\n        CREATE TABLE IF NOT EXISTS megasena (\n            concurso INTEGER PRIMARY KEY,\n            data TEXT,\n            dez1 INTEGER, dez2 INTEGER, dez3 INTEGER,\n            dez4 INTEGER, dez5 INTEGER, dez6 INTEGER\n        )",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "fetch_lottery_data",
-        "kind": 2,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "def fetch_lottery_data(lottery=\"megasena\", concurso=None):\n    url = f\"{API_LOTERIAS[lottery]}/{concurso}\" if concurso else f\"{API_LOTERIAS[lottery]}/latest\"\n    try:\n        resp = requests.get(url)\n        resp.raise_for_status()\n        return resp.json()\n    except requests.RequestException as e:\n        logging.error(f\"Erro ao buscar dados da API para {lottery}: {e}\")\n        raise\nfrom typing import Optional",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "fetch_concurso",
-        "kind": 2,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "def fetch_concurso(concurso: Optional[int] = None) -> dict:\n    \"\"\"Busca JSON de um concurso específico ou último se concurso=None\"\"\"\n    url = f\"{API_BASE}/{concurso}\" if concurso else API_BASE + '/latest'\n    try:\n        resp = requests.get(url)\n        resp.raise_for_status()\n        data = resp.json()\n        if not validate_api_data(data):\n            raise ValueError(f\"Dados inválidos recebidos para o concurso {concurso}\")\n        return data",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "validate_api_data",
-        "kind": 2,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "def validate_api_data(data: dict) -> bool:\n    \"\"\"Valida os dados retornados pela API\"\"\"\n    required_keys = {'concurso', 'data', 'dezenas'}\n    if not all(key in data for key in required_keys):\n        return False\n    if not isinstance(data['dezenas'], list) or len(data['dezenas']) != 6:\n        return False\n    return True\n# ---------------------\n# Atualização de Dados",
+        "peekOfCode": "def init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('''\n            CREATE TABLE IF NOT EXISTS megasena (",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -506,7 +470,25 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def get_last_db_concurso(path: str = DB_PATH) -> int:\n    conn = sqlite3.connect(path)\n    cursor = conn.cursor()\n    cursor.execute('SELECT MAX(concurso) FROM megasena')\n    row = cursor.fetchone()\n    conn.close()\n    return row[0] or 0\ndef update_db(path: str = DB_PATH):\n    init_db(path)\n    ultimo_db = get_last_db_concurso(path)",
+        "peekOfCode": "def get_last_db_concurso(path: str = DB_PATH) -> int:\n    \"\"\"\n    Retorna o número do último concurso registrado no banco de dados.\n    Retorna 0 se o banco de dados estiver vazio ou houver um erro.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('SELECT MAX(concurso) FROM megasena')",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_lottery_data",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def fetch_lottery_data(lottery: str = \"megasena\", concurso: Optional[int] = None) -> Dict[str, Any]:\n    \"\"\"\n    Busca dados de um concurso específico de uma loteria na API.\n    Se 'concurso' for None, busca o último resultado.\n    \"\"\"\n    if lottery not in API_LOTERIAS:\n        raise ValueError(f\"Loteria '{lottery}' não suportada.\")\n    url: str = f\"{API_LOTERIAS[lottery]}/{concurso}\" if concurso else f\"{API_LOTERIAS[lottery]}/latest\"\n    try:\n        resp: requests.Response = requests.get(url)",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "validate_api_data",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def validate_api_data(data: Dict[str, Any], lottery: str) -> bool:\n    \"\"\"\n    Valida os dados retornados pela API para a loteria especificada.\n    \"\"\"\n    if lottery == \"megasena\":\n        required_keys = {'concurso', 'data', 'dezenas'}\n        if not all(key in data for key in required_keys):\n            logging.warning(f\"Dados da API para Mega-Sena faltando chaves esperadas: {data.keys()}\")\n            return False\n        if not isinstance(data['dezenas'], list) or len(data['dezenas']) != NUM_DEZENAS:",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -515,7 +497,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def update_db(path: str = DB_PATH):\n    init_db(path)\n    ultimo_db = get_last_db_concurso(path)\n    try:\n        data_last = fetch_concurso(None)\n        ultimo_api = int(data_last['concurso'])\n    except Exception as e:\n        logging.error(f\"Erro ao obter último concurso da API: {e}\")\n        return\n    if ultimo_api <= ultimo_db:",
+        "peekOfCode": "def update_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Atualiza a base de dados local com os resultados mais recentes da Mega-Sena.\n    \"\"\"\n    init_db(path)\n    ultimo_db: int = get_last_db_concurso(path)\n    ultimo_api: int = 0\n    try:\n        data_last: Dict[str, Any] = fetch_lottery_data(\"megasena\", None)\n        ultimo_api = int(data_last['concurso'])",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -524,7 +506,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def load_all_draws(path: str = DB_PATH):\n    conn = sqlite3.connect(path)\n    cursor = conn.cursor()\n    cursor.execute('SELECT data, dez1, dez2, dez3, dez4, dez5, dez6 FROM megasena')\n    rows = cursor.fetchall()\n    conn.close()\n    draws = []\n    for data_str, *dez in rows:\n        date = datetime.datetime.strptime(data_str, '%d/%m/%Y').date()\n        draws.append((date, tuple(dez)))",
+        "peekOfCode": "def load_all_draws(path: str = DB_PATH) -> List[Draw]:\n    \"\"\"\n    Carrega todos os sorteios da Mega-Sena do banco de dados.\n    Retorna uma lista de tuplas (data, dezenas).\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    draws: List[Draw] = []\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -533,7 +515,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def get_most_frequent(draws, k: int = 6):\n    counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    return [num for num, _ in counter.most_common(k)]\ndef get_most_frequent_period(draws, days: int = 365, k: int = 6):\n    today = datetime.date.today()\n    cutoff = today - datetime.timedelta(days=days)\n    filtered = [(d, nums) for d, nums in draws if d >= cutoff]\n    return get_most_frequent(filtered, k)",
+        "peekOfCode": "def get_most_frequent(draws: List[Draw], k: int = NUM_DEZENAS) -> List[int]:\n    \"\"\"\n    Calcula os k números mais frequentes em todos os sorteios.\n    \"\"\"\n    counter: Counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    return [num for num, _ in counter.most_common(k)]\ndef get_most_frequent_period(draws: List[Draw], days: int = 365, k: int = NUM_DEZENAS) -> List[int]:\n    \"\"\"",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -542,7 +524,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def get_most_frequent_period(draws, days: int = 365, k: int = 6):\n    today = datetime.date.today()\n    cutoff = today - datetime.timedelta(days=days)\n    filtered = [(d, nums) for d, nums in draws if d >= cutoff]\n    return get_most_frequent(filtered, k)\ndef get_weighted(draws, k: int = 6):\n    counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    all_nums = list(range(1, 61))",
+        "peekOfCode": "def get_most_frequent_period(draws: List[Draw], days: int = 365, k: int = NUM_DEZENAS) -> List[int]:\n    \"\"\"\n    Calcula os k números mais frequentes em um período específico (em dias).\n    \"\"\"\n    today = datetime.date.today()\n    cutoff = today - datetime.timedelta(days=days)\n    filtered = [(d, nums) for d, nums in draws if d >= cutoff]\n    if not filtered:\n        logging.warning(f\"Nenhum sorteio encontrado nos últimos {days} dias.\")\n        return []",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -551,7 +533,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def get_weighted(draws, k: int = 6):\n    counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    all_nums = list(range(1, 61))\n    weights = [counter[n] for n in all_nums]\n    if sum(weights) == 0:\n        return random.sample(all_nums, k)\n    probs = [w/sum(weights) for w in weights]\n    chosen = set()",
+        "peekOfCode": "def get_weighted(draws: List[Draw], k: int = NUM_DEZENAS) -> List[int]:\n    \"\"\"\n    Gera um conjunto de números ponderado pela frequência histórica.\n    \"\"\"\n    counter: Counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    all_nums: List[int] = list(range(1, MAX_NUM_MEGA_SENA + 1))\n    weights: List[int] = [counter[n] for n in all_nums]\n    if sum(weights) == 0:",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -560,7 +542,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def plot_frequency(draws):\n    counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    numbers, frequencies = zip(*sorted(counter.items()))\n    plt.bar(numbers, frequencies)\n    plt.title('Frequência dos Números Sorteados')\n    plt.xlabel('Números')\n    plt.ylabel('Frequência')\n    plt.show()",
+        "peekOfCode": "def plot_frequency(draws: List[Draw]) -> None:\n    \"\"\"\n    Gera um gráfico de barras da frequência de cada número sorteado.\n    \"\"\"\n    if not plt:\n        logging.error(\"Matplotlib não está instalado. Não é possível gerar o gráfico de frequência.\")\n        return\n    counter: Counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -569,7 +551,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def monte_carlo_simulation(draws, simulations=10000):\n    all_nums = list(range(1, 61))\n    simulated_counts = Counter()\n    for _ in range(simulations):\n        simulated_draw = np.random.choice(all_nums, size=6, replace=False)\n        simulated_counts.update(simulated_draw)\n    real_counts = Counter()\n    for _, nums in draws:\n        real_counts.update(nums)\n    # Retorna os 6 números mais frequentes simulados e reais",
+        "peekOfCode": "def monte_carlo_simulation(draws: List[Draw], simulations: int = 10000) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]]]:\n    \"\"\"\n    Realiza uma simulação de Monte Carlo para comparar frequências simuladas com as reais.\n    Retorna os 6 números mais frequentes simulados e reais.\n    \"\"\"\n    if not np:\n        logging.error(\"NumPy não está instalado. Não é possível realizar a simulação de Monte Carlo.\")\n        return [], []\n    all_nums: List[int] = list(range(1, MAX_NUM_MEGA_SENA + 1))\n    simulated_counts: Counter = Counter()",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -578,7 +560,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def calculate_correlation(draws):\n    data = []\n    for _, nums in draws:\n        data.append([1 if i in nums else 0 for i in range(1, 61)])\n    df = pd.DataFrame(data, columns=[f'Num_{i}' for i in range(1, 61)])\n    correlation_matrix = df.corr()\n    return correlation_matrix\ndef analyze_probability_distribution(draws):\n    counter = Counter()\n    for _, nums in draws:",
+        "peekOfCode": "def calculate_correlation(draws: List[Draw]) -> Optional[Any]:\n    \"\"\"\n    Calcula a matriz de correlação entre os números sorteados.\n    \"\"\"\n    if not pd:\n        logging.error(\"Pandas não está instalado. Não é possível calcular a correlação.\")\n        return None\n    data: List[List[int]] = []\n    for _, nums in draws:\n        # Create a binary array for each draw: 1 if number is present, 0 otherwise",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -587,7 +569,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def analyze_probability_distribution(draws):\n    counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    observed = [counter[i] for i in range(1, 61)]\n    expected = [sum(observed) / 60] * 60\n    chi2, p = chisquare(observed, expected)\n    return chi2, p\ndef analyze_time_series(draws):\n    dates = [d for d, _ in draws]",
+        "peekOfCode": "def analyze_probability_distribution(draws: List[Draw]) -> Optional[Tuple[float, float]]:\n    \"\"\"\n    Analisa a distribuição de probabilidade dos números sorteados usando o teste Qui-quadrado.\n    Compara a frequência observada com uma distribuição uniforme esperada.\n    \"\"\"\n    if not chisquare:\n        logging.error(\"SciPy não está instalado. Não é possível realizar a análise de distribuição de probabilidade.\")\n        return None\n    counter: Counter = Counter()\n    for _, nums in draws:",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -596,7 +578,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def analyze_time_series(draws):\n    dates = [d for d, _ in draws]\n    frequencies = Counter(dates)\n    sorted_dates = sorted(frequencies.keys())\n    counts = [frequencies[date] for date in sorted_dates]\n    plt.plot(sorted_dates, counts)\n    plt.title('Tendência de Sorteios ao Longo do Tempo')\n    plt.xlabel('Data')\n    plt.ylabel('Frequência de Sorteios')\n    plt.show()",
+        "peekOfCode": "def analyze_time_series(draws: List[Draw]) -> None:\n    \"\"\"\n    Analisa a série temporal dos sorteios, mostrando a frequência de sorteios ao longo do tempo.\n    \"\"\"\n    if not plt:\n        logging.error(\"Matplotlib não está instalado. Não é possível gerar o gráfico de séries temporais.\")\n        return\n    # Extract dates and count occurrences for each date\n    date_counts: Counter = Counter(d for d, _ in draws)\n    # Sort dates and get corresponding counts",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -605,7 +587,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def sanitize_filename(filename):\n    # Permite apenas letras, números, underline, hífen, ponto e espaço\n    filename = os.path.basename(filename)\n    if not re.match(r'^[\\w\\-. ]+$', filename):\n        raise ValueError(\"Nome de arquivo inválido.\")\n    return filename\ndef export_results(data, file_format=\"csv\", filename=\"results\"):\n    filename = sanitize_filename(filename)\n    if file_format == \"csv\":\n        with open(f\"{filename}.csv\", \"w\", newline=\"\") as csvfile:",
+        "peekOfCode": "def sanitize_filename(filename: str) -> str:\n    \"\"\"\n    Sanitiza um nome de arquivo para evitar path traversal e caracteres inválidos.\n    Permite apenas letras, números, underline, hífen, ponto e espaço.\n    \"\"\"\n    # Remove leading/trailing whitespace\n    filename = filename.strip()\n    # Replace any sequence of invalid characters with an underscore\n    filename = re.sub(r'[^\\w\\-. ]', '_', filename)\n    # Ensure it's not empty after sanitization",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -614,70 +596,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def export_results(data, file_format=\"csv\", filename=\"results\"):\n    filename = sanitize_filename(filename)\n    if file_format == \"csv\":\n        with open(f\"{filename}.csv\", \"w\", newline=\"\") as csvfile:\n            writer = csv.writer(csvfile)\n            writer.writerow([\"Número\", \"Frequência\"])\n            writer.writerows(data)\n    elif file_format == \"json\":\n        with open(f\"{filename}.json\", \"w\") as jsonfile:\n            json.dump(data, jsonfile, indent=4)",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "export_advanced_v2",
-        "kind": 2,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "def export_advanced_v2(data, file_format=\"csv\", filename=\"results\", header=None):\n    filename = sanitize_filename(filename)\n    if file_format == \"csv\":\n        with open(f\"{filename}.csv\", \"w\", newline=\"\") as csvfile:\n            writer = csv.writer(csvfile)\n            if header:\n                writer.writerow(header)\n            writer.writerows(data)\n    elif file_format == \"json\":\n        with open(f\"{filename}.json\", \"w\") as jsonfile:",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "schedule_task",
-        "kind": 2,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "def schedule_task():\n    task_name = \"MegaSenaUpdate\"\n    command = f\"schtasks /create /tn {task_name} /tr 'python {os.path.abspath(__file__)} --update' /sc daily /st 12:00\"\n    subprocess.run(command, shell=True)\n    print(f\"Tarefa agendada com sucesso: {task_name}\")\n# ---------------------\n# Novas Funcionalidades\n# ---------------------\ndef filter_draws_by_period(draws, start_date=None, end_date=None):\n    if not start_date and not end_date:",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "filter_draws_by_period",
-        "kind": 2,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "def filter_draws_by_period(draws, start_date=None, end_date=None):\n    if not start_date and not end_date:\n        return draws\n    filtered = []\n    for d, nums in draws:\n        if start_date and d < start_date:\n            continue\n        if end_date and d > end_date:\n            continue\n        filtered.append((d, nums))",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "get_most_frequent_pairs",
-        "kind": 2,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "def get_most_frequent_pairs(draws, k=6):\n    counter = Counter()\n    for _, nums in draws:\n        for pair in combinations(sorted(nums), 2):\n            counter[pair] += 1\n    return counter.most_common(k)\ndef get_most_frequent_triplets(draws, k=6):\n    counter = Counter()\n    for _, nums in draws:\n        for triplet in combinations(sorted(nums), 3):",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "get_most_frequent_triplets",
-        "kind": 2,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "def get_most_frequent_triplets(draws, k=6):\n    counter = Counter()\n    for _, nums in draws:\n        for triplet in combinations(sorted(nums), 3):\n            counter[triplet] += 1\n    return counter.most_common(k)\ndef conditional_probability(draws, given, target):\n    count_given = 0\n    count_both = 0\n    for _, nums in draws:",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "conditional_probability",
-        "kind": 2,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "def conditional_probability(draws, given, target):\n    count_given = 0\n    count_both = 0\n    for _, nums in draws:\n        if given in nums:\n            count_given += 1\n            if target in nums:\n                count_both += 1\n    if count_given == 0:\n        return 0.0",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "export_advanced",
-        "kind": 2,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "def export_advanced(data, file_format=\"csv\", filename=\"results\", header=None):\n    filename = sanitize_filename(filename)\n    if file_format == \"csv\":\n        with open(f\"{filename}.csv\", \"w\", newline=\"\") as csvfile:\n            writer = csv.writer(csvfile)\n            if header:\n                writer.writerow(header)\n            writer.writerows(data)\n    elif file_format == \"json\":\n        with open(f\"{filename}.json\", \"w\") as jsonfile:",
+        "peekOfCode": "def export_results(data: List[Tuple[Any, Any]], file_format: str = \"csv\", filename: str = \"results\", header: Optional[List[str]] = None) -> None:\n    \"\"\"\n    Exporta resultados para CSV ou JSON.\n    É uma função mais genérica para a exportação de listas de tuplas/listas.\n    \"\"\"\n    full_filename: Optional[str] = None\n    try:\n        filename = sanitize_filename(filename)\n        full_filename = f\"{filename}.{file_format}\"\n        if file_format == \"csv\":",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -686,7 +605,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def schedule_task_crossplatform():\n    import platform\n    if platform.system() == \"Windows\":\n        schedule_task()\n    else:\n        cron_line = f\"0 12 * * * python3 {os.path.abspath(__file__)} --update\"\n        print(\"Adicione a seguinte linha ao seu crontab (Linux/macOS):\")\n        print(cron_line)\ndef connect_external_db(conn_str):\n    # Exemplo inicial para SQLite, pode ser adaptado para outros bancos",
+        "peekOfCode": "def schedule_task_crossplatform() -> None:\n    \"\"\"\n    Agenda a atualização diária do banco de dados de forma multiplataforma.\n    Usa `schtasks` no Windows e fornece instrução para `crontab` em Linux/macOS.\n    \"\"\"\n    import platform\n    task_name: str = \"MegaSenaUpdate\"\n    script_path: str = os.path.abspath(__file__)\n    if platform.system() == \"Windows\":\n        command: str = f\"schtasks /create /tn \\\"{task_name}\\\" /tr \\\"cmd /c python {script_path} --update\\\" /sc daily /st 12:00 /F\"",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -695,7 +614,43 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def connect_external_db(conn_str):\n    # Exemplo inicial para SQLite, pode ser adaptado para outros bancos\n    return sqlite3.connect(conn_str)\ndef run_web_interface(draws):\n    app = Flask(__name__)\n    @app.route(\"/frequencia\")\n    def frequencia():\n        top = int(request.args.get(\"top\", 6))\n        result = get_most_frequent(draws, top)\n        return jsonify(result)",
+        "peekOfCode": "def connect_external_db(conn_str: str) -> Optional[sqlite3.Connection]:\n    \"\"\"\n    Conecta-se a um banco de dados externo (exemplo para SQLite).\n    Pode ser adaptado para outros tipos de banco de dados (PostgreSQL, MySQL, etc.)\n    requerendo as bibliotecas apropriadas (e.g., psycopg2, mysql-connector-python).\n    \"\"\"\n    logging.info(f\"Tentando conectar ao banco de dados externo com: {conn_str}\")\n    try:\n        # For SQLite, conn_str is typically the path to the database file\n        conn = sqlite3.connect(conn_str)",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "filter_draws_by_period",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def filter_draws_by_period(draws: List[Draw], start_date: Optional[datetime.date] = None, end_date: Optional[datetime.date] = None) -> List[Draw]:\n    \"\"\"\n    Filtra os sorteios por um período de datas.\n    \"\"\"\n    if not start_date and not end_date:\n        return draws\n    filtered_draws: List[Draw] = []\n    for d, nums in draws:\n        if start_date and d < start_date:\n            continue",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_most_frequent_pairs",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def get_most_frequent_pairs(draws: List[Draw], k: int = NUM_DEZENAS) -> List[Tuple[Tuple[int, int], int]]:\n    \"\"\"\n    Calcula os k pares de números mais frequentes em todos os sorteios.\n    Retorna uma lista de tuplas (par, frequência).\n    \"\"\"\n    counter: Counter = Counter()\n    for _, nums in draws:\n        # Ensure numbers are sorted within the tuple for consistent counting\n        for pair in combinations(sorted(nums), 2):\n            counter[pair] += 1",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_most_frequent_triplets",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def get_most_frequent_triplets(draws: List[Draw], k: int = NUM_DEZENAS) -> List[Tuple[Tuple[int, int, int], int]]:\n    \"\"\"\n    Calcula os k trios de números mais frequentes em todos os sorteios.\n    Retorna uma lista de tuplas (trio, frequência).\n    \"\"\"\n    counter: Counter = Counter()\n    for _, nums in draws:\n        # Ensure numbers are sorted within the tuple for consistent counting\n        for triplet in combinations(sorted(nums), 3):\n            counter[triplet] += 1",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "conditional_probability",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def conditional_probability(draws: List[Draw], given: int, target: int) -> float:\n    \"\"\"\n    Calcula a probabilidade condicional de 'target' ser sorteado, dado que 'given' foi sorteado.\n    P(Target | Given) = P(Target e Given) / P(Given)\n    \"\"\"\n    if not (1 <= given <= MAX_NUM_MEGA_SENA) or not (1 <= target <= MAX_NUM_MEGA_SENA):\n        logging.error(f\"Números 'given' ({given}) e/ou 'target' ({target}) fora do intervalo válido (1-{MAX_NUM_MEGA_SENA}).\")\n        return 0.0\n    if given == target:\n        logging.warning(\"Probabilidade condicional de um número dado ele mesmo é 1.0 (se ele já saiu).\")",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -704,7 +659,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def run_web_interface(draws):\n    app = Flask(__name__)\n    @app.route(\"/frequencia\")\n    def frequencia():\n        top = int(request.args.get(\"top\", 6))\n        result = get_most_frequent(draws, top)\n        return jsonify(result)\n    @app.route(\"/pares\")\n    def pares():\n        top = int(request.args.get(\"top\", 6))",
+        "peekOfCode": "def run_web_interface(draws: List[Draw]) -> None:\n    \"\"\"\n    Inicia uma interface web Flask para exibir estatísticas.\n    \"\"\"\n    if not Flask:\n        logging.error(\"Flask não está instalado. Não é possível iniciar a interface web.\")\n        return\n    app = Flask(__name__)\n    @app.route(\"/frequencia\")\n    def frequencia():",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -713,34 +668,16 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')\n    parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')\n    parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')\n    parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')\n    parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')\n    parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')\n    parser.add_argument('--plot', action='store_true', help='Visualizar frequência dos números')\n    parser.add_argument('--montecarlo', action='store_true', help='Simulação de Monte Carlo')\n    parser.add_argument('--correlation', action='store_true', help='Calcular correlação entre números')",
+        "peekOfCode": "def main() -> None:\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')\n    parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')\n    parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')\n    parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')\n    parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')\n    parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')\n    parser.add_argument('--plot', action='store_true', help='Visualizar frequência dos números')\n    parser.add_argument('--montecarlo', action='store_true', help='Simulação de Monte Carlo')\n    parser.add_argument('--correlation', action='store_true', help='Calcular correlação entre números')",
         "detail": "mega_sena_app",
         "documentation": {}
     },
     {
-        "label": "DB_PATH",
+        "label": "Draw",
         "kind": 5,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "DB_PATH = os.getenv('MEGASENA_DB_PATH', 'megasena.db')\nAPI_BASE = 'https://loteriascaixa-api.herokuapp.com/api/megasena'\n# Configuração de logging\nlogging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')\n# ---------------------\n# Banco de Dados\n# ---------------------\ndef init_db(path: str = DB_PATH):\n    conn = sqlite3.connect(path)\n    cursor = conn.cursor()",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "API_BASE",
-        "kind": 5,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "API_BASE = 'https://loteriascaixa-api.herokuapp.com/api/megasena'\n# Configuração de logging\nlogging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')\n# ---------------------\n# Banco de Dados\n# ---------------------\ndef init_db(path: str = DB_PATH):\n    conn = sqlite3.connect(path)\n    cursor = conn.cursor()\n    cursor.execute('''",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "API_LOTERIAS",
-        "kind": 5,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "API_LOTERIAS = {\n    \"megasena\": \"https://loteriascaixa-api.herokuapp.com/api/megasena\",\n    \"quina\": \"https://loteriascaixa-api.herokuapp.com/api/quina\",\n    \"lotofacil\": \"https://loteriascaixa-api.herokuapp.com/api/lotofacil\"\n}\ndef fetch_lottery_data(lottery=\"megasena\", concurso=None):\n    url = f\"{API_LOTERIAS[lottery]}/{concurso}\" if concurso else f\"{API_LOTERIAS[lottery]}/latest\"\n    try:\n        resp = requests.get(url)\n        resp.raise_for_status()",
+        "peekOfCode": "Draw = Tuple[datetime.date, Tuple[int, int, int, int, int, int]]\n# --- Banco de Dados ---\ndef init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()",
         "detail": "mega_sena_app",
         "documentation": {}
     }
