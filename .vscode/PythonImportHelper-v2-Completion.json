@@ -1,267 +1,11 @@
 [
     {
-        "label": "tkinter",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "tkinter",
-        "description": "tkinter",
-        "detail": "tkinter",
-        "documentation": {}
-    },
-    {
-        "label": "messagebox",
-        "importPath": "tkinter",
-        "description": "tkinter",
-        "isExtraImport": true,
-        "detail": "tkinter",
-        "documentation": {}
-    },
-    {
-        "label": "filedialog",
-        "importPath": "tkinter",
-        "description": "tkinter",
-        "isExtraImport": true,
-        "detail": "tkinter",
-        "documentation": {}
-    },
-    {
-        "label": "Menu",
-        "importPath": "tkinter",
-        "description": "tkinter",
-        "isExtraImport": true,
-        "detail": "tkinter",
-        "documentation": {}
-    },
-    {
-        "label": "simpledialog",
-        "importPath": "tkinter",
-        "description": "tkinter",
-        "isExtraImport": true,
-        "detail": "tkinter",
-        "documentation": {}
-    },
-    {
-        "label": "ttk",
-        "importPath": "tkinter",
-        "description": "tkinter",
-        "isExtraImport": true,
-        "detail": "tkinter",
-        "documentation": {}
-    },
-    {
-        "label": "load_all_draws",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "get_most_frequent",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "get_most_frequent_period",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "get_weighted",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "monte_carlo_simulation",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "plot_frequency",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "calculate_correlation",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "analyze_time_series",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "analyze_probability_distribution",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "update_db",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "export_results",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "get_most_frequent_pairs",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "get_most_frequent_triplets",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "conditional_probability",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "filter_draws_by_period",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "sanitize_filename",
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "isExtraImport": true,
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "webbrowser",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "webbrowser",
-        "description": "webbrowser",
-        "detail": "webbrowser",
-        "documentation": {}
-    },
-    {
-        "label": "Counter",
-        "importPath": "collections",
-        "description": "collections",
-        "isExtraImport": true,
-        "detail": "collections",
-        "documentation": {}
-    },
-    {
-        "label": "Counter",
-        "importPath": "collections",
-        "description": "collections",
-        "isExtraImport": true,
-        "detail": "collections",
-        "documentation": {}
-    },
-    {
         "label": "os",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "os",
         "description": "os",
         "detail": "os",
-        "documentation": {}
-    },
-    {
-        "label": "datetime",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "datetime",
-        "description": "datetime",
-        "detail": "datetime",
-        "documentation": {}
-    },
-    {
-        "label": "logging",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "logging",
-        "description": "logging",
-        "detail": "logging",
-        "documentation": {}
-    },
-    {
-        "label": "subprocess",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "subprocess",
-        "description": "subprocess",
-        "detail": "subprocess",
-        "documentation": {}
-    },
-    {
-        "label": "threading",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "threading",
-        "description": "threading",
-        "detail": "threading",
-        "documentation": {}
-    },
-    {
-        "label": "sys",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "sys",
-        "description": "sys",
-        "detail": "sys",
-        "documentation": {}
-    },
-    {
-        "label": "argparse",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "argparse",
-        "description": "argparse",
-        "detail": "argparse",
         "documentation": {}
     },
     {
@@ -274,47 +18,53 @@
         "documentation": {}
     },
     {
-        "label": "random",
+        "label": "logging",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "random",
-        "description": "random",
-        "detail": "random",
+        "importPath": "logging",
+        "description": "logging",
+        "detail": "logging",
         "documentation": {}
     },
     {
-        "label": "json",
+        "label": "datetime",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "json",
-        "description": "json",
-        "detail": "json",
+        "importPath": "datetime",
+        "description": "datetime",
+        "detail": "datetime",
         "documentation": {}
     },
     {
-        "label": "csv",
-        "kind": 6,
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
         "isExtraImport": true,
-        "importPath": "csv",
-        "description": "csv",
-        "detail": "csv",
+        "detail": "typing",
         "documentation": {}
     },
     {
-        "label": "re",
-        "kind": 6,
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
         "isExtraImport": true,
-        "importPath": "re",
-        "description": "re",
-        "detail": "re",
+        "detail": "typing",
         "documentation": {}
     },
     {
-        "label": "combinations",
-        "importPath": "itertools",
-        "description": "itertools",
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
         "isExtraImport": true,
-        "detail": "itertools",
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
         "documentation": {}
     },
     {
@@ -358,101 +108,183 @@
         "documentation": {}
     },
     {
-        "label": "show_message",
+        "label": "NUM_DEZENAS",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "MAX_NUM_MEGA_SENA",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "DB_PATH",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "load_all_draws",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_last_db_concurso",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_lottery_data",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "argparse",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "argparse",
+        "description": "argparse",
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "random",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "random",
+        "description": "random",
+        "detail": "random",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "csv",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "csv",
+        "description": "csv",
+        "detail": "csv",
+        "documentation": {}
+    },
+    {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
+        "label": "Counter",
+        "importPath": "collections",
+        "description": "collections",
+        "isExtraImport": true,
+        "detail": "collections",
+        "documentation": {}
+    },
+    {
+        "label": "combinations",
+        "importPath": "itertools",
+        "description": "itertools",
+        "isExtraImport": true,
+        "detail": "itertools",
+        "documentation": {}
+    },
+    {
+        "label": "init_user_sets_db",
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def show_message(title, message, is_error=False):\n    \"\"\"Exibe uma messagebox e atualiza o status bar.\"\"\"\n    status_bar.config(text=message)\n    if is_error:\n        logging.error(message)\n        messagebox.showerror(title, message)\n    else:\n        logging.info(message)\n        messagebox.showinfo(title, message)\n    # Clear status bar after a short delay",
+        "peekOfCode": "def init_user_sets_db(path: str = USER_SETS_DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite para os conjuntos de números do usuário,\n    criando a tabela 'user_sets' se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('''",
         "detail": "gui",
         "documentation": {}
     },
     {
-        "label": "open_file_location",
+        "label": "save_user_set",
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def open_file_location(filepath):\n    \"\"\"Abre o explorador de arquivos na pasta do arquivo exportado.\"\"\"\n    try:\n        folder = os.path.dirname(os.path.abspath(filepath))\n        if os.name == 'nt':  # Windows\n            os.startfile(folder)\n        elif os.name == 'posix':  # Linux/macOS\n            subprocess.Popen(['xdg-open', folder])\n    except Exception as e:\n        show_message(\"Erro\", f\"Não foi possível abrir o local do arquivo: {e}\", True)",
+        "peekOfCode": "def save_user_set(name: str, numbers: List[int], path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Salva um conjunto de 6 números gerados pelo usuário na base de dados.\n    Atualiza um conjunto existente se o nome for o mesmo, caso contrário, insere um novo.\n    \"\"\"\n    init_user_sets_db(path)\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()",
         "detail": "gui",
         "documentation": {}
     },
     {
-        "label": "run_in_thread",
+        "label": "load_user_sets",
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def run_in_thread(func, *args, **kwargs):\n    \"\"\"Executa uma função em uma thread separada para evitar que a GUI congele.\"\"\"\n    status_bar.config(text=\"Processando... Por favor, aguarde.\")\n    thread = threading.Thread(target=lambda: func(*args, **kwargs))\n    thread.start()\n# --- Funções de Lógica de Negócios (adaptadas para a GUI) ---\ndef run_analysis_gui(option):\n    \"\"\"Wrapper para executar as análises e exibir resultados na GUI.\"\"\"\n    def _run():\n        try:",
+        "peekOfCode": "def load_user_sets(path: str = USER_SETS_DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Carrega todos os conjuntos de números salvos pelo usuário.\n    \"\"\"\n    init_user_sets_db(path)\n    conn: Optional[sqlite3.Connection] = None\n    user_sets: List[Dict[str, Any]] = []\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()",
         "detail": "gui",
         "documentation": {}
     },
     {
-        "label": "run_analysis_gui",
+        "label": "delete_user_set",
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def run_analysis_gui(option):\n    \"\"\"Wrapper para executar as análises e exibir resultados na GUI.\"\"\"\n    def _run():\n        try:\n            draws = load_all_draws()\n            if not draws:\n                show_message(\"Erro\", \"Base de dados vazia. Execute a atualização primeiro.\", True)\n                return\n            result_message = \"\"\n            plot_needed = False",
+        "peekOfCode": "def delete_user_set(set_id: int, path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Deleta um conjunto de números do usuário pelo ID.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute(\"DELETE FROM user_sets WHERE id = ?\", (set_id,))\n        conn.commit()",
         "detail": "gui",
         "documentation": {}
     },
     {
-        "label": "export_data_gui",
+        "label": "compare_user_sets_with_latest_draw",
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def export_data_gui(advanced=False):\n    \"\"\"\n    Função unificada para exportação simples e avançada.\n    Se 'advanced' for True, solicita tipo de análise para exportar.\n    \"\"\"\n    def _export():\n        try:\n            draws = load_all_draws()\n            if not draws:\n                show_message(\"Erro\", \"Base de dados vazia. Execute a atualização primeiro.\", True)",
+        "peekOfCode": "def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, mega_sena_db_path: str = DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Compara todos os conjuntos de números do usuário com o último sorteio da Mega-Sena.\n    Atualiza o banco de dados do usuário com os resultados da comparação.\n    Retorna uma lista de dicionários com os resultados da comparação.\n    \"\"\"\n    latest_draw_data: Optional[Dict[str, Any]] = None\n    try:\n        # Fetch the latest Mega-Sena draw from the official DB or API\n        # It's safer to get from API directly for latest, then from DB for historical",
         "detail": "gui",
         "documentation": {}
     },
     {
-        "label": "update_db_gui",
+        "label": "calculate_correlation",
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def update_db_gui():\n    \"\"\"Atualiza a base de dados via GUI.\"\"\"\n    def _update():\n        try:\n            update_db()\n            show_message(\"Atualização\", \"Base de dados atualizada com sucesso!\", False)\n        except Exception as e:\n            show_message(\"Erro na Atualização\", f\"Ocorreu um erro ao atualizar a base de dados: {e}\", True)\n    run_in_thread(_update)\ndef show_help():",
+        "peekOfCode": "def calculate_correlation(draws):\n    \"\"\"\n    Calcula a matriz de correlação entre os números sorteados.\n    \"\"\"\n    if pd is None:\n        logging.error(\"Pandas não está instalado. Não é possível calcular a correlação.\")\n        return None\n    data = []\n    for _, nums in draws:\n        draw_binary = [1 if i in nums else 0 for i in range(1, MAX_NUM_MEGA_SENA + 1)]",
         "detail": "gui",
         "documentation": {}
     },
     {
-        "label": "show_help",
+        "label": "main",
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def show_help():\n    \"\"\"Exibe informações de ajuda.\"\"\"\n    help_text = \"\"\"\n    **Mega-Sena Analyzer GUI**\n    - **Atualizar Base de Dados**: Busca os últimos resultados da Mega-Sena e os armazena localmente.\n    - **Top 6 de Todos os Tempos**: Mostra os números sorteados com maior frequência em todo o histórico.\n    - **Top 6 do Último Ano**: Identifica os números mais frequentes nos últimos 365 dias.\n    - **Conjunto Estatístico Ponderado**: Sugere um conjunto de 6 números baseado na frequência histórica, dando mais peso aos números mais sorteados.\n    - **Visualizar Frequência**: Abre um gráfico de barras mostrando a frequência de cada número (1 a 60).\n    - **Simulação de Monte Carlo**: Simula milhares de sorteios aleatórios para comparar as frequências simuladas com as reais.",
-        "detail": "gui",
-        "documentation": {}
-    },
-    {
-        "label": "open_github",
-        "kind": 2,
-        "importPath": "gui",
-        "description": "gui",
-        "peekOfCode": "def open_github():\n    \"\"\"Abre o repositório do GitHub no navegador padrão.\"\"\"\n    webbrowser.open(\"https://github.com/marcosfland/mega_sena_estatistico\")\n    show_message(\"Informação\", \"Repositório do GitHub aberto no navegador.\", False)\ndef show_about():\n    \"\"\"Exibe informações sobre o aplicativo.\"\"\"\n    about_text = \"Mega-Sena Analyzer\\nVersão 1.1 (GUI Aprimorada)\\nDesenvolvido por Marcos\\n\\nFerramenta de análise estatística para os sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre o Mega-Sena Analyzer\", about_text)\n# --- Criação da Interface Gráfica (GUI) ---\ndef create_gui():",
-        "detail": "gui",
-        "documentation": {}
-    },
-    {
-        "label": "show_about",
-        "kind": 2,
-        "importPath": "gui",
-        "description": "gui",
-        "peekOfCode": "def show_about():\n    \"\"\"Exibe informações sobre o aplicativo.\"\"\"\n    about_text = \"Mega-Sena Analyzer\\nVersão 1.1 (GUI Aprimorada)\\nDesenvolvido por Marcos\\n\\nFerramenta de análise estatística para os sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre o Mega-Sena Analyzer\", about_text)\n# --- Criação da Interface Gráfica (GUI) ---\ndef create_gui():\n    global root, status_bar # Make root and status_bar accessible globally for updates\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"600x750\") # Adjust window size for better layout",
-        "detail": "gui",
-        "documentation": {}
-    },
-    {
-        "label": "create_gui",
-        "kind": 2,
-        "importPath": "gui",
-        "description": "gui",
-        "peekOfCode": "def create_gui():\n    global root, status_bar # Make root and status_bar accessible globally for updates\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"600x750\") # Adjust window size for better layout\n    root.resizable(False, False) # Prevent resizing for simplicity\n    root.iconphoto(False, tk.PhotoImage(file=get_resource_path(\"icon.png\"))) # Optional: Add an icon\n    # Theme configuration\n    style = ttk.Style()\n    style.theme_use('clam') # 'clam', 'alt', 'default', 'classic'",
-        "detail": "gui",
-        "documentation": {}
-    },
-    {
-        "label": "get_resource_path",
-        "kind": 2,
-        "importPath": "gui",
-        "description": "gui",
-        "peekOfCode": "def get_resource_path(relative_path):\n    \"\"\"Obtém o caminho absoluto para um recurso.\"\"\"\n    base_path = getattr(sys, '_MEIPASS', os.path.abspath(\".\"))  # Use _MEIPASS if it exists, else current dir\n    return os.path.join(base_path, relative_path)\nimport sys # Import sys for PyInstaller compatibility\nif __name__ == \"__main__\":\n    # Create a dummy icon.png if it doesn't exist for testing.\n    # In a real deployment, you'd include a proper icon file.\n    if not os.path.exists(\"icon.png\"):\n        try:",
+        "peekOfCode": "def main():\n    import tkinter as tk\n    from tkinter import messagebox, simpledialog\n    root = tk.Tk()\n    root.geometry(\"500x400\")\n    root.title(\"Mega-Sena - Gerenciador de Conjuntos do Usuário\")\n    tk.Label(root, text=\"Mega-Sena - Gerenciador de Conjuntos do Usuário\", font=(\"Arial\", 14, \"bold\")).pack(pady=10)\n    # Botões principais\n    tk.Button(root, text=\"Salvar conjunto por frequência\", width=30, command=lambda: messagebox.showinfo(\"Info\", \"Funcionalidade de salvar por frequência\")).pack(pady=5)\n    tk.Button(root, text=\"Salvar conjunto ponderado\", width=30, command=lambda: messagebox.showinfo(\"Info\", \"Funcionalidade de salvar ponderado\")).pack(pady=5)",
         "detail": "gui",
         "documentation": {}
     },
@@ -664,11 +496,92 @@
         "documentation": {}
     },
     {
+        "label": "init_user_sets_db",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def init_user_sets_db(path: str = USER_SETS_DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite para os conjuntos de números do usuário,\n    criando a tabela 'user_sets' se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor = conn.cursor()\n        cursor.execute('''",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "save_user_set",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def save_user_set(name: str, numbers: List[int], path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Salva um conjunto de 6 números gerados pelo usuário na base de dados.\n    Atualiza um conjunto existente se o nome for o mesmo, caso contrário, insere um novo.\n    \"\"\"\n    init_user_sets_db(path)\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor = conn.cursor()",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "load_user_sets",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def load_user_sets(path: str = USER_SETS_DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Carrega todos os conjuntos de números salvos pelo usuário.\n    \"\"\"\n    init_user_sets_db(path)\n    conn: Optional[sqlite3.Connection] = None\n    user_sets: List[Dict[str, Any]] = []\n    try:\n        conn = sqlite3.connect(path)\n        cursor = conn.cursor()",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "delete_user_set",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def delete_user_set(set_id: int, path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Deleta um conjunto de números do usuário pelo ID.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor = conn.cursor()\n        cursor.execute(\"DELETE FROM user_sets WHERE id = ?\", (set_id,))\n        conn.commit()",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "compare_user_sets_with_latest_draw",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, mega_sena_db_path: str = DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Compara todos os conjuntos de números do usuário com o último sorteio da Mega-Sena.\n    Atualiza o banco de dados do usuário com os resultados da comparação.\n    Retorna uma lista de dicionários com os resultados da comparação.\n    \"\"\"\n    latest_draw_data: Optional[Dict[str, Any]] = None\n    try:\n        all_draws = load_all_draws(mega_sena_db_path)\n        if not all_draws:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "salvar_aposta_usuario",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def salvar_aposta_usuario(numeros: list, origem: str):\n    \"\"\"\n    Salva o conjunto de 6 números escolhido pelo usuário em um arquivo separado.\n    \"\"\"\n    import csv\n    from datetime import datetime\n    if len(numeros) != 6:\n        raise ValueError(\"A aposta deve conter exatamente 6 números.\")\n    numeros_ordenados = sorted(numeros)\n    existe = os.path.exists(USER_BETS_FILE)",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "comparar_aposta_com_ultimo_resultado",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def comparar_aposta_com_ultimo_resultado():\n    \"\"\"\n    Compara a última aposta salva pelo usuário com o último resultado oficial da Mega-Sena.\n    \"\"\"\n    import csv\n    if not os.path.exists(USER_BETS_FILE):\n        print(\"Nenhuma aposta de usuário encontrada.\")\n        return\n    # Carrega última aposta\n    with open(USER_BETS_FILE, \"r\", encoding=\"utf-8\") as f:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "calcular_nivel_confianca",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def calcular_nivel_confianca(draws: List[Draw], conjunto: List[int]) -> float:\n    \"\"\"\n    Calcula um nível de confiança empírico para um conjunto de 6 números.\n    Aqui, soma as frequências relativas de cada número no histórico.\n    \"\"\"\n    counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    total = sum(counter.values())\n    if total == 0:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "salvar_jogo_usuario",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def salvar_jogo_usuario(conjunto: List[int], modo: str, nivel_confianca: float, arquivo: str = \"meus_jogos.csv\"):\n    \"\"\"\n    Salva o conjunto de números gerado pelo usuário em um arquivo separado.\n    \"\"\"\n    import csv\n    from datetime import datetime\n    existe = os.path.exists(arquivo)\n    with open(arquivo, \"a\", newline=\"\", encoding=\"utf-8\") as f:\n        writer = csv.writer(f)\n        if not existe:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "main",
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def main() -> None:\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')\n    parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')\n    parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')\n    parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')\n    parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')\n    parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')\n    parser.add_argument('--plot', action='store_true', help='Visualizar frequência dos números')\n    parser.add_argument('--montecarlo', action='store_true', help='Simulação de Monte Carlo')\n    parser.add_argument('--correlation', action='store_true', help='Calcular correlação entre números')",
+        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')\n    parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')\n    parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')\n    parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')\n    parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')\n    parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')\n    parser.add_argument('--plot', action='store_true', help='Visualizar frequência dos números')\n    parser.add_argument('--montecarlo', action='store_true', help='Simulação de Monte Carlo')\n    parser.add_argument('--correlation', action='store_true', help='Calcular correlação entre números')",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -678,6 +591,15 @@
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
         "peekOfCode": "Draw = Tuple[datetime.date, Tuple[int, int, int, int, int, int]]\n# --- Banco de Dados ---\ndef init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "USER_BETS_FILE",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "USER_BETS_FILE = \"apostas_usuario.csv\"\ndef salvar_aposta_usuario(numeros: list, origem: str):\n    \"\"\"\n    Salva o conjunto de 6 números escolhido pelo usuário em um arquivo separado.\n    \"\"\"\n    import csv\n    from datetime import datetime\n    if len(numeros) != 6:\n        raise ValueError(\"A aposta deve conter exatamente 6 números.\")\n    numeros_ordenados = sorted(numeros)",
         "detail": "mega_sena_app",
         "documentation": {}
     }

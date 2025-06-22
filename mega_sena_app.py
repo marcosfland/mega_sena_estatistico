@@ -596,6 +596,12 @@ def run_web_interface(draws: List[Draw]) -> None:
     def frequencia():
         if request is None or not hasattr(request, "args"):
             return {"error": "Flask/Request support não disponível."}, 500
+        if request is None or not hasattr(request, "args"):
+            return {"error": "Flask/Request support não disponível."}, 500
+        if request is None or not hasattr(request, "args"):
+            return {"error": "Flask/Request support não disponível."}, 500
+        if request is None or not hasattr(request, "args"):
+            return {"error": "Flask/Request support não disponível."}, 500
         top = int(request.args.get("top", NUM_DEZENAS))
         result = get_most_frequent(draws, top)
         if jsonify is None:
@@ -626,8 +632,297 @@ def run_web_interface(draws: List[Draw]) -> None:
     except Exception as e:
         logging.error(f"Erro ao iniciar a interface web Flask: {e}")
 
+# --- Banco de Dados do Usuário ---
+USER_SETS_DB_PATH: str = os.getenv('MEGASENA_USER_SETS_DB_PATH', 'user_sets.db')
+
+def init_user_sets_db(path: str = USER_SETS_DB_PATH) -> None:
+    """
+    Inicializa a base de dados SQLite para os conjuntos de números do usuário,
+    criando a tabela 'user_sets' se não existir.
+    """
+    conn: Optional[sqlite3.Connection] = None
+    try:
+        conn = sqlite3.connect(path)
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS user_sets (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                date_generated TEXT NOT NULL,
+                dez1 INTEGER, dez2 INTEGER, dez3 INTEGER,
+                dez4 INTEGER, dez5 INTEGER, dez6 INTEGER,
+                comparison_result TEXT,
+                comparison_concurso INTEGER,
+                UNIQUE(name)
+            )
+        ''')
+        conn.commit()
+    except sqlite3.Error as e:
+        logging.error(f"Erro ao inicializar o banco de dados de conjuntos do usuário: {e}")
+    finally:
+        if conn:
+            conn.close()
+
+def save_user_set(name: str, numbers: List[int], path: str = USER_SETS_DB_PATH) -> bool:
+    """
+    Salva um conjunto de 6 números gerados pelo usuário na base de dados.
+    Atualiza um conjunto existente se o nome for o mesmo, caso contrário, insere um novo.
+    """
+    init_user_sets_db(path)
+    conn: Optional[sqlite3.Connection] = None
+    try:
+        conn = sqlite3.connect(path)
+        cursor = conn.cursor()
+        if len(numbers) != NUM_DEZENAS:
+            logging.error(f"O conjunto de números deve conter {NUM_DEZENAS} dezenas.")
+            return False
+        sorted_numbers = sorted(numbers)
+        date_generated = datetime.date.today().strftime('%Y-%m-%d')
+        cursor.execute("SELECT id FROM user_sets WHERE name = ?", (name,))
+        existing_id = cursor.fetchone()
+        if existing_id:
+            cursor.execute('''
+                UPDATE user_sets
+                SET date_generated = ?, dez1 = ?, dez2 = ?, dez3 = ?, dez4 = ?, dez5 = ?, dez6 = ?,
+                    comparison_result = NULL, comparison_concurso = NULL
+                WHERE id = ?
+            ''', (date_generated, *sorted_numbers, existing_id[0]))
+            logging.info(f"Conjunto de números '{name}' atualizado.")
+        else:
+            cursor.execute('''
+                INSERT INTO user_sets (name, date_generated, dez1, dez2, dez3, dez4, dez5, dez6, comparison_result, comparison_concurso)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)
+            ''', (name, date_generated, *sorted_numbers))
+            logging.info(f"Novo conjunto de números '{name}' salvo.")
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        logging.error(f"Erro: Um conjunto com o nome '{name}' já existe.")
+        return False
+    except sqlite3.Error as e:
+        logging.error(f"Erro ao salvar/atualizar conjunto de números do usuário: {e}")
+        return False
+    finally:
+        if conn:
+            conn.close()
+
+def load_user_sets(path: str = USER_SETS_DB_PATH) -> List[Dict[str, Any]]:
+    """
+    Carrega todos os conjuntos de números salvos pelo usuário.
+    """
+    init_user_sets_db(path)
+    conn: Optional[sqlite3.Connection] = None
+    user_sets: List[Dict[str, Any]] = []
+    try:
+        conn = sqlite3.connect(path)
+        cursor = conn.cursor()
+        cursor.execute('SELECT id, name, date_generated, dez1, dez2, dez3, dez4, dez5, dez6, comparison_result, comparison_concurso FROM user_sets')
+        rows = cursor.fetchall()
+        for row in rows:
+            user_sets.append({
+                'id': row[0],
+                'name': row[1],
+                'date_generated': row[2],
+                'numbers': sorted([row[3], row[4], row[5], row[6], row[7], row[8]]),
+                'comparison_result': row[9],
+                'comparison_concurso': row[10]
+            })
+    except sqlite3.Error as e:
+        logging.error(f"Erro ao carregar conjuntos de números do usuário: {e}")
+    finally:
+        if conn:
+            conn.close()
+    return user_sets
+
+def delete_user_set(set_id: int, path: str = USER_SETS_DB_PATH) -> bool:
+    """
+    Deleta um conjunto de números do usuário pelo ID.
+    """
+    conn: Optional[sqlite3.Connection] = None
+    try:
+        conn = sqlite3.connect(path)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM user_sets WHERE id = ?", (set_id,))
+        conn.commit()
+        logging.info(f"Conjunto de números com ID {set_id} deletado.")
+        return True
+    except sqlite3.Error as e:
+        logging.error(f"Erro ao deletar conjunto de números do usuário (ID: {set_id}): {e}")
+        return False
+    finally:
+        if conn:
+            conn.close()
+
+def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, mega_sena_db_path: str = DB_PATH) -> List[Dict[str, Any]]:
+    """
+    Compara todos os conjuntos de números do usuário com o último sorteio da Mega-Sena.
+    Atualiza o banco de dados do usuário com os resultados da comparação.
+    Retorna uma lista de dicionários com os resultados da comparação.
+    """
+    latest_draw_data: Optional[Dict[str, Any]] = None
+    try:
+        all_draws = load_all_draws(mega_sena_db_path)
+        if not all_draws:
+            logging.warning("Base de dados da Mega-Sena vazia. Não é possível comparar os conjuntos.")
+            return []
+        latest_concurso_db = get_last_db_concurso(mega_sena_db_path)
+        latest_draw_tuple = None
+        for d, nums in all_draws:
+            try:
+                latest_draw_api = fetch_lottery_data("megasena", None)
+                latest_draw_number = int(latest_draw_api['concurso'])
+                latest_draw_dezenas = sorted(list(map(int, latest_draw_api['dezenas'])))
+                latest_draw_data = {
+                    'concurso': latest_draw_number,
+                    'dezenas': latest_draw_dezenas
+                }
+                break
+            except Exception as e:
+                logging.warning(f"Não foi possível buscar o último sorteio da API para comparação: {e}. Tentando usar o último do DB.")
+                if all_draws:
+                    conn_db = sqlite3.connect(mega_sena_db_path)
+                    cursor_db = conn_db.cursor()
+                    cursor_db.execute('SELECT concurso, data, dez1, dez2, dez3, dez4, dez5, dez6 FROM megasena ORDER BY concurso DESC LIMIT 1')
+                    last_db_row = cursor_db.fetchone()
+                    conn_db.close()
+                    if last_db_row:
+                        latest_draw_data = {
+                            'concurso': last_db_row[0],
+                            'dezenas': sorted([last_db_row[i] for i in range(2, 8)])
+                        }
+                    else:
+                        return []
+                else:
+                    return []
+    except Exception as e:
+        logging.error(f"Erro ao obter o último sorteio da Mega-Sena para comparação: {e}")
+        return []
+    if latest_draw_data is None:
+        return []
+    latest_concurso_num = latest_draw_data['concurso']
+    latest_dezenas = set(latest_draw_data['dezenas'])
+    user_sets = load_user_sets(user_sets_path)
+    comparison_results = []
+    conn_user = None
+    try:
+        conn_user = sqlite3.connect(user_sets_path)
+        cursor_user = conn_user.cursor()
+        for user_set in user_sets:
+            user_set_numbers = set(user_set['numbers'])
+            matches = len(user_set_numbers.intersection(latest_dezenas))
+            result_text = "Perdeu"
+            if matches == 6:
+                result_text = "Sena (6 acertos)!"
+            elif matches == 5:
+                result_text = "Quina (5 acertos)!"
+            elif matches == 4:
+                result_text = "Quadra (4 acertos)!"
+            elif matches == 3:
+                result_text = "Terno (3 acertos)"
+            else:
+                result_text = f"Nenhum prêmio ({matches} acertos)"
+            cursor_user.execute('''
+                UPDATE user_sets
+                SET comparison_result = ?, comparison_concurso = ?
+                WHERE id = ?
+            ''', (result_text, latest_concurso_num, user_set['id']))
+            user_set['comparison_result'] = result_text
+            user_set['comparison_concurso'] = latest_concurso_num
+            user_set['matches'] = matches
+            user_set['latest_draw_dezenas'] = sorted(list(latest_dezenas))
+            comparison_results.append(user_set)
+        conn_user.commit()
+    except sqlite3.Error as e:
+        logging.error(f"Erro ao atualizar resultados de comparação na base de dados de conjuntos do usuário: {e}")
+    finally:
+        if conn_user:
+            conn_user.close()
+    return comparison_results
+
 # --- Interface de Linha de Comando ---
-def main() -> None:
+USER_BETS_FILE = "apostas_usuario.csv"
+
+
+def salvar_aposta_usuario(numeros: list, origem: str):
+    """
+    Salva o conjunto de 6 números escolhido pelo usuário em um arquivo separado.
+    """
+    import csv
+    from datetime import datetime
+    if len(numeros) != 6:
+        raise ValueError("A aposta deve conter exatamente 6 números.")
+    numeros_ordenados = sorted(numeros)
+    existe = os.path.exists(USER_BETS_FILE)
+    with open(USER_BETS_FILE, "a", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        if not existe:
+            writer.writerow(["data_aposta", "origem", "n1", "n2", "n3", "n4", "n5", "n6"])
+        writer.writerow([datetime.now().strftime("%Y-%m-%d %H:%M:%S"), origem] + numeros_ordenados)
+    print(f"Aposta salva em {USER_BETS_FILE}: {numeros_ordenados}")
+
+
+def comparar_aposta_com_ultimo_resultado():
+    """
+    Compara a última aposta salva pelo usuário com o último resultado oficial da Mega-Sena.
+    """
+    import csv
+    if not os.path.exists(USER_BETS_FILE):
+        print("Nenhuma aposta de usuário encontrada.")
+        return
+    # Carrega última aposta
+    with open(USER_BETS_FILE, "r", encoding="utf-8") as f:
+        reader = list(csv.reader(f))
+        if len(reader) < 2:
+            print("Nenhuma aposta registrada.")
+            return
+        header, *rows = reader
+        ultima_aposta = rows[-1]
+        aposta_nums = set(map(int, ultima_aposta[2:]))
+        origem = ultima_aposta[1]
+        data_aposta = ultima_aposta[0]
+    # Carrega último sorteio
+    draws = load_all_draws()
+    if not draws:
+        print("Base de dados vazia. Atualize primeiro.")
+        return
+    data_ultimo, dezenas_ultimo = draws[-1]
+    acertos = aposta_nums.intersection(set(dezenas_ultimo))
+    print(f"Aposta feita em {data_aposta} (origem: {origem}): {sorted(aposta_nums)}")
+    print(f"Resultado oficial do sorteio {data_ultimo}: {sorted(dezenas_ultimo)}")
+    print(f"Números acertados: {sorted(acertos)} ({len(acertos)} acertos)")
+
+
+def calcular_nivel_confianca(draws: List[Draw], conjunto: List[int]) -> float:
+    """
+    Calcula um nível de confiança empírico para um conjunto de 6 números.
+    Aqui, soma as frequências relativas de cada número no histórico.
+    """
+    counter = Counter()
+    for _, nums in draws:
+        counter.update(nums)
+    total = sum(counter.values())
+    if total == 0:
+        return 0.0
+    prob = sum(counter[n] for n in conjunto) / total
+    # Normaliza para um valor entre 0 e 1 (ou 0% a 100%)
+    return prob
+
+def salvar_jogo_usuario(conjunto: List[int], modo: str, nivel_confianca: float, arquivo: str = "meus_jogos.csv"):
+    """
+    Salva o conjunto de números gerado pelo usuário em um arquivo separado.
+    """
+    import csv
+    from datetime import datetime
+    existe = os.path.exists(arquivo)
+    with open(arquivo, "a", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        if not existe:
+            writer.writerow(["data", "modo", "numeros", "nivel_confianca"])
+        writer.writerow([datetime.now().strftime("%Y-%m-%d %H:%M"), modo, "-".join(map(str, conjunto)), f"{nivel_confianca:.4f}"])
+    print(f"Jogo salvo em {arquivo}: {conjunto} (Nível de confiança: {nivel_confianca:.4f})")
+
+
+def main():
     parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')
     parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')
     parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')
@@ -649,6 +944,10 @@ def main() -> None:
     parser.add_argument('--schedule', action='store_true', help='Agendar atualização diária (crossplatform)')
     parser.add_argument('--external-db', type=str, help='String de conexão para banco de dados externo')
     parser.add_argument('--web', action='store_true', help='Inicia interface web Flask')
+    parser.add_argument('--salvar-aposta', choices=['frequencia', 'ponderado'], help='Gera e salva aposta baseada em frequência ou ponderação')
+    parser.add_argument('--comparar-aposta', action='store_true', help='Compara a última aposta salva com o último sorteio oficial')
+    parser.add_argument('--salvar-user-set', nargs=2, metavar=('MODO', 'NOME'), help='Salva um conjunto de 6 números gerado pelo modo (frequencia|ponderado) com o nome especificado')
+    parser.add_argument('--comparar-user-sets', action='store_true', help='Compara todos os conjuntos do usuário com o último sorteio oficial')
     args = parser.parse_args()
 
     global DB_PATH
@@ -792,6 +1091,45 @@ def main() -> None:
             filename=args.export.rsplit('.', 1)[0],
             header=['Data'] + [f'Dezena{i+1}' for i in range(NUM_DEZENAS)]
         )
+    elif args.salvar_aposta:
+        draws = load_all_draws()
+        if not draws:
+            print('Base vazia: execute com --update primeiro')
+            return
+        if args.salvar_aposta == 'frequencia':
+            numeros = get_most_frequent(draws)
+            salvar_aposta_usuario(numeros, 'frequencia')
+        elif args.salvar_aposta == 'ponderado':
+            numeros = get_weighted(draws)
+            salvar_aposta_usuario(numeros, 'ponderado')
+        return
+    elif args.comparar_aposta:
+        comparar_aposta_com_ultimo_resultado()
+        return
+    elif args.salvar_user_set:
+        modo, nome = args.salvar_user_set
+        if modo not in ['frequencia', 'ponderado']:
+            print("Modo inválido. Use 'frequencia' ou 'ponderado'.")
+            return
+        draws = load_all_draws()
+        if not draws:
+            print('Base vazia: execute com --update primeiro')
+            return
+        if modo == 'frequencia':
+            numeros = get_most_frequent(draws)
+        else:
+            numeros = get_weighted(draws)
+        ok = save_user_set(nome, numeros)
+        if ok:
+            print(f"Conjunto '{nome}' salvo com sucesso: {numeros}")
+        else:
+            print(f"Falha ao salvar conjunto '{nome}'.")
+        return
+    elif args.comparar_user_sets:
+        results = compare_user_sets_with_latest_draw()
+        for res in results:
+            print(f"Conjunto '{res['name']}' ({res['numbers']}) - Resultado: {res['comparison_result']} (Concurso: {res['comparison_concurso']})")
+        return
     else:
         parser.print_help()
 
