@@ -17,6 +17,7 @@ import logging
 import subprocess
 import threading
 import sys
+from typing import Optional, List
 try:
     from PIL import Image, ImageDraw
 except ImportError:
@@ -40,7 +41,7 @@ def show_message(title, message, is_error=False):
         logging.info(f"{title}: {message}")
         messagebox.showinfo(title, message)
     if root and status_bar:
-        root.after(5000, lambda: status_bar.config(text="Pronto"))
+        root.after(5000, lambda: status_bar.config(text="Pronto") if status_bar is not None else None)
 
 def open_file_location(filepath):
     try:
