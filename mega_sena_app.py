@@ -596,6 +596,8 @@ def run_web_interface(draws: List[Draw]) -> None:
     def frequencia():
         if request is None or not hasattr(request, "args"):
             return {"error": "Flask/Request support não disponível."}, 500
+        if request is None or not hasattr(request, "args"):
+            return {"error": "Flask/Request support não disponível."}, 500
         top = int(request.args.get("top", NUM_DEZENAS))
         result = get_most_frequent(draws, top)
         if jsonify is None:
