@@ -390,7 +390,6 @@ def create_gui():
     root.config(menu=menu_bar)
 
     file_menu = Menu(menu_bar, tearoff=0)
-    file_menu.add_command(label="Atualizar Base de Dados", command=update_db_gui)
     file_menu.add_command(label="Exportar Dados Brutos (CSV/JSON)", command=lambda: export_data_gui(advanced=False))
     file_menu.add_command(label="Exportação Avançada (Análises)", command=lambda: export_data_gui(advanced=True))
     file_menu.add_separator()
@@ -398,6 +397,7 @@ def create_gui():
     menu_bar.add_cascade(label="Arquivo", menu=file_menu)
 
     help_menu = Menu(menu_bar, tearoff=0)
+    help_menu.add_command(label="Atualizar Base de Dados", command=update_db_gui)
     help_menu.add_command(label="Ajuda", command=show_help)
     help_menu.add_command(label="Repositório no GitHub", command=open_github)
     help_menu.add_separator()
