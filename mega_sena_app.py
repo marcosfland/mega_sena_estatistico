@@ -966,81 +966,53 @@ def main():
             logging.error("Falha ao conectar ao banco de dados externo. Operações de banco de dados usarão o DB local.")
 
 
-    if args.update:
+    def handle_update():
         update_db()
-        # sys.exit(0) # Prefer not to exit here, allows for chaining commands if desired
-        return # Exit main function
 
-    # Load draws only if analysis or web interface is requested
-    draws: List[Draw] = []
-    if any([args.alltime, args.lastyear, args.stat, args.plot, args.montecarlo,
-            args.correlation, args.timeseries, args.distribution, args.pairs,
-            args.triplets, args.conditional, args.export_analysis, args.web, args.export]):
-        draws = load_all_draws()
-        if not draws:
-            logging.error('Base vazia: execute com --update primeiro para baixar os dados.')
-            # sys.exit(1) # Prefer not to exit here
-            return # Exit main function
+    def handle_analysis(draws):
+        if args.alltime:
+            result = get_most_frequent(draws)
+            print('Top 6 de todos os tempos:', result)
+        elif args.lastyear:
+            result = get_most_frequent_period(draws)
+            print('Top 6 do último ano:', result)
+        elif args.stat:
+            result = get_weighted(draws)
+            print('Conjunto estatístico ponderado:', result)
+        elif args.plot:
+            plot_frequency(draws)
+        elif args.montecarlo:
+            simulated, real = monte_carlo_simulation(draws)
+            print('Simulação de Monte Carlo - Números mais frequentes:')
+            print('Simulados (Número, Frequência):', simulated)
+            print('Reais (Número, Frequência):', real)
+        elif args.correlation:
+            correlation_matrix = calculate_correlation(draws)
+            if correlation_matrix is not None:
+                print('Matriz de Correlação:\n', correlation_matrix)
+        elif args.timeseries:
+            analyze_time_series(draws)
+        elif args.distribution:
+            chi2_p = analyze_probability_distribution(draws)
+            if chi2_p:
+                chi2, p = chi2_p
+                print(f'Teste Qui-quadrado: Chi2 = {chi2:.4f}, p-valor = {p:.4f}')
+                if p < 0.05:
+                    print("A distribuição observada é significativamente diferente de uma distribuição uniforme (com base no p-valor < 0.05).")
+                else:
+                    print("A distribuição observada não é significativamente diferente de uma distribuição uniforme (com base no p-valor >= 0.05).")
+        elif args.pairs:
+            result = get_most_frequent_pairs(draws)
+            print('Pares mais frequentes (Par, Frequência):', result)
+        elif args.triplets:
+            result = get_most_frequent_triplets(draws)
+            print('Trios mais frequentes (Trio, Frequência):', result)
+        elif args.conditional:
+            given, target = args.conditional
+            prob = conditional_probability(draws, given, target)
+            print(f'Probabilidade de {target} ser sorteado, dado que {given} foi sorteado: P({target}|{given}) = {prob:.4f}')
 
-    # Apply period filter early if specified
-    if args.period:
-        try:
-            start = datetime.datetime.strptime(args.period[0], "%Y-%m-%d").date()
-            end = datetime.datetime.strptime(args.period[1], "%Y-%m-%d").date()
-            if start > end:
-                logging.error("Data de início não pode ser posterior à data de fim.")
-                return
-            draws = filter_draws_by_period(draws, start, end)
-            if not draws:
-                logging.warning(f"Nenhum sorteio encontrado no período de {args.period[0]} a {args.period[1]}.")
-                return # No data for this period
-        except ValueError as e:
-            logging.error(f"Formato de data inválido. Use AAAA-MM-DD. Erro: {e}")
-            return
-
-
-    if args.alltime:
-        result = get_most_frequent(draws)
-        print('Top 6 de todos os tempos:', result)
-    elif args.lastyear:
-        result = get_most_frequent_period(draws)
-        print('Top 6 do último ano:', result)
-    elif args.stat:
-        result = get_weighted(draws)
-        print('Conjunto estatístico ponderado:', result)
-    elif args.plot:
-        plot_frequency(draws)
-    elif args.montecarlo:
-        simulated, real = monte_carlo_simulation(draws)
-        print('Simulação de Monte Carlo - Números mais frequentes:')
-        print('Simulados (Número, Frequência):', simulated)
-        print('Reais (Número, Frequência):', real)
-    elif args.correlation:
-        correlation_matrix = calculate_correlation(draws)
-        if correlation_matrix is not None:
-            print('Matriz de Correlação:\n', correlation_matrix)
-    elif args.timeseries:
-        analyze_time_series(draws)
-    elif args.distribution:
-        chi2_p = analyze_probability_distribution(draws)
-        if chi2_p:
-            chi2, p = chi2_p
-            print(f'Teste Qui-quadrado: Chi2 = {chi2:.4f}, p-valor = {p:.4f}')
-            if p < 0.05:
-                print("A distribuição observada é significativamente diferente de uma distribuição uniforme (com base no p-valor < 0.05).")
-            else:
-                print("A distribuição observada não é significativamente diferente de uma distribuição uniforme (com base no p-valor >= 0.05).")
-    elif args.pairs:
-        result = get_most_frequent_pairs(draws)
-        print('Pares mais frequentes (Par, Frequência):', result)
-    elif args.triplets:
-        result = get_most_frequent_triplets(draws)
-        print('Trios mais frequentes (Trio, Frequência):', result)
-    elif args.conditional:
-        given, target = args.conditional
-        prob = conditional_probability(draws, given, target)
-        print(f'Probabilidade de {target} ser sorteado, dado que {given} foi sorteado: P({target}|{given}) = {prob:.4f}')
-    elif args.export_analysis:
+    def handle_export_analysis(draws):
         analysis_type, filename = args.export_analysis
         if analysis_type == "frequencia":
             counter_data = Counter()
@@ -1048,17 +1020,15 @@ def main():
                 counter_data.update(nums)
             export_results(counter_data.most_common(), file_format=filename.split('.')[-1], filename=filename.rsplit('.', 1)[0], header=["Número", "Frequência"])
         elif analysis_type == "pares":
-            data = get_most_frequent_pairs(draws, k=20) # Export more pairs
+            data = get_most_frequent_pairs(draws, k=20)
             export_results(data, file_format=filename.split('.')[-1], filename=filename.rsplit('.', 1)[0], header=["Par", "Frequência"])
         elif analysis_type == "trios":
-            data = get_most_frequent_triplets(draws, k=20) # Export more triplets
+            data = get_most_frequent_triplets(draws, k=20)
             export_results(data, file_format=filename.split('.')[-1], filename=filename.rsplit('.', 1)[0], header=["Trio", "Frequência"])
         elif analysis_type == "correlacao":
             corr_matrix = calculate_correlation(draws)
             if corr_matrix is not None:
                 try:
-                    # Pandas to_csv handles sanitization internally if given a path directly.
-                    # However, since you have sanitize_filename, let's be consistent.
                     sanitized_fn = sanitize_filename(filename.rsplit('.', 1)[0])
                     corr_matrix.to_csv(f"{sanitized_fn}.csv")
                     logging.info(f"Matriz de correlação exportada para {sanitized_fn}.csv")
@@ -1068,26 +1038,25 @@ def main():
                 logging.warning("Não foi possível gerar a matriz de correlação para exportação.")
         else:
             logging.error(f"Tipo de análise para exportação '{analysis_type}' não suportado.")
-    elif args.schedule:
+
+    def handle_schedule():
         schedule_task_crossplatform()
-    elif args.web:
+
+    def handle_web(draws):
         run_web_interface(draws)
-    elif args.export: # Export raw draws (concurso, data, dez1, ...)
-        # The 'draws' list currently only contains (date, tuple_of_dezenas).
-        # To export full raw data, you'd need to fetch more columns from DB.
-        # For simplicity, let's export (date, dezenas) for now.
-        # If you need full DB export, consider a separate function.
+
+    def handle_export(draws):
         export_data = []
         for d, nums in draws:
             export_data.append([d.strftime('%Y-%m-%d')] + list(nums))
-        
         export_results(
-            export_data, 
-            file_format=args.export.split('.')[-1], 
+            export_data,
+            file_format=args.export.split('.')[-1],
             filename=args.export.rsplit('.', 1)[0],
             header=['Data'] + [f'Dezena{i+1}' for i in range(NUM_DEZENAS)]
         )
-    elif args.salvar_aposta:
+
+    def handle_salvar_aposta():
         draws = load_all_draws()
         if not draws:
             print('Base vazia: execute com --update primeiro')
@@ -1098,11 +1067,11 @@ def main():
         elif args.salvar_aposta == 'ponderado':
             numeros = get_weighted(draws)
             salvar_aposta_usuario(numeros, 'ponderado')
-        return
-    elif args.comparar_aposta:
+
+    def handle_comparar_aposta():
         comparar_aposta_com_ultimo_resultado()
-        return
-    elif args.salvar_user_set:
+
+    def handle_salvar_user_set():
         modo, nome = args.salvar_user_set
         if modo not in ['frequencia', 'ponderado']:
             print("Modo inválido. Use 'frequencia' ou 'ponderado'.")
@@ -1120,14 +1089,69 @@ def main():
             print(f"Conjunto '{nome}' salvo com sucesso: {numeros}")
         else:
             print(f"Falha ao salvar conjunto '{nome}'.")
-        return
-    elif args.comparar_user_sets:
+
+    def handle_comparar_user_sets():
         results = compare_user_sets_with_latest_draw()
         for res in results:
             print(f"Conjunto '{res['name']}' ({res['numbers']}) - Resultado: {res['comparison_result']} (Concurso: {res['comparison_concurso']})")
+
+    # --- Execução dos comandos ---
+    if args.update:
+        handle_update()
         return
-    else:
-        parser.print_help()
+
+    draws: List[Draw] = []
+    if any([args.alltime, args.lastyear, args.stat, args.plot, args.montecarlo,
+            args.correlation, args.timeseries, args.distribution, args.pairs,
+            args.triplets, args.conditional, args.export_analysis, args.web, args.export]):
+        draws = load_all_draws()
+        if not draws:
+            logging.error('Base vazia: execute com --update primeiro para baixar os dados.')
+            return
+
+    if args.period:
+        try:
+            start = datetime.datetime.strptime(args.period[0], "%Y-%m-%d").date()
+            end = datetime.datetime.strptime(args.period[1], "%Y-%m-%d").date()
+            if start > end:
+                logging.error("Data de início não pode ser posterior à data de fim.")
+                return
+            draws = filter_draws_by_period(draws, start, end)
+            if not draws:
+                logging.warning(f"Nenhum sorteio encontrado no período de {args.period[0]} a {args.period[1]}.")
+                return
+        except ValueError as e:
+            logging.error(f"Formato de data inválido. Use AAAA-MM-DD. Erro: {e}")
+            return
+
+    if args.alltime or args.lastyear or args.stat or args.plot or args.montecarlo or args.correlation or args.timeseries or args.distribution or args.pairs or args.triplets or args.conditional:
+        handle_analysis(draws)
+        return
+    if args.export_analysis:
+        handle_export_analysis(draws)
+        return
+    if args.schedule:
+        handle_schedule()
+        return
+    if args.web:
+        handle_web(draws)
+        return
+    if args.export:
+        handle_export(draws)
+        return
+    if args.salvar_aposta:
+        handle_salvar_aposta()
+        return
+    if args.comparar_aposta:
+        handle_comparar_aposta()
+        return
+    if args.salvar_user_set:
+        handle_salvar_user_set()
+        return
+    if args.comparar_user_sets:
+        handle_comparar_user_sets()
+        return
+    parser.print_help()
 
 if __name__ == '__main__':
     main()
