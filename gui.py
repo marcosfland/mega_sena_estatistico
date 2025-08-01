@@ -6,7 +6,8 @@ from mega_sena_app import (
     calculate_correlation, analyze_time_series, analyze_probability_distribution,
     update_db, export_results, get_most_frequent_pairs, get_most_frequent_triplets,
     conditional_probability, filter_draws_by_period, sanitize_filename,
-    save_user_set, load_user_sets, delete_user_set, compare_user_sets_with_latest_draw,
+    save_user_set, load_user_sets, compare_user_sets_with_latest_draw,
+    run_backtest, get_backtest_summary,
     NUM_DEZENAS, MAX_NUM_MEGA_SENA
 )
 import webbrowser
@@ -17,7 +18,7 @@ import logging
 import subprocess
 import threading
 import sys
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 try:
     from PIL import Image, ImageDraw
 except ImportError:
@@ -29,7 +30,7 @@ logging.basicConfig(filename="gui_actions.log", level=logging.INFO, format="%(as
 
 root = None
 status_bar = None
-compare_button = None # Declare compare_button globally here
+compare_button = None
 
 def show_message(title, message, is_error=False):
     if status_bar:
@@ -41,7 +42,7 @@ def show_message(title, message, is_error=False):
         logging.info(f"{title}: {message}")
         messagebox.showinfo(title, message)
     if root and status_bar:
-        root.after(5000, lambda: status_bar.config(text="Pronto") if status_bar is not None else None)
+        root.after(5000, lambda: status_bar.config(text="Pronto") if status_bar else None)
 
 def open_file_location(filepath):
     try:
@@ -273,7 +274,7 @@ def generate_and_save_user_set_gui():
         
         if save_user_set(set_name, generated_numbers):
             show_message("Sucesso", f"Conjunto '{set_name}' ({generated_numbers}) salvo com sucesso!", False)
-            toggle_compare_button_state() # Ensure button state is updated
+            toggle_compare_button_state()
         else:
             show_message("Erro", f"Falha ao salvar o conjunto '{set_name}'. Talvez o nome já exista ou outro erro ocorreu.", True)
 
@@ -292,14 +293,11 @@ def compare_user_sets_gui():
             show_message("Erro", "Não foi possível realizar a comparação. Verifique a base de dados da Mega-Sena e a conexão com a API.", True)
             return
         
-        # Access latest_concurso_num and latest_draw_dezenas more safely
         latest_concurso_num = comparison_results[0].get('comparison_concurso', "N/A")
         latest_draw_dezenas = comparison_results[0].get('latest_draw_dezenas', [])
 
-
         result_display = f"Comparação com o Sorteio {latest_concurso_num} ({latest_draw_dezenas}):\n\n"
         for user_set in comparison_results:
-            # Safely get values, providing defaults if keys might be missing (though they should be present after comparison)
             set_name = user_set.get('name', 'N/A')
             numbers = user_set.get('numbers', [])
             comp_result = user_set.get('comparison_result', 'N/A')
@@ -312,12 +310,56 @@ def compare_user_sets_gui():
 
 def toggle_compare_button_state():
     global compare_button
-    if compare_button is not None: # Check if the button has been created
+    if compare_button is not None:
         user_sets = load_user_sets()
         if user_sets:
             compare_button.config(state=tk.NORMAL)
         else:
             compare_button.config(state=tk.DISABLED)
+
+def run_backtest_gui(method: Optional[str] = None):
+    """Permite ao usuário escolher um método e executa o backtest."""
+    def _prompt_and_run():
+        if not method:
+            selected_method = simpledialog.askstring("Executar Backtest", "Escolha o método (alltime, lastyear, weighted):", parent=root)
+            if not selected_method:
+                return
+        else:
+            selected_method = method
+
+        show_message("Backtest", f"Iniciando backtest para o método '{selected_method}'...", False)
+        
+        if run_backtest(selected_method):
+            if root:
+                root.after(100, lambda: show_backtest_results_gui(selected_method))
+        else:
+            show_message("Erro", "Ocorreu um erro ao executar o backtest.", True)
+
+    run_in_thread(_prompt_and_run)
+
+def show_backtest_results_gui(method: str):
+    """Exibe os resultados do backtest em uma janela."""
+    summary = get_backtest_summary(method)
+    if not summary['numbers']:
+        show_message("Erro", f"Nenhum resultado de backtest encontrado para o método '{method}'.", True)
+        return
+
+    result_text = f"Backtest para o método: '{summary['method']}'\n"
+    result_text += f"Números gerados: {summary['numbers']}\n\n"
+    result_text += f"Resultado contra {summary['total_draws']} sorteios históricos:\n"
+    
+    # Calculate total matches
+    total_matches = sum(matches * count for matches, count in summary['matches'].items())
+    result_text += f"\nTotal de acertos (soma de todos os números que deram match): {total_matches}\n"
+
+    acertos_list = []
+    for i in range(6, -1, -1):
+        if i in summary['matches']:
+            acertos_list.append(f"{i} acertos: {summary['matches'][i]} vezes")
+    
+    result_text += "\n" + "\n".join(acertos_list)
+    
+    messagebox.showinfo("Resumo do Backtest", result_text)
 
 def show_help():
     help_text = """
@@ -340,6 +382,7 @@ def show_help():
     - **Exportação Avançada**: Permite exportar análises específicas (frequência, pares, trios, correlação) para CSV.
     - **Gerar e Salvar Meus Números**: Permite escolher um método de análise e salvar o conjunto de 6 números gerado para futuras comparações.
     - **Comparar Meus Números com Último Sorteio**: Compara todos os conjuntos de números salvos com o resultado do último sorteio da Mega-Sena.
+    - **Executar Backtest**: Executa uma análise retrospectiva do desempenho de uma estratégia de geração de números contra todos os sorteios históricos, salvando e exibindo um resumo dos resultados.
 
     **Repositório no GitHub**: Visite nosso repositório para mais informações, código-fonte e contribuições.
     """
@@ -350,7 +393,7 @@ def open_github():
     show_message("Informação", "Repositório do GitHub aberto no navegador.", False)
 
 def show_about():
-    about_text = "Mega-Sena Analyzer\nVersão 1.2 (Gerenciamento de Números Pessoais)\nDesenvolvido por Marcos\n\nFerramenta de análise estatística para os sorteios da Mega-Sena."
+    about_text = "Mega-Sena Analyzer\nVersão 1.3 (Backtest de Estratégias)\nDesenvolvido por Marcos\n\nFerramenta de análise estatística para os sorteios da Mega-Sena."
     messagebox.showinfo("Sobre o Mega-Sena Analyzer", about_text)
 
 def create_gui():
@@ -358,7 +401,7 @@ def create_gui():
 
     root = tk.Tk()
     root.title("Mega-Sena Analyzer")
-    root.geometry("650x850")
+    root.geometry("650x900") # Aumentado um pouco para acomodar o novo frame
     root.resizable(False, False)
     
     icon_path = get_resource_path("icon.png")
@@ -381,15 +424,14 @@ def create_gui():
     style.configure('TMenubutton', font=('Helvetica', 10))
     style.configure('TEntry', font=('Helvetica', 10))
     
-    # Define a distinct style for the user numbers buttons
-    style.configure('Accent.TButton', background='#28a745', foreground='white') # Green
+    style.configure('Accent.TButton', background='#28a745', foreground='white')
     style.map('Accent.TButton', background=[('active', '#218838')])
-
 
     menu_bar = Menu(root)
     root.config(menu=menu_bar)
 
     file_menu = Menu(menu_bar, tearoff=0)
+    file_menu.add_command(label="Atualizar Base de Dados", command=update_db_gui)
     file_menu.add_command(label="Exportar Dados Brutos (CSV/JSON)", command=lambda: export_data_gui(advanced=False))
     file_menu.add_command(label="Exportação Avançada (Análises)", command=lambda: export_data_gui(advanced=True))
     file_menu.add_separator()
@@ -397,7 +439,6 @@ def create_gui():
     menu_bar.add_cascade(label="Arquivo", menu=file_menu)
 
     help_menu = Menu(menu_bar, tearoff=0)
-    help_menu.add_command(label="Atualizar Base de Dados", command=update_db_gui)
     help_menu.add_command(label="Ajuda", command=show_help)
     help_menu.add_command(label="Repositório no GitHub", command=open_github)
     help_menu.add_separator()
@@ -412,9 +453,8 @@ def create_gui():
 
     ttk.Label(main_frame, text="Escolha uma análise ou gerencie seus números:", font=('Helvetica', 11)).pack(pady=10)
 
-    # --- Botões de Gerenciamento de Números (Novo Frame) ---
     user_numbers_frame = ttk.LabelFrame(main_frame, text=" Meus Números ", padding="15 10 15 15")
-    user_numbers_frame.pack(pady=10, padx=20, fill=tk.X) # Pack the LabelFrame
+    user_numbers_frame.pack(pady=10, padx=20, fill=tk.X)
 
     ttk.Button(user_numbers_frame, text="Gerar e Salvar Meus Números", command=generate_and_save_user_set_gui,
                style='Accent.TButton').pack(pady=5, fill=tk.X)
@@ -423,12 +463,10 @@ def create_gui():
                                 style='Accent.TButton', state=tk.DISABLED)
     compare_button.pack(pady=5, fill=tk.X)
     
-    # Ensure this is called AFTER compare_button is initialized
-    root.after(100, toggle_compare_button_state) # Call after a short delay to ensure GUI is ready
+    root.after(100, toggle_compare_button_state)
 
-    # --- Botões de Análise (Organizados em Grid) ---
     analysis_frame = ttk.LabelFrame(main_frame, text=" Análises Estatísticas ", padding="15 10 15 15")
-    analysis_frame.pack(pady=10, padx=20, fill=tk.X) # Pack the LabelFrame
+    analysis_frame.pack(pady=10, padx=20, fill=tk.X)
 
     button_configs = [
         ("Top 6 de Todos os Tempos", "alltime"),
@@ -457,6 +495,21 @@ def create_gui():
     
     analysis_frame.grid_columnconfigure(0, weight=1)
     analysis_frame.grid_columnconfigure(1, weight=1)
+
+    # --- Nova seção de Backtesting ---
+    backtest_frame = ttk.LabelFrame(main_frame, text=" Backtest de Estratégias ", padding="15 10 15 15")
+    backtest_frame.pack(pady=10, padx=20, fill=tk.X)
+
+    backtest_options_frame = ttk.Frame(backtest_frame)
+    backtest_options_frame.pack(fill=tk.X, pady=5)
+    
+    # Dropdown para selecionar o método de backtest
+    method_var = tk.StringVar(value="alltime")
+    methods = ["alltime", "lastyear", "weighted"]
+    method_menu = ttk.OptionMenu(backtest_options_frame, method_var, methods[0], *methods)
+    method_menu.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
+
+    ttk.Button(backtest_options_frame, text="Executar Backtest", command=lambda: run_backtest_gui(method_var.get()), style='Accent.TButton').pack(side=tk.LEFT, padx=5)
 
     status_bar = ttk.Label(root, text="Pronto", relief=tk.SUNKEN, anchor=tk.W, font=('Helvetica', 9), background='#f0f0f0', foreground='#555555')
     status_bar.pack(side=tk.BOTTOM, fill=tk.X)

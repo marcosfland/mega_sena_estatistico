@@ -67,6 +67,8 @@ except ImportError:
 # Configurações
 DB_PATH: str = os.getenv('MEGASENA_DB_PATH', 'megasena.db')
 API_BASE: str = 'https://loteriascaixa-api.herokuapp.com/api/megasena'
+USER_SETS_DB_PATH: str = os.getenv('MEGASENA_USER_SETS_DB_PATH', 'user_sets.db')
+BACKTEST_DB_PATH: str = os.getenv('MEGASENA_BACKTEST_DB_PATH', 'backtest.db')
 
 # Constants
 NUM_DEZENAS: int = 6
@@ -344,7 +346,7 @@ def calculate_correlation(draws: List[Draw]) -> Optional[Any]:
     """
     Calcula a matriz de correlação entre os números sorteados.
     """
-    if not pd:
+    if pd is None:
         logging.error("Pandas não está instalado. Não é possível calcular a correlação.")
         return None
 
@@ -594,9 +596,7 @@ def run_web_interface(draws: List[Draw]) -> None:
 
     @app.route("/frequencia")
     def frequencia():
-        if request is None or not hasattr(request, "args"):
-            return {"error": "Flask/Request support não disponível."}, 500
-        if request is None or not hasattr(request, "args"):
+        if request is None:
             return {"error": "Flask/Request support não disponível."}, 500
         top = int(request.args.get("top", NUM_DEZENAS))
         result = get_most_frequent(draws, top)
@@ -606,15 +606,19 @@ def run_web_interface(draws: List[Draw]) -> None:
 
     @app.route("/pares")
     def pares():
+        if request is None:
+            return {"error": "Flask/Request support não disponível."}, 500
         top = int(request.args.get("top", NUM_DEZENAS))
         result = get_most_frequent_pairs(draws, top)
         # Convert tuple keys to string for JSON serialization
         if jsonify is None:
-            return {"error": "Flask/JSON support não disponível."}, 500
+            return {"error": "Flask 'jsonify' não está disponível. Instale Flask para usar esta funcionalidade."}
         return jsonify({str(pair): freq for pair, freq in result})
 
     @app.route("/trios")
     def trios():
+        if request is None:
+            return {"error": "Flask/Request support não disponível."}, 500
         top = int(request.args.get("top", NUM_DEZENAS))
         result = get_most_frequent_triplets(draws, top)
         # Convert tuple keys to string for JSON serialization
@@ -628,18 +632,16 @@ def run_web_interface(draws: List[Draw]) -> None:
     except Exception as e:
         logging.error(f"Erro ao iniciar a interface web Flask: {e}")
 
-# --- Banco de Dados do Usuário ---
-USER_SETS_DB_PATH: str = os.getenv('MEGASENA_USER_SETS_DB_PATH', 'user_sets.db')
+# --- User Sets & Backtesting Functions ---
 
 def init_user_sets_db(path: str = USER_SETS_DB_PATH) -> None:
     """
-    Inicializa a base de dados SQLite para os conjuntos de números do usuário,
-    criando a tabela 'user_sets' se não existir.
+    Inicializa a base de dados SQLite para os conjuntos de números do usuário.
     """
     conn: Optional[sqlite3.Connection] = None
     try:
         conn = sqlite3.connect(path)
-        cursor = conn.cursor()
+        cursor: sqlite3.Cursor = conn.cursor()
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS user_sets (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -662,22 +664,25 @@ def init_user_sets_db(path: str = USER_SETS_DB_PATH) -> None:
 def save_user_set(name: str, numbers: List[int], path: str = USER_SETS_DB_PATH) -> bool:
     """
     Salva um conjunto de 6 números gerados pelo usuário na base de dados.
-    Atualiza um conjunto existente se o nome for o mesmo, caso contrário, insere um novo.
     """
     init_user_sets_db(path)
     conn: Optional[sqlite3.Connection] = None
     try:
         conn = sqlite3.connect(path)
-        cursor = conn.cursor()
+        cursor: sqlite3.Cursor = conn.cursor()
+        
         if len(numbers) != NUM_DEZENAS:
             logging.error(f"O conjunto de números deve conter {NUM_DEZENAS} dezenas.")
             return False
+
         sorted_numbers = sorted(numbers)
         date_generated = datetime.date.today().strftime('%Y-%m-%d')
+
         cursor.execute("SELECT id FROM user_sets WHERE name = ?", (name,))
         existing_id = cursor.fetchone()
+
         if existing_id:
-            cursor.execute('''
+            cursor.execute(f'''
                 UPDATE user_sets
                 SET date_generated = ?, dez1 = ?, dez2 = ?, dez3 = ?, dez4 = ?, dez5 = ?, dez6 = ?,
                     comparison_result = NULL, comparison_concurso = NULL
@@ -685,11 +690,12 @@ def save_user_set(name: str, numbers: List[int], path: str = USER_SETS_DB_PATH) 
             ''', (date_generated, *sorted_numbers, existing_id[0]))
             logging.info(f"Conjunto de números '{name}' atualizado.")
         else:
-            cursor.execute('''
+            cursor.execute(f'''
                 INSERT INTO user_sets (name, date_generated, dez1, dez2, dez3, dez4, dez5, dez6, comparison_result, comparison_concurso)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)
             ''', (name, date_generated, *sorted_numbers))
             logging.info(f"Novo conjunto de números '{name}' salvo.")
+        
         conn.commit()
         return True
     except sqlite3.IntegrityError:
@@ -711,7 +717,7 @@ def load_user_sets(path: str = USER_SETS_DB_PATH) -> List[Dict[str, Any]]:
     user_sets: List[Dict[str, Any]] = []
     try:
         conn = sqlite3.connect(path)
-        cursor = conn.cursor()
+        cursor: sqlite3.Cursor = conn.cursor()
         cursor.execute('SELECT id, name, date_generated, dez1, dez2, dez3, dez4, dez5, dez6, comparison_result, comparison_concurso FROM user_sets')
         rows = cursor.fetchall()
         for row in rows:
@@ -737,7 +743,7 @@ def delete_user_set(set_id: int, path: str = USER_SETS_DB_PATH) -> bool:
     conn: Optional[sqlite3.Connection] = None
     try:
         conn = sqlite3.connect(path)
-        cursor = conn.cursor()
+        cursor: sqlite3.Cursor = conn.cursor()
         cursor.execute("DELETE FROM user_sets WHERE id = ?", (set_id,))
         conn.commit()
         logging.info(f"Conjunto de números com ID {set_id} deletado.")
@@ -752,173 +758,194 @@ def delete_user_set(set_id: int, path: str = USER_SETS_DB_PATH) -> bool:
 def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, mega_sena_db_path: str = DB_PATH) -> List[Dict[str, Any]]:
     """
     Compara todos os conjuntos de números do usuário com o último sorteio da Mega-Sena.
-    Atualiza o banco de dados do usuário com os resultados da comparação.
-    Retorna uma lista de dicionários com os resultados da comparação.
     """
     latest_draw_data: Optional[Dict[str, Any]] = None
     try:
-        all_draws = load_all_draws(mega_sena_db_path)
-        if not all_draws:
-            logging.warning("Base de dados da Mega-Sena vazia. Não é possível comparar os conjuntos.")
-            return []
-        latest_concurso_db = get_last_db_concurso(mega_sena_db_path)
-        latest_draw_tuple = None
-        for d, nums in all_draws:
-            try:
-                latest_draw_api = fetch_lottery_data("megasena", None)
-                latest_draw_number = int(latest_draw_api['concurso'])
-                latest_draw_dezenas = sorted(list(map(int, latest_draw_api['dezenas'])))
-                latest_draw_data = {
-                    'concurso': latest_draw_number,
-                    'dezenas': latest_draw_dezenas
-                }
-                break
-            except Exception as e:
-                logging.warning(f"Não foi possível buscar o último sorteio da API para comparação: {e}. Tentando usar o último do DB.")
-                if all_draws:
-                    conn_db = sqlite3.connect(mega_sena_db_path)
-                    cursor_db = conn_db.cursor()
-                    cursor_db.execute('SELECT concurso, data, dez1, dez2, dez3, dez4, dez5, dez6 FROM megasena ORDER BY concurso DESC LIMIT 1')
-                    last_db_row = cursor_db.fetchone()
-                    conn_db.close()
-                    if last_db_row:
-                        latest_draw_data = {
-                            'concurso': last_db_row[0],
-                            'dezenas': sorted([last_db_row[i] for i in range(2, 8)])
-                        }
-                    else:
-                        return []
-                else:
-                    return []
+        latest_draw_api = fetch_lottery_data("megasena", None)
+        latest_draw_data = {
+            'concurso': int(latest_draw_api['concurso']),
+            'dezenas': sorted(list(map(int, latest_draw_api['dezenas'])))
+        }
     except Exception as e:
-        logging.error(f"Erro ao obter o último sorteio da Mega-Sena para comparação: {e}")
-        return []
+        logging.warning(f"Não foi possível buscar o último sorteio da API para comparação: {e}. Tentando usar o último do DB.")
+        try:
+            conn_db = sqlite3.connect(mega_sena_db_path)
+            cursor_db = conn_db.cursor()
+            cursor_db.execute('SELECT concurso, dez1, dez2, dez3, dez4, dez5, dez6 FROM megasena ORDER BY concurso DESC LIMIT 1')
+            last_db_row = cursor_db.fetchone()
+            conn_db.close()
+            if last_db_row:
+                latest_draw_data = {
+                    'concurso': last_db_row[0],
+                    'dezenas': sorted([last_db_row[i] for i in range(1, 7)])
+                }
+        except Exception as e:
+            logging.error(f"Erro ao obter o último sorteio do banco de dados local para comparação: {e}")
+            return []
+
     if latest_draw_data is None:
+        logging.error("Não foi possível obter o último sorteio da Mega-Sena.")
         return []
+
     latest_concurso_num = latest_draw_data['concurso']
     latest_dezenas = set(latest_draw_data['dezenas'])
+
     user_sets = load_user_sets(user_sets_path)
     comparison_results = []
+    
     conn_user = None
     try:
         conn_user = sqlite3.connect(user_sets_path)
         cursor_user = conn_user.cursor()
+
         for user_set in user_sets:
             user_set_numbers = set(user_set['numbers'])
             matches = len(user_set_numbers.intersection(latest_dezenas))
+            
             result_text = "Perdeu"
-            if matches == 6:
-                result_text = "Sena (6 acertos)!"
-            elif matches == 5:
-                result_text = "Quina (5 acertos)!"
-            elif matches == 4:
-                result_text = "Quadra (4 acertos)!"
-            elif matches == 3:
-                result_text = "Terno (3 acertos)"
-            else:
-                result_text = f"Nenhum prêmio ({matches} acertos)"
-            cursor_user.execute('''
+            if matches == 6: result_text = "Sena (6 acertos)!"
+            elif matches == 5: result_text = "Quina (5 acertos)!"
+            elif matches == 4: result_text = "Quadra (4 acertos)!"
+            elif matches >= 3: result_text = f"Terno ({matches} acertos)" # Changed to >=3 to show matches
+            else: result_text = f"Nenhum prêmio ({matches} acertos)"
+
+            cursor_user.execute(f'''
                 UPDATE user_sets
                 SET comparison_result = ?, comparison_concurso = ?
                 WHERE id = ?
             ''', (result_text, latest_concurso_num, user_set['id']))
+            
             user_set['comparison_result'] = result_text
             user_set['comparison_concurso'] = latest_concurso_num
             user_set['matches'] = matches
-            user_set['latest_draw_dezenas'] = sorted(list(latest_dezenas))
+            user_set['latest_draw_dezenas'] = latest_draw_data['dezenas']
+            
             comparison_results.append(user_set)
+        
         conn_user.commit()
+
     except sqlite3.Error as e:
         logging.error(f"Erro ao atualizar resultados de comparação na base de dados de conjuntos do usuário: {e}")
     finally:
         if conn_user:
             conn_user.close()
+    
     return comparison_results
 
-# --- Interface de Linha de Comando ---
-USER_BETS_FILE = "apostas_usuario.csv"
-
-
-def salvar_aposta_usuario(numeros: list, origem: str):
+def init_backtest_db(path: str = BACKTEST_DB_PATH) -> None:
     """
-    Salva o conjunto de 6 números escolhido pelo usuário em um arquivo separado.
+    Inicializa a base de dados para armazenar os resultados do backtest,
+    criando a tabela 'backtest_results' se não existir.
     """
-    import csv
-    from datetime import datetime
-    if len(numeros) != 6:
-        raise ValueError("A aposta deve conter exatamente 6 números.")
-    numeros_ordenados = sorted(numeros)
-    existe = os.path.exists(USER_BETS_FILE)
-    with open(USER_BETS_FILE, "a", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        if not existe:
-            writer.writerow(["data_aposta", "origem", "n1", "n2", "n3", "n4", "n5", "n6"])
-        writer.writerow([datetime.now().strftime("%Y-%m-%d %H:%M:%S"), origem] + numeros_ordenados)
-    print(f"Aposta salva em {USER_BETS_FILE}: {numeros_ordenados}")
+    conn: Optional[sqlite3.Connection] = None
+    try:
+        conn = sqlite3.connect(path)
+        cursor: sqlite3.Cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS backtest_results (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                method TEXT NOT NULL,
+                date_tested TEXT NOT NULL,
+                generated_numbers TEXT NOT NULL,
+                draw_date TEXT NOT NULL,
+                matches INTEGER NOT NULL
+            )
+        ''')
+        conn.commit()
+    except sqlite3.Error as e:
+        logging.error(f"Erro ao inicializar o banco de dados de backtest: {e}")
+    finally:
+        if conn:
+            conn.close()
 
-
-def comparar_aposta_com_ultimo_resultado():
+def run_backtest(method: str) -> bool:
     """
-    Compara a última aposta salva pelo usuário com o último resultado oficial da Mega-Sena.
+    Executa o backtest para um método de geração de números e salva os resultados.
     """
-    import csv
-    if not os.path.exists(USER_BETS_FILE):
-        print("Nenhuma aposta de usuário encontrada.")
-        return
-    # Carrega última aposta
-    with open(USER_BETS_FILE, "r", encoding="utf-8") as f:
-        reader = list(csv.reader(f))
-        if len(reader) < 2:
-            print("Nenhuma aposta registrada.")
-            return
-        header, *rows = reader
-        ultima_aposta = rows[-1]
-        aposta_nums = set(map(int, ultima_aposta[2:]))
-        origem = ultima_aposta[1]
-        data_aposta = ultima_aposta[0]
-    # Carrega último sorteio
+    init_backtest_db()
     draws = load_all_draws()
     if not draws:
-        print("Base de dados vazia. Atualize primeiro.")
-        return
-    data_ultimo, dezenas_ultimo = draws[-1]
-    acertos = aposta_nums.intersection(set(dezenas_ultimo))
-    print(f"Aposta feita em {data_aposta} (origem: {origem}): {sorted(aposta_nums)}")
-    print(f"Resultado oficial do sorteio {data_ultimo}: {sorted(dezenas_ultimo)}")
-    print(f"Números acertados: {sorted(acertos)} ({len(acertos)} acertos)")
+        logging.error('Base de dados vazia para backtest. Execute --update primeiro.')
+        return False
 
+    generated_numbers: Optional[List[int]] = []
+    if method == "alltime":
+        generated_numbers = get_most_frequent(draws)
+    elif method == "lastyear":
+        generated_numbers = get_most_frequent_period(draws)
+    elif method == "weighted":
+        generated_numbers = get_weighted(draws)
+    else:
+        logging.error(f"Método de backtest '{method}' não suportado.")
+        return False
 
-def calcular_nivel_confianca(draws: List[Draw], conjunto: List[int]) -> float:
+    if not generated_numbers:
+        logging.warning(f"Não foi possível gerar números com o método '{method}' para backtest.")
+        return False
+
+    generated_set = set(generated_numbers)
+    generated_numbers_str = ','.join(map(str, generated_numbers))
+    date_tested = datetime.date.today().strftime('%Y-%m-%d')
+
+    conn: Optional[sqlite3.Connection] = None
+    try:
+        conn = sqlite3.connect(BACKTEST_DB_PATH)
+        cursor: sqlite3.Cursor = conn.cursor()
+
+        cursor.execute("DELETE FROM backtest_results WHERE method = ?", (method,))
+        
+        for draw_date, draw_numbers in draws:
+            draw_set = set(draw_numbers)
+            matches = len(generated_set.intersection(draw_set))
+            cursor.execute('''
+                INSERT INTO backtest_results (method, date_tested, generated_numbers, draw_date, matches)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (method, date_tested, generated_numbers_str, str(draw_date), matches))
+
+        conn.commit()
+        logging.info(f"Backtest para o método '{method}' concluído com sucesso. Resultados salvos.")
+        return True
+    except sqlite3.Error as e:
+        logging.error(f"Erro ao salvar os resultados do backtest: {e}")
+        return False
+    finally:
+        if conn:
+            conn.close()
+
+def get_backtest_summary(method: str) -> Dict[str, Any]:
     """
-    Calcula um nível de confiança empírico para um conjunto de 6 números.
-    Aqui, soma as frequências relativas de cada número no histórico.
+    Carrega os resultados do backtest para um método e retorna um resumo.
     """
-    counter = Counter()
-    for _, nums in draws:
-        counter.update(nums)
-    total = sum(counter.values())
-    if total == 0:
-        return 0.0
-    prob = sum(counter[n] for n in conjunto) / total
-    # Normaliza para um valor entre 0 e 1 (ou 0% a 100%)
-    return prob
+    conn: Optional[sqlite3.Connection] = None
+    summary = {
+        'method': method,
+        'numbers': [],
+        'total_draws': 0,
+        'matches': Counter()
+    }
+    try:
+        conn = sqlite3.connect(BACKTEST_DB_PATH)
+        cursor: sqlite3.Cursor = conn.cursor()
+        
+        cursor.execute("SELECT generated_numbers, COUNT(id) FROM backtest_results WHERE method = ? GROUP BY generated_numbers LIMIT 1", (method,))
+        result = cursor.fetchone()
+        if result:
+            summary['numbers'] = [int(n) for n in result[0].split(',')]
+            summary['total_draws'] = result[1]
+        
+        cursor.execute("SELECT matches, COUNT(*) FROM backtest_results WHERE method = ? GROUP BY matches", (method,))
+        for matches, count in cursor.fetchall():
+            summary['matches'][matches] = count
+            
+    except sqlite3.Error as e:
+        logging.error(f"Erro ao carregar o resumo do backtest para o método '{method}': {e}")
+    finally:
+        if conn:
+            conn.close()
+    return summary
 
-def salvar_jogo_usuario(conjunto: List[int], modo: str, nivel_confianca: float, arquivo: str = "meus_jogos.csv"):
-    """
-    Salva o conjunto de números gerado pelo usuário em um arquivo separado.
-    """
-    import csv
-    from datetime import datetime
-    existe = os.path.exists(arquivo)
-    with open(arquivo, "a", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        if not existe:
-            writer.writerow(["data", "modo", "numeros", "nivel_confianca"])
-        writer.writerow([datetime.now().strftime("%Y-%m-%d %H:%M"), modo, "-".join(map(str, conjunto)), f"{nivel_confianca:.4f}"])
-    print(f"Jogo salvo em {arquivo}: {conjunto} (Nível de confiança: {nivel_confianca:.4f})")
-
-
-def main():
+# --- Interface de Linha de Comando ---
+def main() -> None:
     parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')
     parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')
     parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')
@@ -931,7 +958,6 @@ def main():
     parser.add_argument('--timeseries', action='store_true', help='Análise de séries temporais')
     parser.add_argument('--distribution', action='store_true', help='Análise de distribuição de probabilidade')
     parser.add_argument('--export', type=str, help='Exportar dados brutos dos sorteios (ex: --export dados.csv)')
-    # Novos argumentos
     parser.add_argument('--period', nargs=2, metavar=('INICIO', 'FIM'), help='Filtrar por período (formato: AAAA-MM-DD)')
     parser.add_argument('--pairs', action='store_true', help='Exibe pares mais frequentes')
     parser.add_argument('--triplets', action='store_true', help='Exibe trios mais frequentes')
@@ -940,164 +966,23 @@ def main():
     parser.add_argument('--schedule', action='store_true', help='Agendar atualização diária (crossplatform)')
     parser.add_argument('--external-db', type=str, help='String de conexão para banco de dados externo')
     parser.add_argument('--web', action='store_true', help='Inicia interface web Flask')
-    parser.add_argument('--salvar-aposta', choices=['frequencia', 'ponderado'], help='Gera e salva aposta baseada em frequência ou ponderação')
-    parser.add_argument('--comparar-aposta', action='store_true', help='Compara a última aposta salva com o último sorteio oficial')
-    parser.add_argument('--salvar-user-set', nargs=2, metavar=('MODO', 'NOME'), help='Salva um conjunto de 6 números gerado pelo modo (frequencia|ponderado) com o nome especificado')
-    parser.add_argument('--comparar-user-sets', action='store_true', help='Compara todos os conjuntos do usuário com o último sorteio oficial')
     args = parser.parse_args()
 
     global DB_PATH
     if args.db_path:
         DB_PATH = args.db_path
     
-    # Handle external database connection (if provided)
     if args.external_db:
-        # The 'connect_external_db' function currently just connects to SQLite.
-        # For other DBs, you'd need to adapt database functions (init_db, get_last_db_concurso, update_db, load_all_draws)
-        # to use the new connection object or a custom ORM/DBAL.
-        # For this example, we'll just log the connection attempt.
         external_conn = connect_external_db(args.external_db)
         if external_conn:
-            # If you were to fully integrate, you'd pass external_conn to relevant functions
-            # For now, just close it if it was successfully opened.
             external_conn.close()
             logging.info("Conexão com DB externo testada. As operações de DB continuarão a usar o DB local por padrão, a menos que o código seja adaptado.")
         else:
-            logging.error("Falha ao conectar ao banco de dados externo. Operações de banco de dados usarão o DB local.")
+            logging.error("Falha ao conectar ao banco de dados externo. Operaçōes de banco de dados usarão o DB local.")
 
 
-    def handle_update():
-        update_db()
-
-    def handle_analysis(draws):
-        if args.alltime:
-            result = get_most_frequent(draws)
-            print('Top 6 de todos os tempos:', result)
-        elif args.lastyear:
-            result = get_most_frequent_period(draws)
-            print('Top 6 do último ano:', result)
-        elif args.stat:
-            result = get_weighted(draws)
-            print('Conjunto estatístico ponderado:', result)
-        elif args.plot:
-            plot_frequency(draws)
-        elif args.montecarlo:
-            simulated, real = monte_carlo_simulation(draws)
-            print('Simulação de Monte Carlo - Números mais frequentes:')
-            print('Simulados (Número, Frequência):', simulated)
-            print('Reais (Número, Frequência):', real)
-        elif args.correlation:
-            correlation_matrix = calculate_correlation(draws)
-            if correlation_matrix is not None:
-                print('Matriz de Correlação:\n', correlation_matrix)
-        elif args.timeseries:
-            analyze_time_series(draws)
-        elif args.distribution:
-            chi2_p = analyze_probability_distribution(draws)
-            if chi2_p:
-                chi2, p = chi2_p
-                print(f'Teste Qui-quadrado: Chi2 = {chi2:.4f}, p-valor = {p:.4f}')
-                if p < 0.05:
-                    print("A distribuição observada é significativamente diferente de uma distribuição uniforme (com base no p-valor < 0.05).")
-                else:
-                    print("A distribuição observada não é significativamente diferente de uma distribuição uniforme (com base no p-valor >= 0.05).")
-        elif args.pairs:
-            result = get_most_frequent_pairs(draws)
-            print('Pares mais frequentes (Par, Frequência):', result)
-        elif args.triplets:
-            result = get_most_frequent_triplets(draws)
-            print('Trios mais frequentes (Trio, Frequência):', result)
-        elif args.conditional:
-            given, target = args.conditional
-            prob = conditional_probability(draws, given, target)
-            print(f'Probabilidade de {target} ser sorteado, dado que {given} foi sorteado: P({target}|{given}) = {prob:.4f}')
-
-    def handle_export_analysis(draws):
-        analysis_type, filename = args.export_analysis
-        if analysis_type == "frequencia":
-            counter_data = Counter()
-            for _, nums in draws:
-                counter_data.update(nums)
-            export_results(counter_data.most_common(), file_format=filename.split('.')[-1], filename=filename.rsplit('.', 1)[0], header=["Número", "Frequência"])
-        elif analysis_type == "pares":
-            data = get_most_frequent_pairs(draws, k=20)
-            export_results(data, file_format=filename.split('.')[-1], filename=filename.rsplit('.', 1)[0], header=["Par", "Frequência"])
-        elif analysis_type == "trios":
-            data = get_most_frequent_triplets(draws, k=20)
-            export_results(data, file_format=filename.split('.')[-1], filename=filename.rsplit('.', 1)[0], header=["Trio", "Frequência"])
-        elif analysis_type == "correlacao":
-            corr_matrix = calculate_correlation(draws)
-            if corr_matrix is not None:
-                try:
-                    sanitized_fn = sanitize_filename(filename.rsplit('.', 1)[0])
-                    corr_matrix.to_csv(f"{sanitized_fn}.csv")
-                    logging.info(f"Matriz de correlação exportada para {sanitized_fn}.csv")
-                except ValueError as e:
-                    logging.error(f"Erro ao exportar correlação: {e}")
-            else:
-                logging.warning("Não foi possível gerar a matriz de correlação para exportação.")
-        else:
-            logging.error(f"Tipo de análise para exportação '{analysis_type}' não suportado.")
-
-    def handle_schedule():
-        schedule_task_crossplatform()
-
-    def handle_web(draws):
-        run_web_interface(draws)
-
-    def handle_export(draws):
-        export_data = []
-        for d, nums in draws:
-            export_data.append([d.strftime('%Y-%m-%d')] + list(nums))
-        export_results(
-            export_data,
-            file_format=args.export.split('.')[-1],
-            filename=args.export.rsplit('.', 1)[0],
-            header=['Data'] + [f'Dezena{i+1}' for i in range(NUM_DEZENAS)]
-        )
-
-    def handle_salvar_aposta():
-        draws = load_all_draws()
-        if not draws:
-            print('Base vazia: execute com --update primeiro')
-            return
-        if args.salvar_aposta == 'frequencia':
-            numeros = get_most_frequent(draws)
-            salvar_aposta_usuario(numeros, 'frequencia')
-        elif args.salvar_aposta == 'ponderado':
-            numeros = get_weighted(draws)
-            salvar_aposta_usuario(numeros, 'ponderado')
-
-    def handle_comparar_aposta():
-        comparar_aposta_com_ultimo_resultado()
-
-    def handle_salvar_user_set():
-        modo, nome = args.salvar_user_set
-        if modo not in ['frequencia', 'ponderado']:
-            print("Modo inválido. Use 'frequencia' ou 'ponderado'.")
-            return
-        draws = load_all_draws()
-        if not draws:
-            print('Base vazia: execute com --update primeiro')
-            return
-        if modo == 'frequencia':
-            numeros = get_most_frequent(draws)
-        else:
-            numeros = get_weighted(draws)
-        ok = save_user_set(nome, numeros)
-        if ok:
-            print(f"Conjunto '{nome}' salvo com sucesso: {numeros}")
-        else:
-            print(f"Falha ao salvar conjunto '{nome}'.")
-
-    def handle_comparar_user_sets():
-        results = compare_user_sets_with_latest_draw()
-        for res in results:
-            print(f"Conjunto '{res['name']}' ({res['numbers']}) - Resultado: {res['comparison_result']} (Concurso: {res['comparison_concurso']})")
-
-    # --- Execução dos comandos ---
     if args.update:
-        handle_update()
+        update_db()
         return
 
     draws: List[Draw] = []
@@ -1124,34 +1009,92 @@ def main():
             logging.error(f"Formato de data inválido. Use AAAA-MM-DD. Erro: {e}")
             return
 
-    if args.alltime or args.lastyear or args.stat or args.plot or args.montecarlo or args.correlation or args.timeseries or args.distribution or args.pairs or args.triplets or args.conditional:
-        handle_analysis(draws)
-        return
-    if args.export_analysis:
-        handle_export_analysis(draws)
-        return
-    if args.schedule:
-        handle_schedule()
-        return
-    if args.web:
-        handle_web(draws)
-        return
-    if args.export:
-        handle_export(draws)
-        return
-    if args.salvar_aposta:
-        handle_salvar_aposta()
-        return
-    if args.comparar_aposta:
-        handle_comparar_aposta()
-        return
-    if args.salvar_user_set:
-        handle_salvar_user_set()
-        return
-    if args.comparar_user_sets:
-        handle_comparar_user_sets()
-        return
-    parser.print_help()
+
+    if args.alltime:
+        result = get_most_frequent(draws)
+        print('Top 6 de todos os tempos:', result)
+    elif args.lastyear:
+        result = get_most_frequent_period(draws)
+        print('Top 6 do último ano:', result)
+    elif args.stat:
+        result = get_weighted(draws)
+        print('Conjunto estatístico ponderado:', result)
+    elif args.plot:
+        plot_frequency(draws)
+    elif args.montecarlo:
+        simulated, real = monte_carlo_simulation(draws)
+        print('Simulação de Monte Carlo - Números mais frequentes:')
+        print('Simulados (Número, Frequência):', simulated)
+        print('Reais (Número, Frequência):', real)
+    elif args.correlation:
+        correlation_matrix = calculate_correlation(draws)
+        if correlation_matrix is not None:
+            print('Matriz de Correlação:\n', correlation_matrix)
+    elif args.timeseries:
+        analyze_time_series(draws)
+    elif args.distribution:
+        chi2_p = analyze_probability_distribution(draws)
+        if chi2_p:
+            chi2, p = chi2_p
+            print(f'Teste Qui-quadrado: Chi2 = {chi2:.4f}, p-valor = {p:.4f}')
+            if p < 0.05:
+                print("A distribuição observada é significativamente diferente de uma distribuição uniforme (com base no p-valor < 0.05).")
+            else:
+                print("A distribuição observada não é significativamente diferente de uma distribuição uniforme (com base no p-valor >= 0.05).")
+    elif args.pairs:
+        result = get_most_frequent_pairs(draws)
+        print('Pares mais frequentes (Par, Frequência):', result)
+    elif args.triplets:
+        result = get_most_frequent_triplets(draws)
+        print('Trios mais frequentes (Trio, Frequência):', result)
+    elif args.conditional:
+        given, target = args.conditional
+        prob = conditional_probability(draws, given, target)
+        print(f'Probabilidade de {target} ser sorteado, dado que {given} foi sorteado: P({target}|{given}) = {prob:.4f}')
+    elif args.export_analysis:
+        analysis_type, filename = args.export_analysis
+        if analysis_type == "frequencia":
+            counter_data = Counter()
+            for _, nums in draws:
+                counter_data.update(nums)
+            export_results(counter_data.most_common(), file_format=filename.split('.')[-1], filename=filename.rsplit('.', 1)[0], header=["Número", "Frequência"])
+        elif analysis_type == "pares":
+            data = get_most_frequent_pairs(draws, k=20)
+            export_results(data, file_format=filename.split('.')[-1], filename=filename.rsplit('.', 1)[0], header=["Par", "Frequência"])
+        elif analysis_type == "trios":
+            data = get_most_frequent_triplets(draws, k=20)
+            export_results(data, file_format=filename.split('.')[-1], filename=filename.rsplit('.', 1)[0], header=["Trio", "Frequência"])
+        elif analysis_type == "correlacao":
+            corr_matrix = calculate_correlation(draws)
+            if corr_matrix is not None:
+                try:
+                    sanitized_fn = sanitize_filename(filename.rsplit('.', 1)[0])
+                    corr_matrix.to_csv(f"{sanitized_fn}.csv")
+                    logging.info(f"Matriz de correlação exportada para {sanitized_fn}.csv")
+                except ValueError as e:
+                    logging.error(f"Erro ao exportar correlação: {e}")
+            else:
+                logging.warning("Não foi possível gerar a matriz de correlação para exportação.")
+        else:
+            logging.error(f"Tipo de análise para exportação '{analysis_type}' não suportado.")
+    elif args.schedule:
+        schedule_task_crossplatform()
+    elif args.web:
+        run_web_interface(draws)
+    elif args.export:
+        export_data = []
+        for d, nums in draws:
+            export_data.append([d.strftime('%Y-%m-%d')] + list(nums))
+        
+        export_results(
+            export_data, 
+            file_format=args.export.split('.')[-1], 
+            filename=args.export.rsplit('.', 1)[0],
+            header=['Data'] + [f'Dezena{i+1}' for i in range(NUM_DEZENAS)]
+        )
+    else:
+        parser.print_help()
 
 if __name__ == '__main__':
     main()
+

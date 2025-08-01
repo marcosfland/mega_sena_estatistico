@@ -193,7 +193,7 @@
         "documentation": {}
     },
     {
-        "label": "delete_user_set",
+        "label": "compare_user_sets_with_latest_draw",
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
         "isExtraImport": true,
@@ -201,7 +201,15 @@
         "documentation": {}
     },
     {
-        "label": "compare_user_sets_with_latest_draw",
+        "label": "run_backtest",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_backtest_summary",
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
         "isExtraImport": true,
@@ -313,6 +321,22 @@
     },
     {
         "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
         "importPath": "typing",
         "description": "typing",
         "isExtraImport": true,
@@ -498,7 +522,25 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def toggle_compare_button_state():\n    global compare_button\n    if compare_button is not None: # Check if the button has been created\n        user_sets = load_user_sets()\n        if user_sets:\n            compare_button.config(state=tk.NORMAL)\n        else:\n            compare_button.config(state=tk.DISABLED)\ndef show_help():\n    help_text = \"\"\"",
+        "peekOfCode": "def toggle_compare_button_state():\n    global compare_button\n    if compare_button is not None:\n        user_sets = load_user_sets()\n        if user_sets:\n            compare_button.config(state=tk.NORMAL)\n        else:\n            compare_button.config(state=tk.DISABLED)\ndef run_backtest_gui(method: Optional[str] = None):\n    \"\"\"Permite ao usuário escolher um método e executa o backtest.\"\"\"",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "run_backtest_gui",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def run_backtest_gui(method: Optional[str] = None):\n    \"\"\"Permite ao usuário escolher um método e executa o backtest.\"\"\"\n    def _prompt_and_run():\n        if not method:\n            selected_method = simpledialog.askstring(\"Executar Backtest\", \"Escolha o método (alltime, lastyear, weighted):\", parent=root)\n            if not selected_method:\n                return\n        else:\n            selected_method = method\n        show_message(\"Backtest\", f\"Iniciando backtest para o método '{selected_method}'...\", False)",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "show_backtest_results_gui",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def show_backtest_results_gui(method: str):\n    \"\"\"Exibe os resultados do backtest em uma janela.\"\"\"\n    summary = get_backtest_summary(method)\n    if not summary['numbers']:\n        show_message(\"Erro\", f\"Nenhum resultado de backtest encontrado para o método '{method}'.\", True)\n        return\n    result_text = f\"Backtest para o método: '{summary['method']}'\\n\"\n    result_text += f\"Números gerados: {summary['numbers']}\\n\\n\"\n    result_text += f\"Resultado contra {summary['total_draws']} sorteios históricos:\\n\"\n    # Calculate total matches",
         "detail": "gui",
         "documentation": {}
     },
@@ -516,7 +558,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def open_github():\n    webbrowser.open(\"https://github.com/marcosfland/mega_sena_estatistico\")\n    show_message(\"Informação\", \"Repositório do GitHub aberto no navegador.\", False)\ndef show_about():\n    about_text = \"Mega-Sena Analyzer\\nVersão 1.2 (Gerenciamento de Números Pessoais)\\nDesenvolvido por Marcos\\n\\nFerramenta de análise estatística para os sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre o Mega-Sena Analyzer\", about_text)\ndef create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")",
+        "peekOfCode": "def open_github():\n    webbrowser.open(\"https://github.com/marcosfland/mega_sena_estatistico\")\n    show_message(\"Informação\", \"Repositório do GitHub aberto no navegador.\", False)\ndef show_about():\n    about_text = \"Mega-Sena Analyzer\\nVersão 1.3 (Backtest de Estratégias)\\nDesenvolvido por Marcos\\n\\nFerramenta de análise estatística para os sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre o Mega-Sena Analyzer\", about_text)\ndef create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")",
         "detail": "gui",
         "documentation": {}
     },
@@ -525,7 +567,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def show_about():\n    about_text = \"Mega-Sena Analyzer\\nVersão 1.2 (Gerenciamento de Números Pessoais)\\nDesenvolvido por Marcos\\n\\nFerramenta de análise estatística para os sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre o Mega-Sena Analyzer\", about_text)\ndef create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"650x850\")\n    root.resizable(False, False)\n    icon_path = get_resource_path(\"icon.png\")",
+        "peekOfCode": "def show_about():\n    about_text = \"Mega-Sena Analyzer\\nVersão 1.3 (Backtest de Estratégias)\\nDesenvolvido por Marcos\\n\\nFerramenta de análise estatística para os sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre o Mega-Sena Analyzer\", about_text)\ndef create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"650x900\") # Aumentado um pouco para acomodar o novo frame\n    root.resizable(False, False)\n    icon_path = get_resource_path(\"icon.png\")",
         "detail": "gui",
         "documentation": {}
     },
@@ -534,7 +576,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"650x850\")\n    root.resizable(False, False)\n    icon_path = get_resource_path(\"icon.png\")\n    if os.path.exists(icon_path) and Image:\n        try:\n            icon_image = tk.PhotoImage(file=icon_path)",
+        "peekOfCode": "def create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"650x900\") # Aumentado um pouco para acomodar o novo frame\n    root.resizable(False, False)\n    icon_path = get_resource_path(\"icon.png\")\n    if os.path.exists(icon_path) and Image:\n        try:\n            icon_image = tk.PhotoImage(file=icon_path)",
         "detail": "gui",
         "documentation": {}
     },
@@ -552,7 +594,7 @@
         "kind": 5,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "root = None\nstatus_bar = None\ncompare_button = None # Declare compare_button globally here\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:",
+        "peekOfCode": "root = None\nstatus_bar = None\ncompare_button = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:",
         "detail": "gui",
         "documentation": {}
     },
@@ -561,7 +603,7 @@
         "kind": 5,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "status_bar = None\ncompare_button = None # Declare compare_button globally here\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")",
+        "peekOfCode": "status_bar = None\ncompare_button = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")",
         "detail": "gui",
         "documentation": {}
     },
@@ -570,7 +612,7 @@
         "kind": 5,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "compare_button = None # Declare compare_button globally here\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")\n        messagebox.showinfo(title, message)",
+        "peekOfCode": "compare_button = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")\n        messagebox.showinfo(title, message)",
         "detail": "gui",
         "documentation": {}
     },
@@ -678,7 +720,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def calculate_correlation(draws: List[Draw]) -> Optional[Any]:\n    \"\"\"\n    Calcula a matriz de correlação entre os números sorteados.\n    \"\"\"\n    if not pd:\n        logging.error(\"Pandas não está instalado. Não é possível calcular a correlação.\")\n        return None\n    data: List[List[int]] = []\n    for _, nums in draws:\n        # Create a binary array for each draw: 1 if number is present, 0 otherwise",
+        "peekOfCode": "def calculate_correlation(draws: List[Draw]) -> Optional[Any]:\n    \"\"\"\n    Calcula a matriz de correlação entre os números sorteados.\n    \"\"\"\n    if pd is None:\n        logging.error(\"Pandas não está instalado. Não é possível calcular a correlação.\")\n        return None\n    data: List[List[int]] = []\n    for _, nums in draws:\n        # Create a binary array for each draw: 1 if number is present, 0 otherwise",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -786,7 +828,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def init_user_sets_db(path: str = USER_SETS_DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite para os conjuntos de números do usuário,\n    criando a tabela 'user_sets' se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor = conn.cursor()\n        cursor.execute('''",
+        "peekOfCode": "def init_user_sets_db(path: str = USER_SETS_DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite para os conjuntos de números do usuário.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('''\n            CREATE TABLE IF NOT EXISTS user_sets (",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -795,7 +837,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def save_user_set(name: str, numbers: List[int], path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Salva um conjunto de 6 números gerados pelo usuário na base de dados.\n    Atualiza um conjunto existente se o nome for o mesmo, caso contrário, insere um novo.\n    \"\"\"\n    init_user_sets_db(path)\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor = conn.cursor()",
+        "peekOfCode": "def save_user_set(name: str, numbers: List[int], path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Salva um conjunto de 6 números gerados pelo usuário na base de dados.\n    \"\"\"\n    init_user_sets_db(path)\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        if len(numbers) != NUM_DEZENAS:",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -804,7 +846,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def load_user_sets(path: str = USER_SETS_DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Carrega todos os conjuntos de números salvos pelo usuário.\n    \"\"\"\n    init_user_sets_db(path)\n    conn: Optional[sqlite3.Connection] = None\n    user_sets: List[Dict[str, Any]] = []\n    try:\n        conn = sqlite3.connect(path)\n        cursor = conn.cursor()",
+        "peekOfCode": "def load_user_sets(path: str = USER_SETS_DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Carrega todos os conjuntos de números salvos pelo usuário.\n    \"\"\"\n    init_user_sets_db(path)\n    conn: Optional[sqlite3.Connection] = None\n    user_sets: List[Dict[str, Any]] = []\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -813,7 +855,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def delete_user_set(set_id: int, path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Deleta um conjunto de números do usuário pelo ID.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor = conn.cursor()\n        cursor.execute(\"DELETE FROM user_sets WHERE id = ?\", (set_id,))\n        conn.commit()",
+        "peekOfCode": "def delete_user_set(set_id: int, path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Deleta um conjunto de números do usuário pelo ID.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute(\"DELETE FROM user_sets WHERE id = ?\", (set_id,))\n        conn.commit()",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -822,43 +864,34 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, mega_sena_db_path: str = DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Compara todos os conjuntos de números do usuário com o último sorteio da Mega-Sena.\n    Atualiza o banco de dados do usuário com os resultados da comparação.\n    Retorna uma lista de dicionários com os resultados da comparação.\n    \"\"\"\n    latest_draw_data: Optional[Dict[str, Any]] = None\n    try:\n        all_draws = load_all_draws(mega_sena_db_path)\n        if not all_draws:",
+        "peekOfCode": "def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, mega_sena_db_path: str = DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Compara todos os conjuntos de números do usuário com o último sorteio da Mega-Sena.\n    \"\"\"\n    latest_draw_data: Optional[Dict[str, Any]] = None\n    try:\n        latest_draw_api = fetch_lottery_data(\"megasena\", None)\n        latest_draw_data = {\n            'concurso': int(latest_draw_api['concurso']),\n            'dezenas': sorted(list(map(int, latest_draw_api['dezenas'])))",
         "detail": "mega_sena_app",
         "documentation": {}
     },
     {
-        "label": "salvar_aposta_usuario",
+        "label": "init_backtest_db",
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def salvar_aposta_usuario(numeros: list, origem: str):\n    \"\"\"\n    Salva o conjunto de 6 números escolhido pelo usuário em um arquivo separado.\n    \"\"\"\n    import csv\n    from datetime import datetime\n    if len(numeros) != 6:\n        raise ValueError(\"A aposta deve conter exatamente 6 números.\")\n    numeros_ordenados = sorted(numeros)\n    existe = os.path.exists(USER_BETS_FILE)",
+        "peekOfCode": "def init_backtest_db(path: str = BACKTEST_DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados para armazenar os resultados do backtest,\n    criando a tabela 'backtest_results' se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('''",
         "detail": "mega_sena_app",
         "documentation": {}
     },
     {
-        "label": "comparar_aposta_com_ultimo_resultado",
+        "label": "run_backtest",
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def comparar_aposta_com_ultimo_resultado():\n    \"\"\"\n    Compara a última aposta salva pelo usuário com o último resultado oficial da Mega-Sena.\n    \"\"\"\n    import csv\n    if not os.path.exists(USER_BETS_FILE):\n        print(\"Nenhuma aposta de usuário encontrada.\")\n        return\n    # Carrega última aposta\n    with open(USER_BETS_FILE, \"r\", encoding=\"utf-8\") as f:",
+        "peekOfCode": "def run_backtest(method: str) -> bool:\n    \"\"\"\n    Executa o backtest para um método de geração de números e salva os resultados.\n    \"\"\"\n    init_backtest_db()\n    draws = load_all_draws()\n    if not draws:\n        logging.error('Base de dados vazia para backtest. Execute --update primeiro.')\n        return False\n    generated_numbers: Optional[List[int]] = []",
         "detail": "mega_sena_app",
         "documentation": {}
     },
     {
-        "label": "calcular_nivel_confianca",
+        "label": "get_backtest_summary",
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def calcular_nivel_confianca(draws: List[Draw], conjunto: List[int]) -> float:\n    \"\"\"\n    Calcula um nível de confiança empírico para um conjunto de 6 números.\n    Aqui, soma as frequências relativas de cada número no histórico.\n    \"\"\"\n    counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    total = sum(counter.values())\n    if total == 0:",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "salvar_jogo_usuario",
-        "kind": 2,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "def salvar_jogo_usuario(conjunto: List[int], modo: str, nivel_confianca: float, arquivo: str = \"meus_jogos.csv\"):\n    \"\"\"\n    Salva o conjunto de números gerado pelo usuário em um arquivo separado.\n    \"\"\"\n    import csv\n    from datetime import datetime\n    existe = os.path.exists(arquivo)\n    with open(arquivo, \"a\", newline=\"\", encoding=\"utf-8\") as f:\n        writer = csv.writer(f)\n        if not existe:",
+        "peekOfCode": "def get_backtest_summary(method: str) -> Dict[str, Any]:\n    \"\"\"\n    Carrega os resultados do backtest para um método e retorna um resumo.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    summary = {\n        'method': method,\n        'numbers': [],\n        'total_draws': 0,\n        'matches': Counter()",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -867,7 +900,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')\n    parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')\n    parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')\n    parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')\n    parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')\n    parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')\n    parser.add_argument('--plot', action='store_true', help='Visualizar frequência dos números')\n    parser.add_argument('--montecarlo', action='store_true', help='Simulação de Monte Carlo')\n    parser.add_argument('--correlation', action='store_true', help='Calcular correlação entre números')",
+        "peekOfCode": "def main() -> None:\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')\n    parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')\n    parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')\n    parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')\n    parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')\n    parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')\n    parser.add_argument('--plot', action='store_true', help='Visualizar frequência dos números')\n    parser.add_argument('--montecarlo', action='store_true', help='Simulação de Monte Carlo')\n    parser.add_argument('--correlation', action='store_true', help='Calcular correlação entre números')",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -877,15 +910,6 @@
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
         "peekOfCode": "Draw = Tuple[datetime.date, Tuple[int, int, int, int, int, int]]\n# --- Banco de Dados ---\ndef init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "USER_BETS_FILE",
-        "kind": 5,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "USER_BETS_FILE = \"apostas_usuario.csv\"\ndef salvar_aposta_usuario(numeros: list, origem: str):\n    \"\"\"\n    Salva o conjunto de 6 números escolhido pelo usuário em um arquivo separado.\n    \"\"\"\n    import csv\n    from datetime import datetime\n    if len(numeros) != 6:\n        raise ValueError(\"A aposta deve conter exatamente 6 números.\")\n    numeros_ordenados = sorted(numeros)",
         "detail": "mega_sena_app",
         "documentation": {}
     }
