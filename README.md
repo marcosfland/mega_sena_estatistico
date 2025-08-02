@@ -431,7 +431,7 @@ Abra uma **Issue** incluindo:
 
 - **GitHub Issues**: [Reportar problemas](https://github.com/marcosfland/mega_sena_estatistico/issues)
 - **Discussões**: [GitHub Discussions](https://github.com/marcosfland/mega_sena_estatistico/discussions)
-- **Email**: [Entre em contato](mailto:seu-email@exemplo.com)
+- **Email**: [Entre em contato](mailto:marcos.land@unoesc.edu.br)
 
 ## 📜 Licença
 
