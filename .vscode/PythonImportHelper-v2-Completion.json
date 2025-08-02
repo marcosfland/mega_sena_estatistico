@@ -1,5 +1,48 @@
 [
     {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
+        "label": "setup",
+        "importPath": "cx_Freeze",
+        "description": "cx_Freeze",
+        "isExtraImport": true,
+        "detail": "cx_Freeze",
+        "documentation": {}
+    },
+    {
+        "label": "Executable",
+        "importPath": "cx_Freeze",
+        "description": "cx_Freeze",
+        "isExtraImport": true,
+        "detail": "cx_Freeze",
+        "documentation": {}
+    },
+    {
         "label": "tkinter",
         "kind": 6,
         "isExtraImport": true,
@@ -258,15 +301,6 @@
         "documentation": {}
     },
     {
-        "label": "os",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "os",
-        "description": "os",
-        "detail": "os",
-        "documentation": {}
-    },
-    {
         "label": "datetime",
         "kind": 6,
         "isExtraImport": true,
@@ -285,30 +319,12 @@
         "documentation": {}
     },
     {
-        "label": "subprocess",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "subprocess",
-        "description": "subprocess",
-        "detail": "subprocess",
-        "documentation": {}
-    },
-    {
         "label": "threading",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "threading",
         "description": "threading",
         "detail": "threading",
-        "documentation": {}
-    },
-    {
-        "label": "sys",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "sys",
-        "description": "sys",
-        "detail": "sys",
         "documentation": {}
     },
     {
@@ -443,6 +459,69 @@
         "description": "itertools",
         "isExtraImport": true,
         "detail": "itertools",
+        "documentation": {}
+    },
+    {
+        "label": "get_git_version",
+        "kind": 2,
+        "importPath": "build_executable",
+        "description": "build_executable",
+        "peekOfCode": "def get_git_version():\n    \"\"\"Obtém versão do Git se disponível\"\"\"\n    try:\n        # Tenta obter a tag mais recente\n        result = subprocess.run(['git', 'describe', '--tags', '--abbrev=0'], \n                              capture_output=True, text=True, cwd=os.path.dirname(__file__))\n        if result.returncode == 0:\n            return result.stdout.strip()\n    except:\n        pass",
+        "detail": "build_executable",
+        "documentation": {}
+    },
+    {
+        "label": "get_build_info",
+        "kind": 2,
+        "importPath": "build_executable",
+        "description": "build_executable",
+        "peekOfCode": "def get_build_info():\n    \"\"\"Obtém informações de build\"\"\"\n    try:\n        # Hash do commit atual\n        result = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], \n                              capture_output=True, text=True)\n        if result.returncode == 0:\n            commit_hash = result.stdout.strip()\n            return f\"build-{commit_hash}\"\n    except:",
+        "detail": "build_executable",
+        "documentation": {}
+    },
+    {
+        "label": "VERSION",
+        "kind": 5,
+        "importPath": "build_executable",
+        "description": "build_executable",
+        "peekOfCode": "VERSION = get_git_version()\nBUILD_INFO = get_build_info()\nFULL_VERSION = f\"{VERSION}-{BUILD_INFO}\"\nprint(f\"🔨 Versão detectada: {FULL_VERSION}\")\n# Nome do arquivo principal do seu projeto\nmain_script = \"main.py\"\n# Dependências adicionais (se houver)\nbuild_exe_options = {\n    \"packages\": [],\n    \"excludes\": [],",
+        "detail": "build_executable",
+        "documentation": {}
+    },
+    {
+        "label": "BUILD_INFO",
+        "kind": 5,
+        "importPath": "build_executable",
+        "description": "build_executable",
+        "peekOfCode": "BUILD_INFO = get_build_info()\nFULL_VERSION = f\"{VERSION}-{BUILD_INFO}\"\nprint(f\"🔨 Versão detectada: {FULL_VERSION}\")\n# Nome do arquivo principal do seu projeto\nmain_script = \"main.py\"\n# Dependências adicionais (se houver)\nbuild_exe_options = {\n    \"packages\": [],\n    \"excludes\": [],\n    \"include_files\": []",
+        "detail": "build_executable",
+        "documentation": {}
+    },
+    {
+        "label": "FULL_VERSION",
+        "kind": 5,
+        "importPath": "build_executable",
+        "description": "build_executable",
+        "peekOfCode": "FULL_VERSION = f\"{VERSION}-{BUILD_INFO}\"\nprint(f\"🔨 Versão detectada: {FULL_VERSION}\")\n# Nome do arquivo principal do seu projeto\nmain_script = \"main.py\"\n# Dependências adicionais (se houver)\nbuild_exe_options = {\n    \"packages\": [],\n    \"excludes\": [],\n    \"include_files\": []\n}",
+        "detail": "build_executable",
+        "documentation": {}
+    },
+    {
+        "label": "main_script",
+        "kind": 5,
+        "importPath": "build_executable",
+        "description": "build_executable",
+        "peekOfCode": "main_script = \"main.py\"\n# Dependências adicionais (se houver)\nbuild_exe_options = {\n    \"packages\": [],\n    \"excludes\": [],\n    \"include_files\": []\n}\n# Informações do executável\nsetup(\n    name=\"MegaSenaEstatistico\",",
+        "detail": "build_executable",
+        "documentation": {}
+    },
+    {
+        "label": "build_exe_options",
+        "kind": 5,
+        "importPath": "build_executable",
+        "description": "build_executable",
+        "peekOfCode": "build_exe_options = {\n    \"packages\": [],\n    \"excludes\": [],\n    \"include_files\": []\n}\n# Informações do executável\nsetup(\n    name=\"MegaSenaEstatistico\",\n    version=\"1.0\",\n    description=\"Ferramenta estatística para Mega Sena\",",
+        "detail": "build_executable",
         "documentation": {}
     },
     {
