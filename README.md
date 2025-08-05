@@ -1,4 +1,4 @@
-# 🎯 Mega-Sena Analyzer
+# Mega-Sena Analyzer
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -6,7 +6,7 @@
 
 Um analisador estatístico completo para a Mega-Sena que utiliza dados históricos e técnicas estatísticas avançadas para análise de padrões, geração de apostas inteligentes e backtesting de estratégias. Oferece tanto interface de linha de comando (CLI) quanto interface gráfica (GUI) para máxima flexibilidade.
 
-## 🚀 Características Principais
+## Características Principais
 
 - **📊 Análises Estatísticas Avançadas**: Frequência, correlação, séries temporais, Monte Carlo
 - **🎲 Geração Inteligente de Apostas**: Baseada em frequência histórica e ponderação estatística
@@ -17,7 +17,7 @@ Um analisador estatístico completo para a Mega-Sena que utiliza dados históric
 - **📤 Exportação Flexível**: CSV, JSON com múltiplos formatos de análise
 - **🔄 Atualização Automática**: Sincronização com API oficial da Caixa
 
-## 📋 Índice
+## Índice
 
 - [Instalação](#-instalação)
 - [Uso Rápido](#-uso-rápido)
@@ -57,7 +57,7 @@ flask>=2.0.0         # Interface web
 Pillow>=8.0.0        # Processamento de imagens (opcional)
 ```
 
-## ⚡ Uso Rápido
+## Uso Rápido
 
 ### Primeira Execução
 ```bash
@@ -71,7 +71,7 @@ python gui.py
 python mega_sena_app.py --alltime
 ```
 
-## 🖥 Interface Gráfica (GUI)
+## Interface Gráfica (GUI)
 
 A interface gráfica oferece acesso completo a todas as funcionalidades através de uma interface amigável.
 
@@ -82,11 +82,11 @@ python gui.py
 
 ### Principais Seções da GUI
 
-#### 🎯 Meus Números
+#### Meus Números
 - **Gerar e Salvar**: Crie conjuntos baseados em diferentes estratégias
 - **Comparar com Último Sorteio**: Verifique automaticamente seus acertos
 
-#### 📊 Análises Estatísticas
+#### Análises Estatísticas
 - Top 6 de todos os tempos
 - Top 6 do último ano
 - Conjunto estatístico ponderado
@@ -99,16 +99,16 @@ python gui.py
 - Probabilidade condicional
 - Análise por período
 
-#### 🧪 Backtest de Estratégias
+#### Backtest de Estratégias
 - Teste retrospectivo de estratégias
 - Análise de desempenho histórico
 - Relatórios detalhados de acertos
 
-#### 📤 Exportação
+#### Exportação
 - Dados brutos (CSV/JSON)
 - Análises avançadas (frequência, pares, trios, correlação)
 
-## 💻 Interface de Linha de Comando (CLI)
+## Interface de Linha de Comando (CLI)
 
 ### Comandos Básicos
 
@@ -186,9 +186,9 @@ python mega_sena_app.py --web
 python mega_sena_app.py --schedule
 ```
 
-## 🔍 Funcionalidades Detalhadas
+## Funcionalidades Detalhadas
 
-### 📊 Análises Estatísticas
+### Análises Estatísticas
 
 #### Análise de Frequência
 - **Top 6 Histórico**: Números mais sorteados de todos os tempos
@@ -206,7 +206,7 @@ python mega_sena_app.py --schedule
 - **Trios Frequentes**: Combinações de 3 números mais comuns
 - **Probabilidade Condicional**: P(número B | número A sorteado)
 
-### 🎲 Geração de Apostas
+### Geração de Apostas
 
 #### Estratégias Disponíveis
 1. **Frequência Histórica**: Baseada nos números mais sorteados
@@ -217,7 +217,7 @@ python mega_sena_app.py --schedule
 - Cálculo automático baseado na frequência histórica
 - Normalização para escala 0-1 (0% a 100%)
 
-### 🧪 Sistema de Backtesting
+### Sistema de Backtesting
 
 O sistema de backtesting permite testar estratégias contra dados históricos:
 
@@ -232,7 +232,7 @@ O sistema de backtesting permite testar estratégias contra dados históricos:
 - Taxa de sucesso por categoria de prêmio
 - Análise de desempenho da estratégia
 
-### 💾 Gerenciamento de Dados
+### Gerenciamento de Dados
 
 #### Base de Dados Local
 - **SQLite**: Armazenamento eficiente dos sorteios históricos
@@ -244,7 +244,7 @@ O sistema de backtesting permite testar estratégias contra dados históricos:
 - **Comparação Automática**: Verificação contra novos sorteios
 - **Histórico de Resultados**: Acompanhe o desempenho dos seus jogos
 
-### 📤 Sistema de Exportação
+### Sistema de Exportação
 
 #### Formatos Suportados
 - **CSV**: Compatível com Excel, Google Sheets
@@ -257,7 +257,7 @@ O sistema de backtesting permite testar estratégias contra dados históricos:
 4. **Trios Frequentes**: Top 20 combinações de 3 números
 5. **Matriz de Correlação**: Correlação completa entre todos os números
 
-## 🎯 Exemplos de Uso
+## Exemplos de Uso
 
 ### Cenário 1: Análise Rápida para Nova Aposta
 ```bash
@@ -298,7 +298,7 @@ python gui.py
 python mega_sena_app.py --comparar-user-sets
 ```
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 mega_sena_estatistico/
@@ -324,7 +324,7 @@ mega_sena_estatistico/
 - **gui_actions.log**: Log de ações da interface gráfica
 - **icon.png**: Ícone da aplicação (se Pillow estiver instalado)
 
-## 🔧 Configuração Avançada
+## Configuração Avançada
 
 ### Variáveis de Ambiente
 ```bash
@@ -340,7 +340,7 @@ export MEGASENA_BACKTEST_DB_PATH="/caminho/personalizado/backtest.db"
 python mega_sena_app.py --external-db "/caminho/para/banco_externo.db"
 ```
 
-## 🧪 Executável Standalone
+## Executável Standalone
 
 O projeto inclui suporte para geração de executáveis usando PyInstaller:
 
@@ -354,7 +354,7 @@ pyinstaller --onedir --windowed --add-data "icon.png;." --add-data "megasena.db;
 # O executável estará em dist/gui/
 ```
 
-## 📊 Metodologia Estatística
+## Metodologia Estatística
 
 ### Algoritmos Implementados
 
@@ -367,7 +367,7 @@ pyinstaller --onedir --windowed --add-data "icon.png;." --add-data "megasena.db;
 
 ### Limitações e Disclaimers
 
-⚠️ **IMPORTANTE**: Este software é desenvolvido para fins educacionais e de análise estatística. 
+**IMPORTANTE**: Este software é desenvolvido para fins educacionais e de análise estatística. 
 
 - A Mega-Sena é um jogo de azar com sorteios aleatórios
 - Análises passadas **não garantem** resultados futuros
@@ -375,7 +375,7 @@ pyinstaller --onedir --windowed --add-data "icon.png;." --add-data "megasena.db;
 - Use com responsabilidade e apenas com valores que pode perder
 - O autor não se responsabiliza por perdas financeiras
 
-## 🤝 Contribuição
+## Contribuição
 
 Contribuições são bem-vindas! Para contribuir:
 
@@ -401,7 +401,7 @@ Abra uma **Issue** incluindo:
 - Passos para reproduzir
 - Logs de erro (se houver)
 
-## 📝 Changelog
+## Changelog
 
 ### v1.3.0 (Atual)
 - ✅ Sistema de backtesting completo
@@ -427,19 +427,19 @@ Abra uma **Issue** incluindo:
 - ✅ Análises de frequência
 - ✅ Integração com API da Caixa
 
-## 📞 Suporte
+## Suporte
 
 - **GitHub Issues**: [Reportar problemas](https://github.com/marcosfland/mega_sena_estatistico/issues)
 - **Discussões**: [GitHub Discussions](https://github.com/marcosfland/mega_sena_estatistico/discussions)
 - **Email**: [Entre em contato](mailto:marcos.land@unoesc.edu.br)
 
-## 📜 Licença
+## Licença
 
 Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
 
 ---
 
-### ⭐ Se este projeto foi útil para você, considere dar uma estrela no GitHub!
+### Se este projeto foi útil para você, considere dar uma estrela no GitHub!
 
 **Desenvolvido com ❤️ por [Marcos](https://github.com/marcosfland)**
 
