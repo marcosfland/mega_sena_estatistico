@@ -1,12 +1,12 @@
-# 🎯 Mega-Sena Analyzer v1.3.0 - "Backtest & Intelligence"
+# Mega-Sena Analyzer v1.3.0 - "Backtest & Intelligence"
 
 **Data de Lançamento:** 1º de Agosto de 2025
 
 ---
 
-## 🚀 Principais Novidades
+## Principais Novidades
 
-### 🧪 **Sistema de Backtesting Completo**
+### **Sistema de Backtesting Completo**
 - **Teste Retrospectivo de Estratégias**: Execute análises históricas de suas estratégias contra todos os sorteios passados
 - **Três Métodos de Backtesting**: 
   - `alltime`: Baseado em frequência histórica total
@@ -15,20 +15,20 @@
 - **Relatórios Detalhados**: Visualize distribuição de acertos (0-6 números) e taxa de sucesso
 - **Interface Integrada**: Backtesting disponível tanto na GUI quanto na CLI
 
-### 💾 **Gerenciamento Inteligente de Apostas**
+### **Gerenciamento Inteligente de Apostas**
 - **Conjuntos Personalizados**: Salve e gerencie seus números favoritos com nomes customizados
 - **Comparação Automática**: Verifique automaticamente seus acertos contra o último sorteio oficial
 - **Histórico de Desempenho**: Acompanhe o desempenho dos seus conjuntos ao longo do tempo
 - **Base de Dados Dedicada**: Sistema SQLite separado para seus dados pessoais
 
-### 📊 **Análises Estatísticas Avançadas**
+### **Análises Estatísticas Avançadas**
 - **Análise de Correlação**: Matriz completa de correlação entre números (identifica padrões de co-ocorrência)
 - **Séries Temporais**: Visualização da distribuição temporal dos sorteios
 - **Distribuição de Probabilidade**: Teste Qui-quadrado para verificar uniformidade
 - **Pares e Trios Frequentes**: Identificação das combinações mais comuns
 - **Probabilidade Condicional**: Cálculo de P(número B | número A sorteado)
 
-### 🌐 **Interface Web Flask**
+### **Interface Web Flask**
 - **API RESTful**: Endpoints para análises programáticas
 - **Acesso Remoto**: Use o analisador via navegador web
 - **Endpoints Disponíveis**:
@@ -38,7 +38,7 @@
 
 ---
 
-## 🎨 Interface Gráfica Aprimorada
+## Interface Gráfica Aprimorada
 
 ### **Nova Organização Visual**
 - **Seção "Meus Números"**: Área dedicada para gerenciamento de apostas pessoais
@@ -54,7 +54,7 @@
 
 ---
 
-## 📤 Sistema de Exportação Flexível
+## Sistema de Exportação Flexível
 
 ### **Múltiplos Formatos**
 - **CSV**: Compatível com Excel, Google Sheets, Power BI
@@ -69,7 +69,7 @@
 
 ---
 
-## 🔄 Automação e Agendamento
+## Automação e Agendamento
 
 ### **Atualização Automática**
 - **Agendamento Multiplataforma**: 
@@ -85,7 +85,7 @@
 
 ---
 
-## 💻 Melhorias na Interface CLI
+## Melhorias na Interface CLI
 
 ### **Novos Comandos**
 ```bash
@@ -135,7 +135,7 @@
 
 ---
 
-## 📋 Lista Completa de Funcionalidades
+## Lista Completa de Funcionalidades
 
 ### **Análises Disponíveis**
 1. ✅ Top 6 de todos os tempos
@@ -167,7 +167,7 @@
 
 ---
 
-## 🚀 Como Atualizar
+## Como Atualizar
 
 ### **Para Usuários Existentes**
 ```bash
@@ -202,7 +202,7 @@ python gui.py
 
 ---
 
-## 🎯 Exemplos da Nova Versão
+## Exemplos da Nova Versão
 
 ### **Exemplo 1: Backtesting de Estratégia**
 ```bash
@@ -240,7 +240,7 @@ python mega_sena_app.py --period 2023-01-01 2023-12-31 --alltime
 
 ---
 
-## 📊 Estatísticas da Versão
+## Estatísticas da Versão
 
 - **Linhas de Código**: ~1.500+ linhas
 - **Funcionalidades**: 25+ análises diferentes
@@ -251,7 +251,7 @@ python mega_sena_app.py --period 2023-01-01 2023-12-31 --alltime
 
 ---
 
-## 🐛 Correções de Bugs
+## Correções de Bugs
 
 - ✅ Corrigidos erros de tipagem com pandas e Flask
 - ✅ Melhorado tratamento de exceções na GUI
@@ -261,7 +261,7 @@ python mega_sena_app.py --period 2023-01-01 2023-12-31 --alltime
 
 ---
 
-## ⚠️ Notas Importantes
+## Notas Importantes
 
 ### **Compatibilidade**
 - Esta versão mantém compatibilidade com bases de dados das versões anteriores
@@ -280,7 +280,7 @@ python mega_sena_app.py --period 2023-01-01 2023-12-31 --alltime
 
 ---
 
-## 🔮 Próximas Versões (Roadmap)
+## Próximas Versões (Roadmap)
 
 ### **v1.4.0 - "Machine Learning"**
 - Algoritmos de ML para predição
@@ -299,7 +299,7 @@ python mega_sena_app.py --period 2023-01-01 2023-12-31 --alltime
 
 ---
 
-## 📞 Suporte e Feedback
+## Suporte e Feedback
 
 - **GitHub Issues**: [Reportar problemas](https://github.com/marcosfland/mega_sena_estatistico/issues)
 - **Discussões**: [GitHub Discussions](https://github.com/marcosfland/mega_sena_estatistico/discussions)
@@ -308,28 +308,28 @@ python mega_sena_app.py --period 2023-01-01 2023-12-31 --alltime
 
 ---
 
-## 🆕 **Atualização v1.3.1** - Melhorias de Performance e Novas Análises
+## **Atualização v1.3.1** - Melhorias de Performance e Novas Análises
 
-### **🚀 Otimizações Implementadas:**
+### ** Otimizações Implementadas:**
 - **Sistema de Cache Inteligente**: Carregamento 50% mais rápido dos dados
 - **Índices no Banco**: Consultas SQL otimizadas
 - **Logs Rotativos**: Sistema de logs profissional com múltiplos níveis
 - **Configuração Centralizada**: Arquivo `config.py` para personalização
 
-### **📊 Novas Análises:**
+### ** Novas Análises:**
 - **Predição Inteligente**: Scoring avançado baseado em múltiplos fatores
 - **Análise de Gaps**: Intervalos entre aparições dos números
 - **Padrões Cíclicos**: Distribuição por dias da semana e meses
 - **Sequências Numéricas**: Detecta números consecutivos e progressões
 
-### **🎨 Melhorias na Interface:**
+### ** Melhorias na Interface:**
 - **GUI Expandida**: Layout 3 colunas para melhor organização
 - **Novos Comandos CLI**: `--prediction`, `--gaps`, `--cycles`, `--sequences`
 - **Sistema de Testes**: Testes unitários para validação
 
 ---
 
-### 🎉 **Obrigado por usar o Mega-Sena Analyzer!**
+### **Obrigado por usar o Mega-Sena Analyzer!**
 
 **Esta versão representa um marco significativo no desenvolvimento do projeto, trazendo funcionalidades profissionais de análise estatística e backtesting que elevam a ferramenta a um novo patamar de sofisticação e utilidade.**
 
