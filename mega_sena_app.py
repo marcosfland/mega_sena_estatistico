@@ -31,9 +31,30 @@ import json
 import csv
 import subprocess
 import re
+import functools
+import hashlib
 from collections import Counter
 from itertools import combinations
 from typing import List, Tuple, Dict, Any, Optional
+
+# Importar sistema de configuração e logs
+CONFIG_AVAILABLE = False
+get_config = None
+get_db_path = None
+get_monte_carlo_simulations = None
+is_cache_enabled = None
+setup_enhanced_logging = None
+get_logger = None
+log_performance = None
+log_analysis_result = None
+
+try:
+    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled
+    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result
+    CONFIG_AVAILABLE = True
+except ImportError:
+    CONFIG_AVAILABLE = False
+    logging.warning("Sistema de configuração não disponível. Usando valores padrão.")
 
 # Conditional imports for external libraries
 # These are placed here to indicate they are optional if only core functionality is used.
@@ -65,7 +86,22 @@ except ImportError:
 
 
 # Configurações
-DB_PATH: str = os.getenv('MEGASENA_DB_PATH', 'megasena.db')
+if CONFIG_AVAILABLE and get_config and get_db_path:
+    try:
+        config = get_config()
+        DB_PATH: str = os.getenv('MEGASENA_DB_PATH', get_db_path())
+    except (NameError, AttributeError) as e:
+        logging.warning(f"Erro ao obter configuração: {e}. Usando valores padrão.")
+        config = None
+        DB_PATH: str = os.getenv('MEGASENA_DB_PATH', 'megasena.db')
+    except Exception as e:
+        logging.warning(f"Erro ao obter configuração: {e}. Usando valores padrão.")
+        config = None
+        DB_PATH: str = os.getenv('MEGASENA_DB_PATH', 'megasena.db')
+else:
+    config = None
+    DB_PATH: str = os.getenv('MEGASENA_DB_PATH', 'megasena.db')
+
 API_BASE: str = 'https://loteriascaixa-api.herokuapp.com/api/megasena'
 USER_SETS_DB_PATH: str = os.getenv('MEGASENA_USER_SETS_DB_PATH', 'user_sets.db')
 BACKTEST_DB_PATH: str = os.getenv('MEGASENA_BACKTEST_DB_PATH', 'backtest.db')
@@ -75,16 +111,43 @@ NUM_DEZENAS: int = 6
 MAX_NUM_MEGA_SENA: int = 60
 
 # Configuração de logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+if CONFIG_AVAILABLE and setup_enhanced_logging:
+    try:
+        logger = setup_enhanced_logging()
+    except (NameError, AttributeError):
+        logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+        logger = logging.getLogger('mega_sena')
+else:
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logger = logging.getLogger('mega_sena')
 
 # Type alias for better readability
 Draw = Tuple[datetime.date, Tuple[int, int, int, int, int, int]]
+
+# Cache para melhorar performance
+_draws_cache = None
+_cache_hash = None
+
+def get_db_hash(path: str = DB_PATH) -> str:
+    """Gera hash do arquivo de banco para invalidar cache quando necessário"""
+    try:
+        with open(path, 'rb') as f:
+            return hashlib.md5(f.read()).hexdigest()
+    except (FileNotFoundError, IOError):
+        return "no_db"
+
+def invalidate_cache():
+    """Invalida o cache de draws"""
+    global _draws_cache, _cache_hash
+    _draws_cache = None
+    _cache_hash = None
 
 
 # --- Banco de Dados ---
 def init_db(path: str = DB_PATH) -> None:
     """
     Inicializa a base de dados SQLite, criando a tabela megasena se não existir.
+    Adiciona índices para melhor performance.
     """
     conn: Optional[sqlite3.Connection] = None
     try:
@@ -98,6 +161,12 @@ def init_db(path: str = DB_PATH) -> None:
                 dez4 INTEGER, dez5 INTEGER, dez6 INTEGER
             )
         ''')
+        
+        # Adicionar índices para consultas frequentes
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_data ON megasena(data)')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_concurso ON megasena(concurso)')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_numeros ON megasena(dez1, dez2, dez3, dez4, dez5, dez6)')
+        
         conn.commit()
     except sqlite3.Error as e:
         logging.error(f"Erro ao inicializar o banco de dados: {e}")
@@ -212,6 +281,8 @@ def update_db(path: str = DB_PATH) -> None:
                 continue
         conn.commit()
         logging.info(f"Atualização concluída até o concurso {ultimo_api}")
+        # Invalidar cache após atualização
+        invalidate_cache()
     except sqlite3.Error as e:
         logging.error(f"Erro ao inserir dados no banco de dados: {e}")
     finally:
@@ -221,9 +292,16 @@ def update_db(path: str = DB_PATH) -> None:
 # --- Cálculos Estatísticos ---
 def load_all_draws(path: str = DB_PATH) -> List[Draw]:
     """
-    Carrega todos os sorteios da Mega-Sena do banco de dados.
+    Carrega todos os sorteios da Mega-Sena do banco de dados com cache.
     Retorna uma lista de tuplas (data, dezenas).
     """
+    global _draws_cache, _cache_hash
+    
+    # Verificar se o cache ainda é válido
+    current_hash = get_db_hash(path)
+    if _draws_cache is not None and _cache_hash == current_hash:
+        return _draws_cache
+    
     conn: Optional[sqlite3.Connection] = None
     draws: List[Draw] = []
     try:
@@ -238,6 +316,12 @@ def load_all_draws(path: str = DB_PATH) -> List[Draw]:
             except ValueError as e:
                 logging.warning(f"Erro ao parsear data '{data_str}' ou dezenas '{dez}': {e}. Pulando registro.")
                 continue
+        
+        # Atualizar cache
+        _draws_cache = draws
+        _cache_hash = current_hash
+        logging.info(f"Cache de draws atualizado. {len(draws)} sorteios carregados.")
+        
     except sqlite3.Error as e:
         logging.error(f"Erro ao carregar sorteios do banco de dados: {e}")
     finally:
@@ -317,7 +401,7 @@ def plot_frequency(draws: List[Draw]) -> None:
     plt.tight_layout()
     plt.show()
 
-def monte_carlo_simulation(draws: List[Draw], simulations: int = 10000) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]]]:
+def monte_carlo_simulation(draws: List[Draw], simulations: Optional[int] = None) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]]]:
     """
     Realiza uma simulação de Monte Carlo para comparar frequências simuladas com as reais.
     Retorna os 6 números mais frequentes simulados e reais.
@@ -326,8 +410,21 @@ def monte_carlo_simulation(draws: List[Draw], simulations: int = 10000) -> Tuple
         logging.error("NumPy não está instalado. Não é possível realizar a simulação de Monte Carlo.")
         return [], []
 
+    # Usar configuração se disponível
+    if simulations is None:
+        try:
+            if CONFIG_AVAILABLE and get_monte_carlo_simulations:
+                simulations = get_monte_carlo_simulations()
+            else:
+                simulations = 10000
+        except (NameError, AttributeError):
+            simulations = 10000
+
     all_nums: List[int] = list(range(1, MAX_NUM_MEGA_SENA + 1))
     simulated_counts: Counter = Counter()
+
+    # Log início da simulação
+    start_time = datetime.datetime.now()
 
     for _ in range(simulations):
         # Simulate a draw of 6 unique numbers
@@ -340,6 +437,17 @@ def monte_carlo_simulation(draws: List[Draw], simulations: int = 10000) -> Tuple
         
     most_simulated: List[Tuple[int, int]] = simulated_counts.most_common(NUM_DEZENAS)
     most_real: List[Tuple[int, int]] = real_counts.most_common(NUM_DEZENAS)
+    
+    # Log resultado
+    if CONFIG_AVAILABLE and log_performance and log_analysis_result:
+        duration = (datetime.datetime.now() - start_time).total_seconds()
+        try:
+            log_performance('monte_carlo_simulation', duration, f"{simulations} simulações")
+            log_analysis_result('Monte Carlo', len(most_simulated), duration)
+        except (NameError, TypeError):
+            # Funções de log não disponíveis
+            pass
+    
     return most_simulated, most_real
 
 def calculate_correlation(draws: List[Draw]) -> Optional[Any]:
@@ -631,6 +739,105 @@ def run_web_interface(draws: List[Draw]) -> None:
         app.run(port=5000)
     except Exception as e:
         logging.error(f"Erro ao iniciar a interface web Flask: {e}")
+
+# --- Análises Avançadas ---
+
+def calculate_prediction_score(number: int, draws: List[Draw]) -> float:
+    """Calcula score preditivo baseado em múltiplos fatores"""
+    recent_weight = 0.4
+    frequency_weight = 0.3
+    gap_weight = 0.2
+    correlation_weight = 0.1
+    
+    # Frequência recente
+    recent_draws = draws[-50:] if len(draws) >= 50 else draws  # Últimos 50 sorteios
+    recent_freq = sum(1 for _, nums in recent_draws if number in nums)
+    recent_score = recent_freq / len(recent_draws) if recent_draws else 0
+    
+    # Frequência histórica
+    total_freq = sum(1 for _, nums in draws if number in nums)
+    freq_score = total_freq / len(draws) if draws else 0
+    
+    # Análise de gap (tempo desde última aparição)
+    last_appearance = -1
+    for i, (_, nums) in enumerate(reversed(draws)):
+        if number in nums:
+            last_appearance = i
+            break
+    
+    gap_score = min(last_appearance / 20, 1.0) if last_appearance != -1 else 1.0
+    
+    # Score combinado
+    final_score = (
+        recent_score * recent_weight +
+        freq_score * frequency_weight +
+        gap_score * gap_weight
+    )
+    
+    return final_score
+
+def generate_smart_prediction(draws: List[Draw]) -> List[Tuple[int, float]]:
+    """Gera predição inteligente com scores"""
+    scores = []
+    for num in range(1, MAX_NUM_MEGA_SENA + 1):
+        score = calculate_prediction_score(num, draws)
+        scores.append((num, score))
+    
+    return sorted(scores, key=lambda x: x[1], reverse=True)
+
+def analyze_number_gaps(draws: List[Draw]) -> Dict[int, List[int]]:
+    """Analisa intervalos entre aparições de cada número"""
+    gaps = {i: [] for i in range(1, MAX_NUM_MEGA_SENA + 1)}
+    last_appearance = {i: -1 for i in range(1, MAX_NUM_MEGA_SENA + 1)}
+    
+    for idx, (_, nums) in enumerate(draws):
+        for num in nums:
+            if last_appearance[num] != -1:
+                gaps[num].append(idx - last_appearance[num])
+            last_appearance[num] = idx
+    
+    return gaps
+
+def analyze_cycles(draws: List[Draw]) -> Dict[str, Any]:
+    """Identifica padrões cíclicos nos sorteios"""
+    weekday_patterns = Counter()
+    month_patterns = Counter()
+    
+    for date, nums in draws:
+        weekday_patterns[date.weekday()] += 1
+        month_patterns[date.month] += 1
+    
+    return {
+        'weekday_distribution': dict(weekday_patterns),
+        'month_distribution': dict(month_patterns)
+    }
+
+def analyze_sequences(draws: List[Draw]) -> Dict[str, Any]:
+    """Analisa sequências numéricas nos sorteios"""
+    consecutive_counts = Counter()
+    arithmetic_sequences = Counter()
+    
+    for _, nums in draws:
+        sorted_nums = sorted(nums)
+        
+        # Contar números consecutivos
+        consecutive = 0
+        for i in range(len(sorted_nums) - 1):
+            if sorted_nums[i+1] == sorted_nums[i] + 1:
+                consecutive += 1
+        consecutive_counts[consecutive] += 1
+        
+        # Detectar progressões aritméticas
+        for i in range(len(sorted_nums) - 2):
+            diff1 = sorted_nums[i+1] - sorted_nums[i]
+            diff2 = sorted_nums[i+2] - sorted_nums[i+1]
+            if diff1 == diff2 and diff1 > 0:
+                arithmetic_sequences[diff1] += 1
+    
+    return {
+        'consecutive_distribution': dict(consecutive_counts),
+        'arithmetic_progressions': dict(arithmetic_sequences)
+    }
 
 # --- User Sets & Backtesting Functions ---
 
@@ -966,6 +1173,10 @@ def main() -> None:
     parser.add_argument('--schedule', action='store_true', help='Agendar atualização diária (crossplatform)')
     parser.add_argument('--external-db', type=str, help='String de conexão para banco de dados externo')
     parser.add_argument('--web', action='store_true', help='Inicia interface web Flask')
+    parser.add_argument('--prediction', action='store_true', help='Geração inteligente de números com scoring')
+    parser.add_argument('--gaps', action='store_true', help='Análise de intervalos entre aparições')
+    parser.add_argument('--cycles', action='store_true', help='Análise de padrões cíclicos')
+    parser.add_argument('--sequences', action='store_true', help='Análise de sequências numéricas')
     args = parser.parse_args()
 
     global DB_PATH
@@ -988,7 +1199,8 @@ def main() -> None:
     draws: List[Draw] = []
     if any([args.alltime, args.lastyear, args.stat, args.plot, args.montecarlo,
             args.correlation, args.timeseries, args.distribution, args.pairs,
-            args.triplets, args.conditional, args.export_analysis, args.web, args.export]):
+            args.triplets, args.conditional, args.export_analysis, args.web, args.export,
+            args.prediction, args.gaps, args.cycles, args.sequences]):
         draws = load_all_draws()
         if not draws:
             logging.error('Base vazia: execute com --update primeiro para baixar os dados.')
@@ -1081,6 +1293,46 @@ def main() -> None:
         schedule_task_crossplatform()
     elif args.web:
         run_web_interface(draws)
+    elif args.prediction:
+        prediction = generate_smart_prediction(draws)
+        print('Predição Inteligente (Top 10 com scores):')
+        for i, (num, score) in enumerate(prediction[:10], 1):
+            print(f"{i:2d}. Número {num:2d}: Score {score:.4f}")
+        
+        top_6 = [num for num, _ in prediction[:6]]
+        print(f'\nTop 6 Sugeridos: {top_6}')
+    elif args.gaps:
+        gaps = analyze_number_gaps(draws)
+        print('Análise de Intervalos (números com maior gap médio):')
+        avg_gaps = {num: sum(gap_list)/len(gap_list) if gap_list else 0 
+                   for num, gap_list in gaps.items()}
+        sorted_gaps = sorted(avg_gaps.items(), key=lambda x: x[1], reverse=True)
+        for i, (num, avg_gap) in enumerate(sorted_gaps[:10], 1):
+            print(f"{i:2d}. Número {num:2d}: Gap médio {avg_gap:.1f}")
+    elif args.cycles:
+        cycles = analyze_cycles(draws)
+        print('Análise de Padrões Cíclicos:')
+        print('\nDistribuição por dia da semana:')
+        weekdays = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
+        for day, freq in cycles['weekday_distribution'].items():
+            print(f"  {weekdays[day]}: {freq} sorteios")
+        
+        print('\nDistribuição por mês:')
+        months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 
+                 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+        for month, freq in cycles['month_distribution'].items():
+            print(f"  {months[month-1]}: {freq} sorteios")
+    elif args.sequences:
+        sequences = analyze_sequences(draws)
+        print('Análise de Sequências:')
+        print('\nDistribuição de números consecutivos:')
+        for consec, freq in sorted(sequences['consecutive_distribution'].items()):
+            print(f"  {consec} consecutivos: {freq} sorteios")
+        
+        print('\nProgressões aritméticas mais comuns:')
+        for diff, freq in sorted(sequences['arithmetic_progressions'].items(), 
+                                key=lambda x: x[1], reverse=True)[:5]:
+            print(f"  Diferença {diff}: {freq} ocorrências")
     elif args.export:
         export_data = []
         for d, nums in draws:

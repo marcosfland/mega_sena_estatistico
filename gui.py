@@ -7,7 +7,8 @@ from mega_sena_app import (
     update_db, export_results, get_most_frequent_pairs, get_most_frequent_triplets,
     conditional_probability, filter_draws_by_period, sanitize_filename,
     save_user_set, load_user_sets, compare_user_sets_with_latest_draw,
-    run_backtest, get_backtest_summary,
+    run_backtest, get_backtest_summary, generate_smart_prediction,
+    analyze_number_gaps, analyze_cycles, analyze_sequences,
     NUM_DEZENAS, MAX_NUM_MEGA_SENA
 )
 import webbrowser
@@ -151,6 +152,39 @@ def run_analysis_gui(option):
                 except ValueError as e:
                     show_message("Erro", f"Formato de data inválido. Use AAAA-MM-DD. Erro: {e}", True)
                     return
+            elif option == "prediction":
+                prediction = generate_smart_prediction(draws)
+                top_numbers = [(num, score) for num, score in prediction[:10]]
+                formatted_prediction = "\n".join([f"{i}. Número {num}: Score {score:.4f}" 
+                                                for i, (num, score) in enumerate(top_numbers, 1)])
+                top_6 = [num for num, _ in prediction[:6]]
+                result_message = f"Predição Inteligente (Top 10):\n{formatted_prediction}\n\nTop 6 Sugeridos: {top_6}"
+            elif option == "gaps":
+                gaps = analyze_number_gaps(draws)
+                avg_gaps = {num: sum(gap_list)/len(gap_list) if gap_list else 0 
+                           for num, gap_list in gaps.items()}
+                sorted_gaps = sorted(avg_gaps.items(), key=lambda x: x[1], reverse=True)[:10]
+                formatted_gaps = "\n".join([f"{i}. Número {num}: Gap médio {avg:.1f}" 
+                                          for i, (num, avg) in enumerate(sorted_gaps, 1)])
+                result_message = f"Análise de Intervalos (Top 10):\n{formatted_gaps}"
+            elif option == "cycles":
+                cycles = analyze_cycles(draws)
+                weekdays = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
+                months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+                
+                weekday_info = "\n".join([f"  {weekdays[day]}: {freq}" 
+                                        for day, freq in cycles['weekday_distribution'].items()])
+                month_info = "\n".join([f"  {months[month-1]}: {freq}" 
+                                      for month, freq in cycles['month_distribution'].items()])
+                result_message = f"Padrões Cíclicos:\n\nPor dia da semana:\n{weekday_info}\n\nPor mês:\n{month_info}"
+            elif option == "sequences":
+                sequences = analyze_sequences(draws)
+                consec_info = "\n".join([f"  {consec} consecutivos: {freq}" 
+                                       for consec, freq in sorted(sequences['consecutive_distribution'].items())])
+                prog_info = "\n".join([f"  Diferença {diff}: {freq}" 
+                                     for diff, freq in sorted(sequences['arithmetic_progressions'].items(), 
+                                                            key=lambda x: x[1], reverse=True)[:5]])
+                result_message = f"Análise de Sequências:\n\nNúmeros consecutivos:\n{consec_info}\n\nProgressões aritméticas:\n{prog_info}"
             
             if plot_needed:
                 if option == "plot":
@@ -251,7 +285,7 @@ def generate_and_save_user_set_gui():
             show_message("Erro", "Base de dados vazia. Atualize primeiro para gerar números.", True)
             return
 
-        method = simpledialog.askstring("Gerar Meus Números", "Escolha o método (alltime, lastyear, weighted):", parent=root)
+        method = simpledialog.askstring("Gerar Meus Números", "Escolha o método (alltime, lastyear, weighted, prediction):", parent=root)
         if not method: return
 
         generated_numbers: Optional[List[int]] = []
@@ -261,6 +295,9 @@ def generate_and_save_user_set_gui():
             generated_numbers = get_most_frequent_period(draws)
         elif method == "weighted":
             generated_numbers = get_weighted(draws)
+        elif method == "prediction":
+            prediction = generate_smart_prediction(draws)
+            generated_numbers = [num for num, _ in prediction[:6]]
         else:
             show_message("Erro", "Método de geração inválido.", True)
             return
@@ -401,7 +438,7 @@ def create_gui():
 
     root = tk.Tk()
     root.title("Mega-Sena Analyzer")
-    root.geometry("650x900") # Aumentado um pouco para acomodar o novo frame
+    root.geometry("700x950") # Aumentado para acomodar novos botões
     root.resizable(False, False)
     
     icon_path = get_resource_path("icon.png")
@@ -472,6 +509,7 @@ def create_gui():
         ("Top 6 de Todos os Tempos", "alltime"),
         ("Top 6 do Último Ano", "lastyear"),
         ("Conjunto Estatístico Ponderado", "weighted"),
+        ("Predição Inteligente", "prediction"),
         ("Visualizar Frequência", "plot"),
         ("Simulação de Monte Carlo", "montecarlo"),
         ("Correlação", "correlation"),
@@ -481,6 +519,9 @@ def create_gui():
         ("Trios Mais Frequentes", "triplets"),
         ("Probabilidade Condicional", "conditional"),
         ("Top 6 por Período", "period"),
+        ("Análise de Intervalos", "gaps"),
+        ("Padrões Cíclicos", "cycles"),
+        ("Análise de Sequências", "sequences"),
     ]
 
     row_idx = 0
@@ -489,12 +530,13 @@ def create_gui():
         button = ttk.Button(analysis_frame, text=text, command=lambda opt=option: run_analysis_gui(opt))
         button.grid(row=row_idx, column=col_idx, padx=5, pady=5, sticky="ew")
         col_idx += 1
-        if col_idx > 1:
+        if col_idx > 2:  # 3 colunas agora
             col_idx = 0
             row_idx += 1
     
     analysis_frame.grid_columnconfigure(0, weight=1)
     analysis_frame.grid_columnconfigure(1, weight=1)
+    analysis_frame.grid_columnconfigure(2, weight=1)
 
     # --- Nova seção de Backtesting ---
     backtest_frame = ttk.LabelFrame(main_frame, text=" Backtest de Estratégias ", padding="15 10 15 15")

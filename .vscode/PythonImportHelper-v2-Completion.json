@@ -43,6 +43,128 @@
         "documentation": {}
     },
     {
+        "label": "configparser",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "configparser",
+        "description": "configparser",
+        "detail": "configparser",
+        "documentation": {}
+    },
+    {
+        "label": "logging",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "logging",
+        "description": "logging",
+        "detail": "logging",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "tkinter",
         "kind": 6,
         "isExtraImport": true,
@@ -260,6 +382,38 @@
         "documentation": {}
     },
     {
+        "label": "generate_smart_prediction",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_number_gaps",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_cycles",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_sequences",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "NUM_DEZENAS",
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
@@ -310,12 +464,11 @@
         "documentation": {}
     },
     {
-        "label": "logging",
-        "kind": 6,
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
         "isExtraImport": true,
-        "importPath": "logging",
-        "description": "logging",
-        "detail": "logging",
+        "detail": "datetime",
         "documentation": {}
     },
     {
@@ -328,75 +481,12 @@
         "documentation": {}
     },
     {
-        "label": "Optional",
-        "importPath": "typing",
-        "description": "typing",
+        "label": "logging.handlers",
+        "kind": 6,
         "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "List",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Dict",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Any",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "List",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Tuple",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Dict",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Any",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Optional",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
+        "importPath": "logging.handlers",
+        "description": "logging.handlers",
+        "detail": "logging.handlers",
         "documentation": {}
     },
     {
@@ -454,11 +544,79 @@
         "documentation": {}
     },
     {
+        "label": "functools",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "functools",
+        "description": "functools",
+        "detail": "functools",
+        "documentation": {}
+    },
+    {
+        "label": "hashlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "hashlib",
+        "description": "hashlib",
+        "detail": "hashlib",
+        "documentation": {}
+    },
+    {
         "label": "combinations",
         "importPath": "itertools",
         "description": "itertools",
         "isExtraImport": true,
         "detail": "itertools",
+        "documentation": {}
+    },
+    {
+        "label": "unittest",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "unittest",
+        "description": "unittest",
+        "detail": "unittest",
+        "documentation": {}
+    },
+    {
+        "label": "tempfile",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "tempfile",
+        "description": "tempfile",
+        "detail": "tempfile",
+        "documentation": {}
+    },
+    {
+        "label": "patch",
+        "importPath": "unittest.mock",
+        "description": "unittest.mock",
+        "isExtraImport": true,
+        "detail": "unittest.mock",
+        "documentation": {}
+    },
+    {
+        "label": "MagicMock",
+        "importPath": "unittest.mock",
+        "description": "unittest.mock",
+        "isExtraImport": true,
+        "detail": "unittest.mock",
+        "documentation": {}
+    },
+    {
+        "label": "patch",
+        "importPath": "unittest.mock",
+        "description": "unittest.mock",
+        "isExtraImport": true,
+        "detail": "unittest.mock",
+        "documentation": {}
+    },
+    {
+        "label": "MagicMock",
+        "importPath": "unittest.mock",
+        "description": "unittest.mock",
+        "isExtraImport": true,
+        "detail": "unittest.mock",
         "documentation": {}
     },
     {
@@ -525,6 +683,87 @@
         "documentation": {}
     },
     {
+        "label": "Config",
+        "kind": 6,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "class Config:\n    \"\"\"Classe para gerenciar configurações do aplicativo\"\"\"\n    def __init__(self, config_file: str = 'mega_sena_config.ini'):\n        self.config = configparser.ConfigParser()\n        self.config_file = config_file\n        self.load_config()\n    def load_config(self) -> None:\n        \"\"\"Carrega configurações do arquivo ou cria configurações padrão\"\"\"\n        if os.path.exists(self.config_file):\n            try:",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "get_config",
+        "kind": 2,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "def get_config() -> Config:\n    \"\"\"Retorna a instância global de configuração\"\"\"\n    return app_config\n# Funções de conveniência para acessar configurações comuns\ndef get_db_path() -> str:\n    \"\"\"Retorna o caminho do banco de dados\"\"\"\n    return app_config.get('DATABASE', 'path', 'megasena.db')\ndef get_monte_carlo_simulations() -> int:\n    \"\"\"Retorna o número de simulações Monte Carlo\"\"\"\n    return app_config.getint('ANALYSIS', 'monte_carlo_simulations', 10000)",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "get_db_path",
+        "kind": 2,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "def get_db_path() -> str:\n    \"\"\"Retorna o caminho do banco de dados\"\"\"\n    return app_config.get('DATABASE', 'path', 'megasena.db')\ndef get_monte_carlo_simulations() -> int:\n    \"\"\"Retorna o número de simulações Monte Carlo\"\"\"\n    return app_config.getint('ANALYSIS', 'monte_carlo_simulations', 10000)\ndef get_gui_theme() -> str:\n    \"\"\"Retorna o tema da GUI\"\"\"\n    return app_config.get('GUI', 'theme', 'clam')\ndef get_web_port() -> int:",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "get_monte_carlo_simulations",
+        "kind": 2,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "def get_monte_carlo_simulations() -> int:\n    \"\"\"Retorna o número de simulações Monte Carlo\"\"\"\n    return app_config.getint('ANALYSIS', 'monte_carlo_simulations', 10000)\ndef get_gui_theme() -> str:\n    \"\"\"Retorna o tema da GUI\"\"\"\n    return app_config.get('GUI', 'theme', 'clam')\ndef get_web_port() -> int:\n    \"\"\"Retorna a porta do servidor web\"\"\"\n    return app_config.getint('WEB', 'port', 5000)\ndef is_cache_enabled() -> bool:",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "get_gui_theme",
+        "kind": 2,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "def get_gui_theme() -> str:\n    \"\"\"Retorna o tema da GUI\"\"\"\n    return app_config.get('GUI', 'theme', 'clam')\ndef get_web_port() -> int:\n    \"\"\"Retorna a porta do servidor web\"\"\"\n    return app_config.getint('WEB', 'port', 5000)\ndef is_cache_enabled() -> bool:\n    \"\"\"Verifica se o cache está habilitado\"\"\"\n    return app_config.getboolean('DATABASE', 'cache_enabled', True)\ndef is_auto_update_enabled() -> bool:",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "get_web_port",
+        "kind": 2,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "def get_web_port() -> int:\n    \"\"\"Retorna a porta do servidor web\"\"\"\n    return app_config.getint('WEB', 'port', 5000)\ndef is_cache_enabled() -> bool:\n    \"\"\"Verifica se o cache está habilitado\"\"\"\n    return app_config.getboolean('DATABASE', 'cache_enabled', True)\ndef is_auto_update_enabled() -> bool:\n    \"\"\"Verifica se a atualização automática está habilitada\"\"\"\n    return app_config.getboolean('GUI', 'auto_update', True)\nif __name__ == \"__main__\":",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "is_cache_enabled",
+        "kind": 2,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "def is_cache_enabled() -> bool:\n    \"\"\"Verifica se o cache está habilitado\"\"\"\n    return app_config.getboolean('DATABASE', 'cache_enabled', True)\ndef is_auto_update_enabled() -> bool:\n    \"\"\"Verifica se a atualização automática está habilitada\"\"\"\n    return app_config.getboolean('GUI', 'auto_update', True)\nif __name__ == \"__main__\":\n    # Teste das configurações\n    config = get_config()\n    print(\"Configurações atuais:\")",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "is_auto_update_enabled",
+        "kind": 2,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "def is_auto_update_enabled() -> bool:\n    \"\"\"Verifica se a atualização automática está habilitada\"\"\"\n    return app_config.getboolean('GUI', 'auto_update', True)\nif __name__ == \"__main__\":\n    # Teste das configurações\n    config = get_config()\n    print(\"Configurações atuais:\")\n    for section, settings in config.get_all_settings().items():\n        print(f\"\\n[{section}]\")\n        for key, value in settings.items():",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "app_config",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "app_config = Config()\ndef get_config() -> Config:\n    \"\"\"Retorna a instância global de configuração\"\"\"\n    return app_config\n# Funções de conveniência para acessar configurações comuns\ndef get_db_path() -> str:\n    \"\"\"Retorna o caminho do banco de dados\"\"\"\n    return app_config.get('DATABASE', 'path', 'megasena.db')\ndef get_monte_carlo_simulations() -> int:\n    \"\"\"Retorna o número de simulações Monte Carlo\"\"\"",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
         "label": "show_message",
         "kind": 2,
         "importPath": "gui",
@@ -583,7 +822,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def generate_and_save_user_set_gui():\n    def _generate_and_save():\n        draws = load_all_draws()\n        if not draws:\n            show_message(\"Erro\", \"Base de dados vazia. Atualize primeiro para gerar números.\", True)\n            return\n        method = simpledialog.askstring(\"Gerar Meus Números\", \"Escolha o método (alltime, lastyear, weighted):\", parent=root)\n        if not method: return\n        generated_numbers: Optional[List[int]] = []\n        if method == \"alltime\":",
+        "peekOfCode": "def generate_and_save_user_set_gui():\n    def _generate_and_save():\n        draws = load_all_draws()\n        if not draws:\n            show_message(\"Erro\", \"Base de dados vazia. Atualize primeiro para gerar números.\", True)\n            return\n        method = simpledialog.askstring(\"Gerar Meus Números\", \"Escolha o método (alltime, lastyear, weighted, prediction):\", parent=root)\n        if not method: return\n        generated_numbers: Optional[List[int]] = []\n        if method == \"alltime\":",
         "detail": "gui",
         "documentation": {}
     },
@@ -646,7 +885,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def show_about():\n    about_text = \"Mega-Sena Analyzer\\nVersão 1.3 (Backtest de Estratégias)\\nDesenvolvido por Marcos\\n\\nFerramenta de análise estatística para os sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre o Mega-Sena Analyzer\", about_text)\ndef create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"650x900\") # Aumentado um pouco para acomodar o novo frame\n    root.resizable(False, False)\n    icon_path = get_resource_path(\"icon.png\")",
+        "peekOfCode": "def show_about():\n    about_text = \"Mega-Sena Analyzer\\nVersão 1.3 (Backtest de Estratégias)\\nDesenvolvido por Marcos\\n\\nFerramenta de análise estatística para os sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre o Mega-Sena Analyzer\", about_text)\ndef create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"700x950\") # Aumentado para acomodar novos botões\n    root.resizable(False, False)\n    icon_path = get_resource_path(\"icon.png\")",
         "detail": "gui",
         "documentation": {}
     },
@@ -655,7 +894,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"650x900\") # Aumentado um pouco para acomodar o novo frame\n    root.resizable(False, False)\n    icon_path = get_resource_path(\"icon.png\")\n    if os.path.exists(icon_path) and Image:\n        try:\n            icon_image = tk.PhotoImage(file=icon_path)",
+        "peekOfCode": "def create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"700x950\") # Aumentado para acomodar novos botões\n    root.resizable(False, False)\n    icon_path = get_resource_path(\"icon.png\")\n    if os.path.exists(icon_path) and Image:\n        try:\n            icon_image = tk.PhotoImage(file=icon_path)",
         "detail": "gui",
         "documentation": {}
     },
@@ -696,11 +935,110 @@
         "documentation": {}
     },
     {
+        "label": "setup_enhanced_logging",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def setup_enhanced_logging(log_level: str = 'INFO', \n                          console_level: str = 'WARNING',\n                          max_file_size: int = 5 * 1024 * 1024,  # 5MB\n                          backup_count: int = 5) -> logging.Logger:\n    \"\"\"\n    Configura sistema de logs avançado com rotação\n    Args:\n        log_level: Nível de log para arquivo (DEBUG, INFO, WARNING, ERROR, CRITICAL)\n        console_level: Nível de log para console\n        max_file_size: Tamanho máximo do arquivo de log em bytes",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "get_logger",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def get_logger(name: str = 'mega_sena') -> logging.Logger:\n    \"\"\"Retorna logger configurado\"\"\"\n    return logging.getLogger(name)\ndef log_function_call(func_name: str, args: tuple = (), kwargs: dict = {}) -> None:\n    \"\"\"Log de chamada de função para debugging\"\"\"\n    logger = get_logger('mega_sena.debug')\n    args_str = ', '.join([str(arg) for arg in args])\n    kwargs_str = ', '.join([f\"{k}={v}\" for k, v in kwargs.items()])\n    all_args = ', '.join(filter(None, [args_str, kwargs_str]))\n    logger.debug(f\"Chamando {func_name}({all_args})\")",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "log_function_call",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def log_function_call(func_name: str, args: tuple = (), kwargs: dict = {}) -> None:\n    \"\"\"Log de chamada de função para debugging\"\"\"\n    logger = get_logger('mega_sena.debug')\n    args_str = ', '.join([str(arg) for arg in args])\n    kwargs_str = ', '.join([f\"{k}={v}\" for k, v in kwargs.items()])\n    all_args = ', '.join(filter(None, [args_str, kwargs_str]))\n    logger.debug(f\"Chamando {func_name}({all_args})\")\ndef log_performance(func_name: str, duration: float, details: str = \"\") -> None:\n    \"\"\"Log de performance de função\"\"\"\n    logger = get_logger('mega_sena.performance')",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "log_performance",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def log_performance(func_name: str, duration: float, details: str = \"\") -> None:\n    \"\"\"Log de performance de função\"\"\"\n    logger = get_logger('mega_sena.performance')\n    logger.info(f\"Performance - {func_name}: {duration:.3f}s {details}\")\ndef log_user_action(action: str, details: str = \"\", user_id: str = \"default\") -> None:\n    \"\"\"Log de ação do usuário\"\"\"\n    logger = get_logger('mega_sena.gui')\n    logger.info(f\"Usuário {user_id} - {action}: {details}\")\ndef log_analysis_result(analysis_type: str, result_count: int, duration: float = 0) -> None:\n    \"\"\"Log de resultado de análise\"\"\"",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "log_user_action",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def log_user_action(action: str, details: str = \"\", user_id: str = \"default\") -> None:\n    \"\"\"Log de ação do usuário\"\"\"\n    logger = get_logger('mega_sena.gui')\n    logger.info(f\"Usuário {user_id} - {action}: {details}\")\ndef log_analysis_result(analysis_type: str, result_count: int, duration: float = 0) -> None:\n    \"\"\"Log de resultado de análise\"\"\"\n    logger = get_logger('mega_sena.analysis')\n    duration_str = f\" ({duration:.3f}s)\" if duration > 0 else \"\"\n    logger.info(f\"Análise {analysis_type} concluída: {result_count} resultados{duration_str}\")\ndef log_error_with_context(error: Exception, context: str = \"\", extra_data: dict = {}) -> None:",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "log_analysis_result",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def log_analysis_result(analysis_type: str, result_count: int, duration: float = 0) -> None:\n    \"\"\"Log de resultado de análise\"\"\"\n    logger = get_logger('mega_sena.analysis')\n    duration_str = f\" ({duration:.3f}s)\" if duration > 0 else \"\"\n    logger.info(f\"Análise {analysis_type} concluída: {result_count} resultados{duration_str}\")\ndef log_error_with_context(error: Exception, context: str = \"\", extra_data: dict = {}) -> None:\n    \"\"\"Log de erro com contexto adicional\"\"\"\n    logger = get_logger('mega_sena')\n    error_msg = f\"Erro em {context}: {str(error)}\"\n    if extra_data:",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "log_error_with_context",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def log_error_with_context(error: Exception, context: str = \"\", extra_data: dict = {}) -> None:\n    \"\"\"Log de erro com contexto adicional\"\"\"\n    logger = get_logger('mega_sena')\n    error_msg = f\"Erro em {context}: {str(error)}\"\n    if extra_data:\n        error_msg += f\" | Dados: {extra_data}\"\n    logger.error(error_msg, exc_info=True)\ndef cleanup_old_logs(days_to_keep: int = 30) -> None:\n    \"\"\"Remove logs antigos\"\"\"\n    import glob",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "cleanup_old_logs",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def cleanup_old_logs(days_to_keep: int = 30) -> None:\n    \"\"\"Remove logs antigos\"\"\"\n    import glob\n    import time\n    log_dir = 'logs'\n    if not os.path.exists(log_dir):\n        return\n    cutoff_time = time.time() - (days_to_keep * 24 * 60 * 60)\n    for log_file in glob.glob(f\"{log_dir}/*.log*\"):\n        try:",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "log_function",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def log_function(logger_name: str = 'mega_sena'):\n    \"\"\"Decorator para log automático de entrada e saída de função\"\"\"\n    def decorator(func):\n        def wrapper(*args, **kwargs):\n            logger = get_logger(logger_name)\n            func_name = func.__name__\n            # Log entrada\n            logger.debug(f\"Iniciando {func_name}\")\n            try:\n                # Executar função",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "get_db_hash",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def get_db_hash(path: str = DB_PATH) -> str:\n    \"\"\"Gera hash do arquivo de banco para invalidar cache quando necessário\"\"\"\n    try:\n        with open(path, 'rb') as f:\n            return hashlib.md5(f.read()).hexdigest()\n    except (FileNotFoundError, IOError):\n        return \"no_db\"\ndef invalidate_cache():\n    \"\"\"Invalida o cache de draws\"\"\"\n    global _draws_cache, _cache_hash",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "invalidate_cache",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def invalidate_cache():\n    \"\"\"Invalida o cache de draws\"\"\"\n    global _draws_cache, _cache_hash\n    _draws_cache = None\n    _cache_hash = None\n# --- Banco de Dados ---\ndef init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    Adiciona índices para melhor performance.",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "init_db",
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('''\n            CREATE TABLE IF NOT EXISTS megasena (",
+        "peekOfCode": "def init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    Adiciona índices para melhor performance.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('''",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -745,7 +1083,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def load_all_draws(path: str = DB_PATH) -> List[Draw]:\n    \"\"\"\n    Carrega todos os sorteios da Mega-Sena do banco de dados.\n    Retorna uma lista de tuplas (data, dezenas).\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    draws: List[Draw] = []\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()",
+        "peekOfCode": "def load_all_draws(path: str = DB_PATH) -> List[Draw]:\n    \"\"\"\n    Carrega todos os sorteios da Mega-Sena do banco de dados com cache.\n    Retorna uma lista de tuplas (data, dezenas).\n    \"\"\"\n    global _draws_cache, _cache_hash\n    # Verificar se o cache ainda é válido\n    current_hash = get_db_hash(path)\n    if _draws_cache is not None and _cache_hash == current_hash:\n        return _draws_cache",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -790,7 +1128,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def monte_carlo_simulation(draws: List[Draw], simulations: int = 10000) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]]]:\n    \"\"\"\n    Realiza uma simulação de Monte Carlo para comparar frequências simuladas com as reais.\n    Retorna os 6 números mais frequentes simulados e reais.\n    \"\"\"\n    if not np:\n        logging.error(\"NumPy não está instalado. Não é possível realizar a simulação de Monte Carlo.\")\n        return [], []\n    all_nums: List[int] = list(range(1, MAX_NUM_MEGA_SENA + 1))\n    simulated_counts: Counter = Counter()",
+        "peekOfCode": "def monte_carlo_simulation(draws: List[Draw], simulations: Optional[int] = None) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]]]:\n    \"\"\"\n    Realiza uma simulação de Monte Carlo para comparar frequências simuladas com as reais.\n    Retorna os 6 números mais frequentes simulados e reais.\n    \"\"\"\n    if not np:\n        logging.error(\"NumPy não está instalado. Não é possível realizar a simulação de Monte Carlo.\")\n        return [], []\n    # Usar configuração se disponível\n    if simulations is None:",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -903,6 +1241,51 @@
         "documentation": {}
     },
     {
+        "label": "calculate_prediction_score",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def calculate_prediction_score(number: int, draws: List[Draw]) -> float:\n    \"\"\"Calcula score preditivo baseado em múltiplos fatores\"\"\"\n    recent_weight = 0.4\n    frequency_weight = 0.3\n    gap_weight = 0.2\n    correlation_weight = 0.1\n    # Frequência recente\n    recent_draws = draws[-50:] if len(draws) >= 50 else draws  # Últimos 50 sorteios\n    recent_freq = sum(1 for _, nums in recent_draws if number in nums)\n    recent_score = recent_freq / len(recent_draws) if recent_draws else 0",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "generate_smart_prediction",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def generate_smart_prediction(draws: List[Draw]) -> List[Tuple[int, float]]:\n    \"\"\"Gera predição inteligente com scores\"\"\"\n    scores = []\n    for num in range(1, MAX_NUM_MEGA_SENA + 1):\n        score = calculate_prediction_score(num, draws)\n        scores.append((num, score))\n    return sorted(scores, key=lambda x: x[1], reverse=True)\ndef analyze_number_gaps(draws: List[Draw]) -> Dict[int, List[int]]:\n    \"\"\"Analisa intervalos entre aparições de cada número\"\"\"\n    gaps = {i: [] for i in range(1, MAX_NUM_MEGA_SENA + 1)}",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_number_gaps",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def analyze_number_gaps(draws: List[Draw]) -> Dict[int, List[int]]:\n    \"\"\"Analisa intervalos entre aparições de cada número\"\"\"\n    gaps = {i: [] for i in range(1, MAX_NUM_MEGA_SENA + 1)}\n    last_appearance = {i: -1 for i in range(1, MAX_NUM_MEGA_SENA + 1)}\n    for idx, (_, nums) in enumerate(draws):\n        for num in nums:\n            if last_appearance[num] != -1:\n                gaps[num].append(idx - last_appearance[num])\n            last_appearance[num] = idx\n    return gaps",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_cycles",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def analyze_cycles(draws: List[Draw]) -> Dict[str, Any]:\n    \"\"\"Identifica padrões cíclicos nos sorteios\"\"\"\n    weekday_patterns = Counter()\n    month_patterns = Counter()\n    for date, nums in draws:\n        weekday_patterns[date.weekday()] += 1\n        month_patterns[date.month] += 1\n    return {\n        'weekday_distribution': dict(weekday_patterns),\n        'month_distribution': dict(month_patterns)",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_sequences",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def analyze_sequences(draws: List[Draw]) -> Dict[str, Any]:\n    \"\"\"Analisa sequências numéricas nos sorteios\"\"\"\n    consecutive_counts = Counter()\n    arithmetic_sequences = Counter()\n    for _, nums in draws:\n        sorted_nums = sorted(nums)\n        # Contar números consecutivos\n        consecutive = 0\n        for i in range(len(sorted_nums) - 1):\n            if sorted_nums[i+1] == sorted_nums[i] + 1:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "init_user_sets_db",
         "kind": 2,
         "importPath": "mega_sena_app",
@@ -984,12 +1367,165 @@
         "documentation": {}
     },
     {
+        "label": "CONFIG_AVAILABLE",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "CONFIG_AVAILABLE = False\nget_config = None\nget_db_path = None\nget_monte_carlo_simulations = None\nis_cache_enabled = None\nsetup_enhanced_logging = None\nget_logger = None\nlog_performance = None\nlog_analysis_result = None\ntry:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_config",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "get_config = None\nget_db_path = None\nget_monte_carlo_simulations = None\nis_cache_enabled = None\nsetup_enhanced_logging = None\nget_logger = None\nlog_performance = None\nlog_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_db_path",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "get_db_path = None\nget_monte_carlo_simulations = None\nis_cache_enabled = None\nsetup_enhanced_logging = None\nget_logger = None\nlog_performance = None\nlog_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled\n    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_monte_carlo_simulations",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "get_monte_carlo_simulations = None\nis_cache_enabled = None\nsetup_enhanced_logging = None\nget_logger = None\nlog_performance = None\nlog_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled\n    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result\n    CONFIG_AVAILABLE = True",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "is_cache_enabled",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "is_cache_enabled = None\nsetup_enhanced_logging = None\nget_logger = None\nlog_performance = None\nlog_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled\n    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result\n    CONFIG_AVAILABLE = True\nexcept ImportError:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "setup_enhanced_logging",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "setup_enhanced_logging = None\nget_logger = None\nlog_performance = None\nlog_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled\n    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result\n    CONFIG_AVAILABLE = True\nexcept ImportError:\n    CONFIG_AVAILABLE = False",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_logger",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "get_logger = None\nlog_performance = None\nlog_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled\n    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result\n    CONFIG_AVAILABLE = True\nexcept ImportError:\n    CONFIG_AVAILABLE = False\n    logging.warning(\"Sistema de configuração não disponível. Usando valores padrão.\")",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "log_performance",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "log_performance = None\nlog_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled\n    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result\n    CONFIG_AVAILABLE = True\nexcept ImportError:\n    CONFIG_AVAILABLE = False\n    logging.warning(\"Sistema de configuração não disponível. Usando valores padrão.\")\n# Conditional imports for external libraries",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "log_analysis_result",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "log_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled\n    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result\n    CONFIG_AVAILABLE = True\nexcept ImportError:\n    CONFIG_AVAILABLE = False\n    logging.warning(\"Sistema de configuração não disponível. Usando valores padrão.\")\n# Conditional imports for external libraries\n# These are placed here to indicate they are optional if only core functionality is used.",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "Draw",
         "kind": 5,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "Draw = Tuple[datetime.date, Tuple[int, int, int, int, int, int]]\n# --- Banco de Dados ---\ndef init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()",
+        "peekOfCode": "Draw = Tuple[datetime.date, Tuple[int, int, int, int, int, int]]\n# Cache para melhorar performance\n_draws_cache = None\n_cache_hash = None\ndef get_db_hash(path: str = DB_PATH) -> str:\n    \"\"\"Gera hash do arquivo de banco para invalidar cache quando necessário\"\"\"\n    try:\n        with open(path, 'rb') as f:\n            return hashlib.md5(f.read()).hexdigest()\n    except (FileNotFoundError, IOError):",
         "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "_draws_cache",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "_draws_cache = None\n_cache_hash = None\ndef get_db_hash(path: str = DB_PATH) -> str:\n    \"\"\"Gera hash do arquivo de banco para invalidar cache quando necessário\"\"\"\n    try:\n        with open(path, 'rb') as f:\n            return hashlib.md5(f.read()).hexdigest()\n    except (FileNotFoundError, IOError):\n        return \"no_db\"\ndef invalidate_cache():",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "_cache_hash",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "_cache_hash = None\ndef get_db_hash(path: str = DB_PATH) -> str:\n    \"\"\"Gera hash do arquivo de banco para invalidar cache quando necessário\"\"\"\n    try:\n        with open(path, 'rb') as f:\n            return hashlib.md5(f.read()).hexdigest()\n    except (FileNotFoundError, IOError):\n        return \"no_db\"\ndef invalidate_cache():\n    \"\"\"Invalida o cache de draws\"\"\"",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "TestMegaSenaAnalyzer",
+        "kind": 6,
+        "importPath": "tests",
+        "description": "tests",
+        "peekOfCode": "class TestMegaSenaAnalyzer(unittest.TestCase):\n    \"\"\"Testes para o analisador da Mega-Sena\"\"\"\n    def setUp(self):\n        \"\"\"Configuração inicial para os testes\"\"\"\n        if not MODULE_AVAILABLE:\n            self.skipTest(\"Módulo mega_sena_app não pode ser importado\")\n        # Dados de teste - usar datas mais recentes\n        self.sample_draws = [\n            (datetime.date.today() - datetime.timedelta(days=5), (1, 2, 3, 4, 5, 6)),\n            (datetime.date.today() - datetime.timedelta(days=10), (7, 8, 9, 10, 11, 12)),",
+        "detail": "tests",
+        "documentation": {}
+    },
+    {
+        "label": "TestDatabaseOperations",
+        "kind": 6,
+        "importPath": "tests",
+        "description": "tests",
+        "peekOfCode": "class TestDatabaseOperations(unittest.TestCase):\n    \"\"\"Testes para operações de banco de dados\"\"\"\n    def setUp(self):\n        \"\"\"Configuração inicial para testes de banco\"\"\"\n        if not MODULE_AVAILABLE:\n            self.skipTest(\"Módulo mega_sena_app não pode ser importado\")\n        # Criar banco temporário para testes\n        self.temp_db_file = tempfile.NamedTemporaryFile(delete=False)\n        self.temp_db_path = self.temp_db_file.name\n        self.temp_db_file.close()",
+        "detail": "tests",
+        "documentation": {}
+    },
+    {
+        "label": "TestMathematicalFunctions",
+        "kind": 6,
+        "importPath": "tests",
+        "description": "tests",
+        "peekOfCode": "class TestMathematicalFunctions(unittest.TestCase):\n    \"\"\"Testes para funções matemáticas e estatísticas\"\"\"\n    def test_edge_cases(self):\n        \"\"\"Testa casos extremos\"\"\"\n        if not MODULE_AVAILABLE:\n            self.skipTest(\"Módulo mega_sena_app não pode ser importado\")\n        # Lista vazia\n        empty_draws = []\n        if hasattr(mega_sena_app, 'get_most_frequent'):\n            result = mega_sena_app.get_most_frequent(empty_draws, k=6)",
+        "detail": "tests",
+        "documentation": {}
+    },
+    {
+        "label": "TestMegaSenaAnalyzer",
+        "kind": 6,
+        "importPath": "tests_fixed",
+        "description": "tests_fixed",
+        "peekOfCode": "class TestMegaSenaAnalyzer(unittest.TestCase):\n    \"\"\"Testes para o analisador da Mega-Sena\"\"\"\n    def setUp(self):\n        \"\"\"Configuração inicial para os testes\"\"\"\n        if not MODULE_AVAILABLE:\n            self.skipTest(\"Módulo mega_sena_app não pode ser importado\")\n        # Dados de teste - usar datas mais recentes\n        self.sample_draws = [\n            (datetime.date.today() - datetime.timedelta(days=5), (1, 2, 3, 4, 5, 6)),\n            (datetime.date.today() - datetime.timedelta(days=10), (7, 8, 9, 10, 11, 12)),",
+        "detail": "tests_fixed",
+        "documentation": {}
+    },
+    {
+        "label": "TestDatabaseOperations",
+        "kind": 6,
+        "importPath": "tests_fixed",
+        "description": "tests_fixed",
+        "peekOfCode": "class TestDatabaseOperations(unittest.TestCase):\n    \"\"\"Testes para operações de banco de dados\"\"\"\n    def setUp(self):\n        \"\"\"Configuração inicial para testes de banco\"\"\"\n        if not MODULE_AVAILABLE:\n            self.skipTest(\"Módulo mega_sena_app não pode ser importado\")\n        # Criar banco temporário para testes\n        self.temp_db_file = tempfile.NamedTemporaryFile(delete=False)\n        self.temp_db_path = self.temp_db_file.name\n        self.temp_db_file.close()",
+        "detail": "tests_fixed",
+        "documentation": {}
+    },
+    {
+        "label": "TestMathematicalFunctions",
+        "kind": 6,
+        "importPath": "tests_fixed",
+        "description": "tests_fixed",
+        "peekOfCode": "class TestMathematicalFunctions(unittest.TestCase):\n    \"\"\"Testes para funções matemáticas e estatísticas\"\"\"\n    def test_edge_cases(self):\n        \"\"\"Testa casos extremos\"\"\"\n        if not MODULE_AVAILABLE:\n            self.skipTest(\"Módulo mega_sena_app não pode ser importado\")\n        # Lista vazia\n        empty_draws = []\n        if hasattr(mega_sena_app, 'get_most_frequent'):\n            result = mega_sena_app.get_most_frequent(empty_draws, k=6)",
+        "detail": "tests_fixed",
         "documentation": {}
     }
 ]
