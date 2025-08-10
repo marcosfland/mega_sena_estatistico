@@ -1011,7 +1011,7 @@
         "kind": 2,
         "importPath": "logging_config",
         "description": "logging_config",
-        "peekOfCode": "def log_function(logger_name: str = 'mega_sena'):\n    \"\"\"Decorator para log automático de entrada e saída de função\"\"\"\n    def decorator(func):\n        def wrapper(*args, **kwargs):\n            logger = get_logger(logger_name)\n            func_name = func.__name__\n            # Log entrada\n            logger.debug(f\"Iniciando {func_name}\")\n            try:\n                # Executar função",
+        "peekOfCode": "def log_function(logger_name: str = 'mega_sena'):\n    \"\"\"Decorator para log automático de entrada e saída de função\"\"\"\n    def decorator(func):\n        def wrapper(*args, **kwargs):\n            logger = get_logger(logger_name)\n            func_name = func.__name__\n            # Log entrada\n            logger.debug(f\"Iniciando {func_name}\")\n            try:\n                result = func(*args, **kwargs)",
         "detail": "logging_config",
         "documentation": {}
     },

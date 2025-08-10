@@ -172,43 +172,15 @@ def log_function(logger_name: str = 'mega_sena'):
         def wrapper(*args, **kwargs):
             logger = get_logger(logger_name)
             func_name = func.__name__
-            
+
             # Log entrada
             logger.debug(f"Iniciando {func_name}")
-            
-            try:
-                # Executar função
-                result = func(*args, **kwargs)
-                
-                # Log sucesso
-                logger.debug(f"Concluído {func_name}")
-                return result
-                
-            except Exception as e:
-                # Log erro
-                logger.error(f"Erro em {func_name}: {str(e)}", exc_info=True)
-                raise
-        
-        return wrapper
-    return decorator
 
-if __name__ == "__main__":
-    # Teste do sistema de logs
-    logger = setup_enhanced_logging('DEBUG', 'INFO')
-    
-    # Testes
-    logger.debug("Mensagem de debug")
-    logger.info("Mensagem informativa")
-    logger.warning("Mensagem de aviso")
-    logger.error("Mensagem de erro")
-    
-    # Teste com contexto
-    log_user_action("Teste", "Ação de teste do usuário")
-    log_analysis_result("Frequência", 60, 1.234)
-    
-    try:
-        raise ValueError("Erro de teste")
-    except Exception as e:
-        log_error_with_context(e, "teste do sistema", {"dados": "teste"})
-    
-    print("Sistema de logs testado. Verifique o diretório 'logs/'")
+            try:
+                result = func(*args, **kwargs)
+                # Log saída
+                logger.debug(f"Finalizando {func_name}")
+                return result
+            except Exception as e:
+                logger.error(f"Erro ao executar a função {func_name}: {e}", exc_info=True)
+                raise
