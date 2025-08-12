@@ -1,5 +1,170 @@
 [
     {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
+        "label": "setup",
+        "importPath": "cx_Freeze",
+        "description": "cx_Freeze",
+        "isExtraImport": true,
+        "detail": "cx_Freeze",
+        "documentation": {}
+    },
+    {
+        "label": "Executable",
+        "importPath": "cx_Freeze",
+        "description": "cx_Freeze",
+        "isExtraImport": true,
+        "detail": "cx_Freeze",
+        "documentation": {}
+    },
+    {
+        "label": "configparser",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "configparser",
+        "description": "configparser",
+        "detail": "configparser",
+        "documentation": {}
+    },
+    {
+        "label": "logging",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "logging",
+        "description": "logging",
+        "detail": "logging",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Dict",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Any",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "tkinter",
         "kind": 6,
         "isExtraImport": true,
@@ -193,7 +358,7 @@
         "documentation": {}
     },
     {
-        "label": "delete_user_set",
+        "label": "compare_user_sets_with_latest_draw",
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
         "isExtraImport": true,
@@ -201,7 +366,47 @@
         "documentation": {}
     },
     {
-        "label": "compare_user_sets_with_latest_draw",
+        "label": "run_backtest",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_backtest_summary",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "generate_smart_prediction",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_number_gaps",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_cycles",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_sequences",
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
         "isExtraImport": true,
@@ -250,15 +455,6 @@
         "documentation": {}
     },
     {
-        "label": "os",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "os",
-        "description": "os",
-        "detail": "os",
-        "documentation": {}
-    },
-    {
         "label": "datetime",
         "kind": 6,
         "isExtraImport": true,
@@ -268,21 +464,11 @@
         "documentation": {}
     },
     {
-        "label": "logging",
-        "kind": 6,
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
         "isExtraImport": true,
-        "importPath": "logging",
-        "description": "logging",
-        "detail": "logging",
-        "documentation": {}
-    },
-    {
-        "label": "subprocess",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "subprocess",
-        "description": "subprocess",
-        "detail": "subprocess",
+        "detail": "datetime",
         "documentation": {}
     },
     {
@@ -295,68 +481,12 @@
         "documentation": {}
     },
     {
-        "label": "sys",
+        "label": "logging.handlers",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "sys",
-        "description": "sys",
-        "detail": "sys",
-        "documentation": {}
-    },
-    {
-        "label": "Optional",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "List",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "List",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Tuple",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Dict",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Any",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
-        "documentation": {}
-    },
-    {
-        "label": "Optional",
-        "importPath": "typing",
-        "description": "typing",
-        "isExtraImport": true,
-        "detail": "typing",
+        "importPath": "logging.handlers",
+        "description": "logging.handlers",
+        "detail": "logging.handlers",
         "documentation": {}
     },
     {
@@ -414,11 +544,223 @@
         "documentation": {}
     },
     {
+        "label": "functools",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "functools",
+        "description": "functools",
+        "detail": "functools",
+        "documentation": {}
+    },
+    {
+        "label": "hashlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "hashlib",
+        "description": "hashlib",
+        "detail": "hashlib",
+        "documentation": {}
+    },
+    {
         "label": "combinations",
         "importPath": "itertools",
         "description": "itertools",
         "isExtraImport": true,
         "detail": "itertools",
+        "documentation": {}
+    },
+    {
+        "label": "unittest",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "unittest",
+        "description": "unittest",
+        "detail": "unittest",
+        "documentation": {}
+    },
+    {
+        "label": "tempfile",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "tempfile",
+        "description": "tempfile",
+        "detail": "tempfile",
+        "documentation": {}
+    },
+    {
+        "label": "patch",
+        "importPath": "unittest.mock",
+        "description": "unittest.mock",
+        "isExtraImport": true,
+        "detail": "unittest.mock",
+        "documentation": {}
+    },
+    {
+        "label": "MagicMock",
+        "importPath": "unittest.mock",
+        "description": "unittest.mock",
+        "isExtraImport": true,
+        "detail": "unittest.mock",
+        "documentation": {}
+    },
+    {
+        "label": "patch",
+        "importPath": "unittest.mock",
+        "description": "unittest.mock",
+        "isExtraImport": true,
+        "detail": "unittest.mock",
+        "documentation": {}
+    },
+    {
+        "label": "MagicMock",
+        "importPath": "unittest.mock",
+        "description": "unittest.mock",
+        "isExtraImport": true,
+        "detail": "unittest.mock",
+        "documentation": {}
+    },
+    {
+        "label": "get_git_version",
+        "kind": 2,
+        "importPath": "build_executable",
+        "description": "build_executable",
+        "peekOfCode": "def get_git_version():\n    \"\"\"Obtém versão do Git se disponível\"\"\"\n    try:\n        # Tenta obter a tag mais recente\n        result = subprocess.run(['git', 'describe', '--tags', '--abbrev=0'], \n                              capture_output=True, text=True, cwd=os.path.dirname(__file__))\n        if result.returncode == 0:\n            return result.stdout.strip()\n    except:\n        pass",
+        "detail": "build_executable",
+        "documentation": {}
+    },
+    {
+        "label": "get_build_info",
+        "kind": 2,
+        "importPath": "build_executable",
+        "description": "build_executable",
+        "peekOfCode": "def get_build_info():\n    \"\"\"Obtém informações de build\"\"\"\n    try:\n        # Hash do commit atual\n        result = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], \n                              capture_output=True, text=True)\n        if result.returncode == 0:\n            commit_hash = result.stdout.strip()\n            return f\"build-{commit_hash}\"\n    except:",
+        "detail": "build_executable",
+        "documentation": {}
+    },
+    {
+        "label": "VERSION",
+        "kind": 5,
+        "importPath": "build_executable",
+        "description": "build_executable",
+        "peekOfCode": "VERSION = get_git_version()\nBUILD_INFO = get_build_info()\nFULL_VERSION = f\"{VERSION}-{BUILD_INFO}\"\nprint(f\"🔨 Versão detectada: {FULL_VERSION}\")\n# Nome do arquivo principal do seu projeto\nmain_script = \"main.py\"\n# Dependências adicionais (se houver)\nbuild_exe_options = {\n    \"packages\": [],\n    \"excludes\": [],",
+        "detail": "build_executable",
+        "documentation": {}
+    },
+    {
+        "label": "BUILD_INFO",
+        "kind": 5,
+        "importPath": "build_executable",
+        "description": "build_executable",
+        "peekOfCode": "BUILD_INFO = get_build_info()\nFULL_VERSION = f\"{VERSION}-{BUILD_INFO}\"\nprint(f\"🔨 Versão detectada: {FULL_VERSION}\")\n# Nome do arquivo principal do seu projeto\nmain_script = \"main.py\"\n# Dependências adicionais (se houver)\nbuild_exe_options = {\n    \"packages\": [],\n    \"excludes\": [],\n    \"include_files\": []",
+        "detail": "build_executable",
+        "documentation": {}
+    },
+    {
+        "label": "FULL_VERSION",
+        "kind": 5,
+        "importPath": "build_executable",
+        "description": "build_executable",
+        "peekOfCode": "FULL_VERSION = f\"{VERSION}-{BUILD_INFO}\"\nprint(f\"🔨 Versão detectada: {FULL_VERSION}\")\n# Nome do arquivo principal do seu projeto\nmain_script = \"main.py\"\n# Dependências adicionais (se houver)\nbuild_exe_options = {\n    \"packages\": [],\n    \"excludes\": [],\n    \"include_files\": []\n}",
+        "detail": "build_executable",
+        "documentation": {}
+    },
+    {
+        "label": "main_script",
+        "kind": 5,
+        "importPath": "build_executable",
+        "description": "build_executable",
+        "peekOfCode": "main_script = \"main.py\"\n# Dependências adicionais (se houver)\nbuild_exe_options = {\n    \"packages\": [],\n    \"excludes\": [],\n    \"include_files\": []\n}\n# Informações do executável\nsetup(\n    name=\"MegaSenaEstatistico\",",
+        "detail": "build_executable",
+        "documentation": {}
+    },
+    {
+        "label": "build_exe_options",
+        "kind": 5,
+        "importPath": "build_executable",
+        "description": "build_executable",
+        "peekOfCode": "build_exe_options = {\n    \"packages\": [],\n    \"excludes\": [],\n    \"include_files\": []\n}\n# Informações do executável\nsetup(\n    name=\"MegaSenaEstatistico\",\n    version=\"1.0\",\n    description=\"Ferramenta estatística para Mega Sena\",",
+        "detail": "build_executable",
+        "documentation": {}
+    },
+    {
+        "label": "Config",
+        "kind": 6,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "class Config:\n    \"\"\"Classe para gerenciar configurações do aplicativo\"\"\"\n    def __init__(self, config_file: str = 'mega_sena_config.ini'):\n        self.config = configparser.ConfigParser()\n        self.config_file = config_file\n        self.load_config()\n    def load_config(self) -> None:\n        \"\"\"Carrega configurações do arquivo ou cria configurações padrão\"\"\"\n        if os.path.exists(self.config_file):\n            try:",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "get_config",
+        "kind": 2,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "def get_config() -> Config:\n    \"\"\"Retorna a instância global de configuração\"\"\"\n    return app_config\n# Funções de conveniência para acessar configurações comuns\ndef get_db_path() -> str:\n    \"\"\"Retorna o caminho do banco de dados\"\"\"\n    return app_config.get('DATABASE', 'path', 'megasena.db')\ndef get_monte_carlo_simulations() -> int:\n    \"\"\"Retorna o número de simulações Monte Carlo\"\"\"\n    return app_config.getint('ANALYSIS', 'monte_carlo_simulations', 10000)",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "get_db_path",
+        "kind": 2,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "def get_db_path() -> str:\n    \"\"\"Retorna o caminho do banco de dados\"\"\"\n    return app_config.get('DATABASE', 'path', 'megasena.db')\ndef get_monte_carlo_simulations() -> int:\n    \"\"\"Retorna o número de simulações Monte Carlo\"\"\"\n    return app_config.getint('ANALYSIS', 'monte_carlo_simulations', 10000)\ndef get_gui_theme() -> str:\n    \"\"\"Retorna o tema da GUI\"\"\"\n    return app_config.get('GUI', 'theme', 'clam')\ndef get_web_port() -> int:",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "get_monte_carlo_simulations",
+        "kind": 2,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "def get_monte_carlo_simulations() -> int:\n    \"\"\"Retorna o número de simulações Monte Carlo\"\"\"\n    return app_config.getint('ANALYSIS', 'monte_carlo_simulations', 10000)\ndef get_gui_theme() -> str:\n    \"\"\"Retorna o tema da GUI\"\"\"\n    return app_config.get('GUI', 'theme', 'clam')\ndef get_web_port() -> int:\n    \"\"\"Retorna a porta do servidor web\"\"\"\n    return app_config.getint('WEB', 'port', 5000)\ndef is_cache_enabled() -> bool:",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "get_gui_theme",
+        "kind": 2,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "def get_gui_theme() -> str:\n    \"\"\"Retorna o tema da GUI\"\"\"\n    return app_config.get('GUI', 'theme', 'clam')\ndef get_web_port() -> int:\n    \"\"\"Retorna a porta do servidor web\"\"\"\n    return app_config.getint('WEB', 'port', 5000)\ndef is_cache_enabled() -> bool:\n    \"\"\"Verifica se o cache está habilitado\"\"\"\n    return app_config.getboolean('DATABASE', 'cache_enabled', True)\ndef is_auto_update_enabled() -> bool:",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "get_web_port",
+        "kind": 2,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "def get_web_port() -> int:\n    \"\"\"Retorna a porta do servidor web\"\"\"\n    return app_config.getint('WEB', 'port', 5000)\ndef is_cache_enabled() -> bool:\n    \"\"\"Verifica se o cache está habilitado\"\"\"\n    return app_config.getboolean('DATABASE', 'cache_enabled', True)\ndef is_auto_update_enabled() -> bool:\n    \"\"\"Verifica se a atualização automática está habilitada\"\"\"\n    return app_config.getboolean('GUI', 'auto_update', True)\nif __name__ == \"__main__\":",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "is_cache_enabled",
+        "kind": 2,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "def is_cache_enabled() -> bool:\n    \"\"\"Verifica se o cache está habilitado\"\"\"\n    return app_config.getboolean('DATABASE', 'cache_enabled', True)\ndef is_auto_update_enabled() -> bool:\n    \"\"\"Verifica se a atualização automática está habilitada\"\"\"\n    return app_config.getboolean('GUI', 'auto_update', True)\nif __name__ == \"__main__\":\n    # Teste das configurações\n    config = get_config()\n    print(\"Configurações atuais:\")",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "is_auto_update_enabled",
+        "kind": 2,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "def is_auto_update_enabled() -> bool:\n    \"\"\"Verifica se a atualização automática está habilitada\"\"\"\n    return app_config.getboolean('GUI', 'auto_update', True)\nif __name__ == \"__main__\":\n    # Teste das configurações\n    config = get_config()\n    print(\"Configurações atuais:\")\n    for section, settings in config.get_all_settings().items():\n        print(f\"\\n[{section}]\")\n        for key, value in settings.items():",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "app_config",
+        "kind": 5,
+        "importPath": "config",
+        "description": "config",
+        "peekOfCode": "app_config = Config()\ndef get_config() -> Config:\n    \"\"\"Retorna a instância global de configuração\"\"\"\n    return app_config\n# Funções de conveniência para acessar configurações comuns\ndef get_db_path() -> str:\n    \"\"\"Retorna o caminho do banco de dados\"\"\"\n    return app_config.get('DATABASE', 'path', 'megasena.db')\ndef get_monte_carlo_simulations() -> int:\n    \"\"\"Retorna o número de simulações Monte Carlo\"\"\"",
+        "detail": "config",
         "documentation": {}
     },
     {
@@ -480,7 +822,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def generate_and_save_user_set_gui():\n    def _generate_and_save():\n        draws = load_all_draws()\n        if not draws:\n            show_message(\"Erro\", \"Base de dados vazia. Atualize primeiro para gerar números.\", True)\n            return\n        method = simpledialog.askstring(\"Gerar Meus Números\", \"Escolha o método (alltime, lastyear, weighted):\", parent=root)\n        if not method: return\n        generated_numbers: Optional[List[int]] = []\n        if method == \"alltime\":",
+        "peekOfCode": "def generate_and_save_user_set_gui():\n    def _generate_and_save():\n        draws = load_all_draws()\n        if not draws:\n            show_message(\"Erro\", \"Base de dados vazia. Atualize primeiro para gerar números.\", True)\n            return\n        method = simpledialog.askstring(\"Gerar Meus Números\", \"Escolha o método (alltime, lastyear, weighted, prediction):\", parent=root)\n        if not method: return\n        generated_numbers: Optional[List[int]] = []\n        if method == \"alltime\":",
         "detail": "gui",
         "documentation": {}
     },
@@ -498,7 +840,25 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def toggle_compare_button_state():\n    global compare_button\n    if compare_button is not None: # Check if the button has been created\n        user_sets = load_user_sets()\n        if user_sets:\n            compare_button.config(state=tk.NORMAL)\n        else:\n            compare_button.config(state=tk.DISABLED)\ndef show_help():\n    help_text = \"\"\"",
+        "peekOfCode": "def toggle_compare_button_state():\n    global compare_button\n    if compare_button is not None:\n        user_sets = load_user_sets()\n        if user_sets:\n            compare_button.config(state=tk.NORMAL)\n        else:\n            compare_button.config(state=tk.DISABLED)\ndef run_backtest_gui(method: Optional[str] = None):\n    \"\"\"Permite ao usuário escolher um método e executa o backtest.\"\"\"",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "run_backtest_gui",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def run_backtest_gui(method: Optional[str] = None):\n    \"\"\"Permite ao usuário escolher um método e executa o backtest.\"\"\"\n    def _prompt_and_run():\n        if not method:\n            selected_method = simpledialog.askstring(\"Executar Backtest\", \"Escolha o método (alltime, lastyear, weighted):\", parent=root)\n            if not selected_method:\n                return\n        else:\n            selected_method = method\n        show_message(\"Backtest\", f\"Iniciando backtest para o método '{selected_method}'...\", False)",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "show_backtest_results_gui",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def show_backtest_results_gui(method: str):\n    \"\"\"Exibe os resultados do backtest em uma janela.\"\"\"\n    summary = get_backtest_summary(method)\n    if not summary['numbers']:\n        show_message(\"Erro\", f\"Nenhum resultado de backtest encontrado para o método '{method}'.\", True)\n        return\n    result_text = f\"Backtest para o método: '{summary['method']}'\\n\"\n    result_text += f\"Números gerados: {summary['numbers']}\\n\\n\"\n    result_text += f\"Resultado contra {summary['total_draws']} sorteios históricos:\\n\"\n    # Calculate total matches",
         "detail": "gui",
         "documentation": {}
     },
@@ -516,7 +876,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def open_github():\n    webbrowser.open(\"https://github.com/marcosfland/mega_sena_estatistico\")\n    show_message(\"Informação\", \"Repositório do GitHub aberto no navegador.\", False)\ndef show_about():\n    about_text = \"Mega-Sena Analyzer\\nVersão 1.2 (Gerenciamento de Números Pessoais)\\nDesenvolvido por Marcos\\n\\nFerramenta de análise estatística para os sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre o Mega-Sena Analyzer\", about_text)\ndef create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")",
+        "peekOfCode": "def open_github():\n    webbrowser.open(\"https://github.com/marcosfland/mega_sena_estatistico\")\n    show_message(\"Informação\", \"Repositório do GitHub aberto no navegador.\", False)\ndef show_about():\n    about_text = \"Mega-Sena Analyzer\\nVersão 1.3 (Backtest de Estratégias)\\nDesenvolvido por Marcos\\n\\nFerramenta de análise estatística para os sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre o Mega-Sena Analyzer\", about_text)\ndef create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")",
         "detail": "gui",
         "documentation": {}
     },
@@ -525,7 +885,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def show_about():\n    about_text = \"Mega-Sena Analyzer\\nVersão 1.2 (Gerenciamento de Números Pessoais)\\nDesenvolvido por Marcos\\n\\nFerramenta de análise estatística para os sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre o Mega-Sena Analyzer\", about_text)\ndef create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"650x850\")\n    root.resizable(False, False)\n    icon_path = get_resource_path(\"icon.png\")",
+        "peekOfCode": "def show_about():\n    about_text = \"Mega-Sena Analyzer\\nVersão 1.3 (Backtest de Estratégias)\\nDesenvolvido por Marcos\\n\\nFerramenta de análise estatística para os sorteios da Mega-Sena.\"\n    messagebox.showinfo(\"Sobre o Mega-Sena Analyzer\", about_text)\ndef create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"700x950\") # Aumentado para acomodar novos botões\n    root.resizable(False, False)\n    icon_path = get_resource_path(\"icon.png\")",
         "detail": "gui",
         "documentation": {}
     },
@@ -534,7 +894,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"650x850\")\n    root.resizable(False, False)\n    icon_path = get_resource_path(\"icon.png\")\n    if os.path.exists(icon_path) and Image:\n        try:\n            icon_image = tk.PhotoImage(file=icon_path)",
+        "peekOfCode": "def create_gui():\n    global root, status_bar, compare_button\n    root = tk.Tk()\n    root.title(\"Mega-Sena Analyzer\")\n    root.geometry(\"700x950\") # Aumentado para acomodar novos botões\n    root.resizable(False, False)\n    icon_path = get_resource_path(\"icon.png\")\n    if os.path.exists(icon_path) and Image:\n        try:\n            icon_image = tk.PhotoImage(file=icon_path)",
         "detail": "gui",
         "documentation": {}
     },
@@ -552,7 +912,7 @@
         "kind": 5,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "root = None\nstatus_bar = None\ncompare_button = None # Declare compare_button globally here\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:",
+        "peekOfCode": "root = None\nstatus_bar = None\ncompare_button = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:",
         "detail": "gui",
         "documentation": {}
     },
@@ -561,7 +921,7 @@
         "kind": 5,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "status_bar = None\ncompare_button = None # Declare compare_button globally here\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")",
+        "peekOfCode": "status_bar = None\ncompare_button = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")",
         "detail": "gui",
         "documentation": {}
     },
@@ -570,8 +930,107 @@
         "kind": 5,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "compare_button = None # Declare compare_button globally here\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")\n        messagebox.showinfo(title, message)",
+        "peekOfCode": "compare_button = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")\n        messagebox.showinfo(title, message)",
         "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "setup_enhanced_logging",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def setup_enhanced_logging(log_level: str = 'INFO', \n                          console_level: str = 'WARNING',\n                          max_file_size: int = 5 * 1024 * 1024,  # 5MB\n                          backup_count: int = 5) -> logging.Logger:\n    \"\"\"\n    Configura sistema de logs avançado com rotação\n    Args:\n        log_level: Nível de log para arquivo (DEBUG, INFO, WARNING, ERROR, CRITICAL)\n        console_level: Nível de log para console\n        max_file_size: Tamanho máximo do arquivo de log em bytes",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "get_logger",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def get_logger(name: str = 'mega_sena') -> logging.Logger:\n    \"\"\"Retorna logger configurado\"\"\"\n    return logging.getLogger(name)\ndef log_function_call(func_name: str, args: tuple = (), kwargs: dict = {}) -> None:\n    \"\"\"Log de chamada de função para debugging\"\"\"\n    logger = get_logger('mega_sena.debug')\n    args_str = ', '.join([str(arg) for arg in args])\n    kwargs_str = ', '.join([f\"{k}={v}\" for k, v in kwargs.items()])\n    all_args = ', '.join(filter(None, [args_str, kwargs_str]))\n    logger.debug(f\"Chamando {func_name}({all_args})\")",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "log_function_call",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def log_function_call(func_name: str, args: tuple = (), kwargs: dict = {}) -> None:\n    \"\"\"Log de chamada de função para debugging\"\"\"\n    logger = get_logger('mega_sena.debug')\n    args_str = ', '.join([str(arg) for arg in args])\n    kwargs_str = ', '.join([f\"{k}={v}\" for k, v in kwargs.items()])\n    all_args = ', '.join(filter(None, [args_str, kwargs_str]))\n    logger.debug(f\"Chamando {func_name}({all_args})\")\ndef log_performance(func_name: str, duration: float, details: str = \"\") -> None:\n    \"\"\"Log de performance de função\"\"\"\n    logger = get_logger('mega_sena.performance')",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "log_performance",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def log_performance(func_name: str, duration: float, details: str = \"\") -> None:\n    \"\"\"Log de performance de função\"\"\"\n    logger = get_logger('mega_sena.performance')\n    logger.info(f\"Performance - {func_name}: {duration:.3f}s {details}\")\ndef log_user_action(action: str, details: str = \"\", user_id: str = \"default\") -> None:\n    \"\"\"Log de ação do usuário\"\"\"\n    logger = get_logger('mega_sena.gui')\n    logger.info(f\"Usuário {user_id} - {action}: {details}\")\ndef log_analysis_result(analysis_type: str, result_count: int, duration: float = 0) -> None:\n    \"\"\"Log de resultado de análise\"\"\"",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "log_user_action",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def log_user_action(action: str, details: str = \"\", user_id: str = \"default\") -> None:\n    \"\"\"Log de ação do usuário\"\"\"\n    logger = get_logger('mega_sena.gui')\n    logger.info(f\"Usuário {user_id} - {action}: {details}\")\ndef log_analysis_result(analysis_type: str, result_count: int, duration: float = 0) -> None:\n    \"\"\"Log de resultado de análise\"\"\"\n    logger = get_logger('mega_sena.analysis')\n    duration_str = f\" ({duration:.3f}s)\" if duration > 0 else \"\"\n    logger.info(f\"Análise {analysis_type} concluída: {result_count} resultados{duration_str}\")\ndef log_error_with_context(error: Exception, context: str = \"\", extra_data: dict = {}) -> None:",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "log_analysis_result",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def log_analysis_result(analysis_type: str, result_count: int, duration: float = 0) -> None:\n    \"\"\"Log de resultado de análise\"\"\"\n    logger = get_logger('mega_sena.analysis')\n    duration_str = f\" ({duration:.3f}s)\" if duration > 0 else \"\"\n    logger.info(f\"Análise {analysis_type} concluída: {result_count} resultados{duration_str}\")\ndef log_error_with_context(error: Exception, context: str = \"\", extra_data: dict = {}) -> None:\n    \"\"\"Log de erro com contexto adicional\"\"\"\n    logger = get_logger('mega_sena')\n    error_msg = f\"Erro em {context}: {str(error)}\"\n    if extra_data:",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "log_error_with_context",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def log_error_with_context(error: Exception, context: str = \"\", extra_data: dict = {}) -> None:\n    \"\"\"Log de erro com contexto adicional\"\"\"\n    logger = get_logger('mega_sena')\n    error_msg = f\"Erro em {context}: {str(error)}\"\n    if extra_data:\n        error_msg += f\" | Dados: {extra_data}\"\n    logger.error(error_msg, exc_info=True)\ndef cleanup_old_logs(days_to_keep: int = 30) -> None:\n    \"\"\"Remove logs antigos\"\"\"\n    import glob",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "cleanup_old_logs",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def cleanup_old_logs(days_to_keep: int = 30) -> None:\n    \"\"\"Remove logs antigos\"\"\"\n    import glob\n    import time\n    log_dir = 'logs'\n    if not os.path.exists(log_dir):\n        return\n    cutoff_time = time.time() - (days_to_keep * 24 * 60 * 60)\n    for log_file in glob.glob(f\"{log_dir}/*.log*\"):\n        try:",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "log_function",
+        "kind": 2,
+        "importPath": "logging_config",
+        "description": "logging_config",
+        "peekOfCode": "def log_function(logger_name: str = 'mega_sena'):\n    \"\"\"Decorator para log automático de entrada e saída de função\"\"\"\n    def decorator(func):\n        def wrapper(*args, **kwargs):\n            logger = get_logger(logger_name)\n            func_name = func.__name__\n            # Log entrada\n            logger.debug(f\"Iniciando {func_name}\")\n            try:\n                result = func(*args, **kwargs)",
+        "detail": "logging_config",
+        "documentation": {}
+    },
+    {
+        "label": "get_db_hash",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def get_db_hash(path: str = DB_PATH) -> str:\n    \"\"\"Gera hash do arquivo de banco para invalidar cache quando necessário\"\"\"\n    try:\n        with open(path, 'rb') as f:\n            return hashlib.md5(f.read()).hexdigest()\n    except (FileNotFoundError, IOError):\n        return \"no_db\"\ndef invalidate_cache():\n    \"\"\"Invalida o cache de draws\"\"\"\n    global _draws_cache, _cache_hash",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "invalidate_cache",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def invalidate_cache():\n    \"\"\"Invalida o cache de draws\"\"\"\n    global _draws_cache, _cache_hash\n    _draws_cache = None\n    _cache_hash = None\n# --- Banco de Dados ---\ndef init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    Adiciona índices para melhor performance.",
+        "detail": "mega_sena_app",
         "documentation": {}
     },
     {
@@ -579,7 +1038,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('''\n            CREATE TABLE IF NOT EXISTS megasena (",
+        "peekOfCode": "def init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    Adiciona índices para melhor performance.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('''",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -624,7 +1083,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def load_all_draws(path: str = DB_PATH) -> List[Draw]:\n    \"\"\"\n    Carrega todos os sorteios da Mega-Sena do banco de dados.\n    Retorna uma lista de tuplas (data, dezenas).\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    draws: List[Draw] = []\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()",
+        "peekOfCode": "def load_all_draws(path: str = DB_PATH) -> List[Draw]:\n    \"\"\"\n    Carrega todos os sorteios da Mega-Sena do banco de dados com cache.\n    Retorna uma lista de tuplas (data, dezenas).\n    \"\"\"\n    global _draws_cache, _cache_hash\n    # Verificar se o cache ainda é válido\n    current_hash = get_db_hash(path)\n    if _draws_cache is not None and _cache_hash == current_hash:\n        return _draws_cache",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -669,7 +1128,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def monte_carlo_simulation(draws: List[Draw], simulations: int = 10000) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]]]:\n    \"\"\"\n    Realiza uma simulação de Monte Carlo para comparar frequências simuladas com as reais.\n    Retorna os 6 números mais frequentes simulados e reais.\n    \"\"\"\n    if not np:\n        logging.error(\"NumPy não está instalado. Não é possível realizar a simulação de Monte Carlo.\")\n        return [], []\n    all_nums: List[int] = list(range(1, MAX_NUM_MEGA_SENA + 1))\n    simulated_counts: Counter = Counter()",
+        "peekOfCode": "def monte_carlo_simulation(draws: List[Draw], simulations: Optional[int] = None) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]]]:\n    \"\"\"\n    Realiza uma simulação de Monte Carlo para comparar frequências simuladas com as reais.\n    Retorna os 6 números mais frequentes simulados e reais.\n    \"\"\"\n    if not np:\n        logging.error(\"NumPy não está instalado. Não é possível realizar a simulação de Monte Carlo.\")\n        return [], []\n    # Usar configuração se disponível\n    if simulations is None:",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -678,7 +1137,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def calculate_correlation(draws: List[Draw]) -> Optional[Any]:\n    \"\"\"\n    Calcula a matriz de correlação entre os números sorteados.\n    \"\"\"\n    if not pd:\n        logging.error(\"Pandas não está instalado. Não é possível calcular a correlação.\")\n        return None\n    data: List[List[int]] = []\n    for _, nums in draws:\n        # Create a binary array for each draw: 1 if number is present, 0 otherwise",
+        "peekOfCode": "def calculate_correlation(draws: List[Draw]) -> Optional[Any]:\n    \"\"\"\n    Calcula a matriz de correlação entre os números sorteados.\n    \"\"\"\n    if pd is None:\n        logging.error(\"Pandas não está instalado. Não é possível calcular a correlação.\")\n        return None\n    data: List[List[int]] = []\n    for _, nums in draws:\n        # Create a binary array for each draw: 1 if number is present, 0 otherwise",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -782,11 +1241,56 @@
         "documentation": {}
     },
     {
+        "label": "calculate_prediction_score",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def calculate_prediction_score(number: int, draws: List[Draw]) -> float:\n    \"\"\"Calcula score preditivo baseado em múltiplos fatores\"\"\"\n    recent_weight = 0.4\n    frequency_weight = 0.3\n    gap_weight = 0.2\n    correlation_weight = 0.1\n    # Frequência recente\n    recent_draws = draws[-50:] if len(draws) >= 50 else draws  # Últimos 50 sorteios\n    recent_freq = sum(1 for _, nums in recent_draws if number in nums)\n    recent_score = recent_freq / len(recent_draws) if recent_draws else 0",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "generate_smart_prediction",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def generate_smart_prediction(draws: List[Draw]) -> List[Tuple[int, float]]:\n    \"\"\"Gera predição inteligente com scores\"\"\"\n    scores = []\n    for num in range(1, MAX_NUM_MEGA_SENA + 1):\n        score = calculate_prediction_score(num, draws)\n        scores.append((num, score))\n    return sorted(scores, key=lambda x: x[1], reverse=True)\ndef analyze_number_gaps(draws: List[Draw]) -> Dict[int, List[int]]:\n    \"\"\"Analisa intervalos entre aparições de cada número\"\"\"\n    gaps = {i: [] for i in range(1, MAX_NUM_MEGA_SENA + 1)}",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_number_gaps",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def analyze_number_gaps(draws: List[Draw]) -> Dict[int, List[int]]:\n    \"\"\"Analisa intervalos entre aparições de cada número\"\"\"\n    gaps = {i: [] for i in range(1, MAX_NUM_MEGA_SENA + 1)}\n    last_appearance = {i: -1 for i in range(1, MAX_NUM_MEGA_SENA + 1)}\n    for idx, (_, nums) in enumerate(draws):\n        for num in nums:\n            if last_appearance[num] != -1:\n                gaps[num].append(idx - last_appearance[num])\n            last_appearance[num] = idx\n    return gaps",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_cycles",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def analyze_cycles(draws: List[Draw]) -> Dict[str, Any]:\n    \"\"\"Identifica padrões cíclicos nos sorteios\"\"\"\n    weekday_patterns = Counter()\n    month_patterns = Counter()\n    for date, nums in draws:\n        weekday_patterns[date.weekday()] += 1\n        month_patterns[date.month] += 1\n    return {\n        'weekday_distribution': dict(weekday_patterns),\n        'month_distribution': dict(month_patterns)",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_sequences",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def analyze_sequences(draws: List[Draw]) -> Dict[str, Any]:\n    \"\"\"Analisa sequências numéricas nos sorteios\"\"\"\n    consecutive_counts = Counter()\n    arithmetic_sequences = Counter()\n    for _, nums in draws:\n        sorted_nums = sorted(nums)\n        # Contar números consecutivos\n        consecutive = 0\n        for i in range(len(sorted_nums) - 1):\n            if sorted_nums[i+1] == sorted_nums[i] + 1:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "init_user_sets_db",
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def init_user_sets_db(path: str = USER_SETS_DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite para os conjuntos de números do usuário,\n    criando a tabela 'user_sets' se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor = conn.cursor()\n        cursor.execute('''",
+        "peekOfCode": "def init_user_sets_db(path: str = USER_SETS_DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite para os conjuntos de números do usuário.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('''\n            CREATE TABLE IF NOT EXISTS user_sets (",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -795,7 +1299,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def save_user_set(name: str, numbers: List[int], path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Salva um conjunto de 6 números gerados pelo usuário na base de dados.\n    Atualiza um conjunto existente se o nome for o mesmo, caso contrário, insere um novo.\n    \"\"\"\n    init_user_sets_db(path)\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor = conn.cursor()",
+        "peekOfCode": "def save_user_set(name: str, numbers: List[int], path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Salva um conjunto de 6 números gerados pelo usuário na base de dados.\n    \"\"\"\n    init_user_sets_db(path)\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        if len(numbers) != NUM_DEZENAS:",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -804,7 +1308,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def load_user_sets(path: str = USER_SETS_DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Carrega todos os conjuntos de números salvos pelo usuário.\n    \"\"\"\n    init_user_sets_db(path)\n    conn: Optional[sqlite3.Connection] = None\n    user_sets: List[Dict[str, Any]] = []\n    try:\n        conn = sqlite3.connect(path)\n        cursor = conn.cursor()",
+        "peekOfCode": "def load_user_sets(path: str = USER_SETS_DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Carrega todos os conjuntos de números salvos pelo usuário.\n    \"\"\"\n    init_user_sets_db(path)\n    conn: Optional[sqlite3.Connection] = None\n    user_sets: List[Dict[str, Any]] = []\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -813,7 +1317,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def delete_user_set(set_id: int, path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Deleta um conjunto de números do usuário pelo ID.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor = conn.cursor()\n        cursor.execute(\"DELETE FROM user_sets WHERE id = ?\", (set_id,))\n        conn.commit()",
+        "peekOfCode": "def delete_user_set(set_id: int, path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Deleta um conjunto de números do usuário pelo ID.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute(\"DELETE FROM user_sets WHERE id = ?\", (set_id,))\n        conn.commit()",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -822,43 +1326,34 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, mega_sena_db_path: str = DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Compara todos os conjuntos de números do usuário com o último sorteio da Mega-Sena.\n    Atualiza o banco de dados do usuário com os resultados da comparação.\n    Retorna uma lista de dicionários com os resultados da comparação.\n    \"\"\"\n    latest_draw_data: Optional[Dict[str, Any]] = None\n    try:\n        all_draws = load_all_draws(mega_sena_db_path)\n        if not all_draws:",
+        "peekOfCode": "def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, mega_sena_db_path: str = DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Compara todos os conjuntos de números do usuário com o último sorteio da Mega-Sena.\n    \"\"\"\n    latest_draw_data: Optional[Dict[str, Any]] = None\n    try:\n        latest_draw_api = fetch_lottery_data(\"megasena\", None)\n        latest_draw_data = {\n            'concurso': int(latest_draw_api['concurso']),\n            'dezenas': sorted(list(map(int, latest_draw_api['dezenas'])))",
         "detail": "mega_sena_app",
         "documentation": {}
     },
     {
-        "label": "salvar_aposta_usuario",
+        "label": "init_backtest_db",
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def salvar_aposta_usuario(numeros: list, origem: str):\n    \"\"\"\n    Salva o conjunto de 6 números escolhido pelo usuário em um arquivo separado.\n    \"\"\"\n    import csv\n    from datetime import datetime\n    if len(numeros) != 6:\n        raise ValueError(\"A aposta deve conter exatamente 6 números.\")\n    numeros_ordenados = sorted(numeros)\n    existe = os.path.exists(USER_BETS_FILE)",
+        "peekOfCode": "def init_backtest_db(path: str = BACKTEST_DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados para armazenar os resultados do backtest,\n    criando a tabela 'backtest_results' se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('''",
         "detail": "mega_sena_app",
         "documentation": {}
     },
     {
-        "label": "comparar_aposta_com_ultimo_resultado",
+        "label": "run_backtest",
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def comparar_aposta_com_ultimo_resultado():\n    \"\"\"\n    Compara a última aposta salva pelo usuário com o último resultado oficial da Mega-Sena.\n    \"\"\"\n    import csv\n    if not os.path.exists(USER_BETS_FILE):\n        print(\"Nenhuma aposta de usuário encontrada.\")\n        return\n    # Carrega última aposta\n    with open(USER_BETS_FILE, \"r\", encoding=\"utf-8\") as f:",
+        "peekOfCode": "def run_backtest(method: str) -> bool:\n    \"\"\"\n    Executa o backtest para um método de geração de números e salva os resultados.\n    \"\"\"\n    init_backtest_db()\n    draws = load_all_draws()\n    if not draws:\n        logging.error('Base de dados vazia para backtest. Execute --update primeiro.')\n        return False\n    generated_numbers: Optional[List[int]] = []",
         "detail": "mega_sena_app",
         "documentation": {}
     },
     {
-        "label": "calcular_nivel_confianca",
+        "label": "get_backtest_summary",
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def calcular_nivel_confianca(draws: List[Draw], conjunto: List[int]) -> float:\n    \"\"\"\n    Calcula um nível de confiança empírico para um conjunto de 6 números.\n    Aqui, soma as frequências relativas de cada número no histórico.\n    \"\"\"\n    counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)\n    total = sum(counter.values())\n    if total == 0:",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "salvar_jogo_usuario",
-        "kind": 2,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "def salvar_jogo_usuario(conjunto: List[int], modo: str, nivel_confianca: float, arquivo: str = \"meus_jogos.csv\"):\n    \"\"\"\n    Salva o conjunto de números gerado pelo usuário em um arquivo separado.\n    \"\"\"\n    import csv\n    from datetime import datetime\n    existe = os.path.exists(arquivo)\n    with open(arquivo, \"a\", newline=\"\", encoding=\"utf-8\") as f:\n        writer = csv.writer(f)\n        if not existe:",
+        "peekOfCode": "def get_backtest_summary(method: str) -> Dict[str, Any]:\n    \"\"\"\n    Carrega os resultados do backtest para um método e retorna um resumo.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    summary = {\n        'method': method,\n        'numbers': [],\n        'total_draws': 0,\n        'matches': Counter()",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -867,7 +1362,88 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')\n    parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')\n    parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')\n    parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')\n    parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')\n    parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')\n    parser.add_argument('--plot', action='store_true', help='Visualizar frequência dos números')\n    parser.add_argument('--montecarlo', action='store_true', help='Simulação de Monte Carlo')\n    parser.add_argument('--correlation', action='store_true', help='Calcular correlação entre números')",
+        "peekOfCode": "def main() -> None:\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')\n    parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')\n    parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')\n    parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')\n    parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')\n    parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')\n    parser.add_argument('--plot', action='store_true', help='Visualizar frequência dos números')\n    parser.add_argument('--montecarlo', action='store_true', help='Simulação de Monte Carlo')\n    parser.add_argument('--correlation', action='store_true', help='Calcular correlação entre números')",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "CONFIG_AVAILABLE",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "CONFIG_AVAILABLE = False\nget_config = None\nget_db_path = None\nget_monte_carlo_simulations = None\nis_cache_enabled = None\nsetup_enhanced_logging = None\nget_logger = None\nlog_performance = None\nlog_analysis_result = None\ntry:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_config",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "get_config = None\nget_db_path = None\nget_monte_carlo_simulations = None\nis_cache_enabled = None\nsetup_enhanced_logging = None\nget_logger = None\nlog_performance = None\nlog_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_db_path",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "get_db_path = None\nget_monte_carlo_simulations = None\nis_cache_enabled = None\nsetup_enhanced_logging = None\nget_logger = None\nlog_performance = None\nlog_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled\n    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_monte_carlo_simulations",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "get_monte_carlo_simulations = None\nis_cache_enabled = None\nsetup_enhanced_logging = None\nget_logger = None\nlog_performance = None\nlog_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled\n    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result\n    CONFIG_AVAILABLE = True",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "is_cache_enabled",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "is_cache_enabled = None\nsetup_enhanced_logging = None\nget_logger = None\nlog_performance = None\nlog_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled\n    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result\n    CONFIG_AVAILABLE = True\nexcept ImportError:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "setup_enhanced_logging",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "setup_enhanced_logging = None\nget_logger = None\nlog_performance = None\nlog_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled\n    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result\n    CONFIG_AVAILABLE = True\nexcept ImportError:\n    CONFIG_AVAILABLE = False",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "get_logger",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "get_logger = None\nlog_performance = None\nlog_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled\n    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result\n    CONFIG_AVAILABLE = True\nexcept ImportError:\n    CONFIG_AVAILABLE = False\n    logging.warning(\"Sistema de configuração não disponível. Usando valores padrão.\")",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "log_performance",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "log_performance = None\nlog_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled\n    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result\n    CONFIG_AVAILABLE = True\nexcept ImportError:\n    CONFIG_AVAILABLE = False\n    logging.warning(\"Sistema de configuração não disponível. Usando valores padrão.\")\n# Conditional imports for external libraries",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "log_analysis_result",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "log_analysis_result = None\ntry:\n    from config import get_config, get_db_path, get_monte_carlo_simulations, is_cache_enabled\n    from logging_config import setup_enhanced_logging, get_logger, log_performance, log_analysis_result\n    CONFIG_AVAILABLE = True\nexcept ImportError:\n    CONFIG_AVAILABLE = False\n    logging.warning(\"Sistema de configuração não disponível. Usando valores padrão.\")\n# Conditional imports for external libraries\n# These are placed here to indicate they are optional if only core functionality is used.",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -876,17 +1452,80 @@
         "kind": 5,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "Draw = Tuple[datetime.date, Tuple[int, int, int, int, int, int]]\n# --- Banco de Dados ---\ndef init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()",
+        "peekOfCode": "Draw = Tuple[datetime.date, Tuple[int, int, int, int, int, int]]\n# Cache para melhorar performance\n_draws_cache = None\n_cache_hash = None\ndef get_db_hash(path: str = DB_PATH) -> str:\n    \"\"\"Gera hash do arquivo de banco para invalidar cache quando necessário\"\"\"\n    try:\n        with open(path, 'rb') as f:\n            return hashlib.md5(f.read()).hexdigest()\n    except (FileNotFoundError, IOError):",
         "detail": "mega_sena_app",
         "documentation": {}
     },
     {
-        "label": "USER_BETS_FILE",
+        "label": "_draws_cache",
         "kind": 5,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "USER_BETS_FILE = \"apostas_usuario.csv\"\ndef salvar_aposta_usuario(numeros: list, origem: str):\n    \"\"\"\n    Salva o conjunto de 6 números escolhido pelo usuário em um arquivo separado.\n    \"\"\"\n    import csv\n    from datetime import datetime\n    if len(numeros) != 6:\n        raise ValueError(\"A aposta deve conter exatamente 6 números.\")\n    numeros_ordenados = sorted(numeros)",
+        "peekOfCode": "_draws_cache = None\n_cache_hash = None\ndef get_db_hash(path: str = DB_PATH) -> str:\n    \"\"\"Gera hash do arquivo de banco para invalidar cache quando necessário\"\"\"\n    try:\n        with open(path, 'rb') as f:\n            return hashlib.md5(f.read()).hexdigest()\n    except (FileNotFoundError, IOError):\n        return \"no_db\"\ndef invalidate_cache():",
         "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "_cache_hash",
+        "kind": 5,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "_cache_hash = None\ndef get_db_hash(path: str = DB_PATH) -> str:\n    \"\"\"Gera hash do arquivo de banco para invalidar cache quando necessário\"\"\"\n    try:\n        with open(path, 'rb') as f:\n            return hashlib.md5(f.read()).hexdigest()\n    except (FileNotFoundError, IOError):\n        return \"no_db\"\ndef invalidate_cache():\n    \"\"\"Invalida o cache de draws\"\"\"",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "TestMegaSenaAnalyzer",
+        "kind": 6,
+        "importPath": "tests",
+        "description": "tests",
+        "peekOfCode": "class TestMegaSenaAnalyzer(unittest.TestCase):\n    \"\"\"Testes para o analisador da Mega-Sena\"\"\"\n    def setUp(self):\n        \"\"\"Configuração inicial para os testes\"\"\"\n        if not MODULE_AVAILABLE:\n            self.skipTest(\"Módulo mega_sena_app não pode ser importado\")\n        # Dados de teste - usar datas mais recentes\n        self.sample_draws = [\n            (datetime.date.today() - datetime.timedelta(days=5), (1, 2, 3, 4, 5, 6)),\n            (datetime.date.today() - datetime.timedelta(days=10), (7, 8, 9, 10, 11, 12)),",
+        "detail": "tests",
+        "documentation": {}
+    },
+    {
+        "label": "TestDatabaseOperations",
+        "kind": 6,
+        "importPath": "tests",
+        "description": "tests",
+        "peekOfCode": "class TestDatabaseOperations(unittest.TestCase):\n    \"\"\"Testes para operações de banco de dados\"\"\"\n    def setUp(self):\n        \"\"\"Configuração inicial para testes de banco\"\"\"\n        if not MODULE_AVAILABLE:\n            self.skipTest(\"Módulo mega_sena_app não pode ser importado\")\n        # Criar banco temporário para testes\n        self.temp_db_file = tempfile.NamedTemporaryFile(delete=False)\n        self.temp_db_path = self.temp_db_file.name\n        self.temp_db_file.close()",
+        "detail": "tests",
+        "documentation": {}
+    },
+    {
+        "label": "TestMathematicalFunctions",
+        "kind": 6,
+        "importPath": "tests",
+        "description": "tests",
+        "peekOfCode": "class TestMathematicalFunctions(unittest.TestCase):\n    \"\"\"Testes para funções matemáticas e estatísticas\"\"\"\n    def test_edge_cases(self):\n        \"\"\"Testa casos extremos\"\"\"\n        if not MODULE_AVAILABLE:\n            self.skipTest(\"Módulo mega_sena_app não pode ser importado\")\n        # Lista vazia\n        empty_draws = []\n        if hasattr(mega_sena_app, 'get_most_frequent'):\n            result = mega_sena_app.get_most_frequent(empty_draws, k=6)",
+        "detail": "tests",
+        "documentation": {}
+    },
+    {
+        "label": "TestMegaSenaAnalyzer",
+        "kind": 6,
+        "importPath": "tests_fixed",
+        "description": "tests_fixed",
+        "peekOfCode": "class TestMegaSenaAnalyzer(unittest.TestCase):\n    \"\"\"Testes para o analisador da Mega-Sena\"\"\"\n    def setUp(self):\n        \"\"\"Configuração inicial para os testes\"\"\"\n        if not MODULE_AVAILABLE:\n            self.skipTest(\"Módulo mega_sena_app não pode ser importado\")\n        # Dados de teste - usar datas mais recentes\n        self.sample_draws = [\n            (datetime.date.today() - datetime.timedelta(days=5), (1, 2, 3, 4, 5, 6)),\n            (datetime.date.today() - datetime.timedelta(days=10), (7, 8, 9, 10, 11, 12)),",
+        "detail": "tests_fixed",
+        "documentation": {}
+    },
+    {
+        "label": "TestDatabaseOperations",
+        "kind": 6,
+        "importPath": "tests_fixed",
+        "description": "tests_fixed",
+        "peekOfCode": "class TestDatabaseOperations(unittest.TestCase):\n    \"\"\"Testes para operações de banco de dados\"\"\"\n    def setUp(self):\n        \"\"\"Configuração inicial para testes de banco\"\"\"\n        if not MODULE_AVAILABLE:\n            self.skipTest(\"Módulo mega_sena_app não pode ser importado\")\n        # Criar banco temporário para testes\n        self.temp_db_file = tempfile.NamedTemporaryFile(delete=False)\n        self.temp_db_path = self.temp_db_file.name\n        self.temp_db_file.close()",
+        "detail": "tests_fixed",
+        "documentation": {}
+    },
+    {
+        "label": "TestMathematicalFunctions",
+        "kind": 6,
+        "importPath": "tests_fixed",
+        "description": "tests_fixed",
+        "peekOfCode": "class TestMathematicalFunctions(unittest.TestCase):\n    \"\"\"Testes para funções matemáticas e estatísticas\"\"\"\n    def test_edge_cases(self):\n        \"\"\"Testa casos extremos\"\"\"\n        if not MODULE_AVAILABLE:\n            self.skipTest(\"Módulo mega_sena_app não pode ser importado\")\n        # Lista vazia\n        empty_draws = []\n        if hasattr(mega_sena_app, 'get_most_frequent'):\n            result = mega_sena_app.get_most_frequent(empty_draws, k=6)",
+        "detail": "tests_fixed",
         "documentation": {}
     }
 ]
