@@ -73,3 +73,8 @@
 2025-08-10 20:44:54 - mega_sena - INFO - logging_config.py:107 - setup_enhanced_logging() - Nível de log: INFO
 2025-08-10 20:44:54 - mega_sena - INFO - logging_config.py:108 - setup_enhanced_logging() - Diretório de logs: C:\Users\marco\Documents\Github\mega_sena_estatistico\logs
 2025-08-10 20:44:54 - mega_sena - INFO - logging_config.py:109 - setup_enhanced_logging() - ==================================================
+2025-08-12 13:59:31 - mega_sena - INFO - logging_config.py:105 - setup_enhanced_logging() - ==================================================
+2025-08-12 13:59:31 - mega_sena - INFO - logging_config.py:106 - setup_enhanced_logging() - Mega-Sena Analyzer iniciado em 2025-08-12 13:59:31.769116
+2025-08-12 13:59:31 - mega_sena - INFO - logging_config.py:107 - setup_enhanced_logging() - Nível de log: INFO
+2025-08-12 13:59:31 - mega_sena - INFO - logging_config.py:108 - setup_enhanced_logging() - Diretório de logs: C:\Users\marco\Documents\GitHub\mega_sena_estatistico\logs
+2025-08-12 13:59:31 - mega_sena - INFO - logging_config.py:109 - setup_enhanced_logging() - ==================================================
