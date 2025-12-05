@@ -149,49 +149,42 @@ def init_db(path: str = DB_PATH) -> None:
     Inicializa a base de dados SQLite, criando a tabela megasena se não existir.
     Adiciona índices para melhor performance.
     """
-    conn: Optional[sqlite3.Connection] = None
     try:
-        conn = sqlite3.connect(path)
-        cursor: sqlite3.Cursor = conn.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS megasena (
-                concurso INTEGER PRIMARY KEY,
-                data TEXT,
-                dez1 INTEGER, dez2 INTEGER, dez3 INTEGER,
-                dez4 INTEGER, dez5 INTEGER, dez6 INTEGER
-            )
-        ''')
-        
-        # Adicionar índices para consultas frequentes
-        cursor.execute('CREATE INDEX IF NOT EXISTS idx_data ON megasena(data)')
-        cursor.execute('CREATE INDEX IF NOT EXISTS idx_concurso ON megasena(concurso)')
-        cursor.execute('CREATE INDEX IF NOT EXISTS idx_numeros ON megasena(dez1, dez2, dez3, dez4, dez5, dez6)')
-        
-        conn.commit()
+        with sqlite3.connect(path, timeout=20.0) as conn:
+            conn.execute('PRAGMA journal_mode=WAL')  # Write-Ahead Logging reduz locks
+            cursor: sqlite3.Cursor = conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS megasena (
+                    concurso INTEGER PRIMARY KEY,
+                    data TEXT,
+                    dez1 INTEGER, dez2 INTEGER, dez3 INTEGER,
+                    dez4 INTEGER, dez5 INTEGER, dez6 INTEGER
+                )
+            ''')
+            
+            # Adicionar índices para consultas frequentes
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_data ON megasena(data)')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_concurso ON megasena(concurso)')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_numeros ON megasena(dez1, dez2, dez3, dez4, dez5, dez6)')
+            
+            conn.commit()
     except sqlite3.Error as e:
         logging.error(f"Erro ao inicializar o banco de dados: {e}")
-    finally:
-        if conn:
-            conn.close()
 
 def get_last_db_concurso(path: str = DB_PATH) -> int:
     """
     Retorna o número do último concurso registrado no banco de dados.
     Retorna 0 se o banco de dados estiver vazio ou houver um erro.
     """
-    conn: Optional[sqlite3.Connection] = None
     try:
-        conn = sqlite3.connect(path)
-        cursor: sqlite3.Cursor = conn.cursor()
-        cursor.execute('SELECT MAX(concurso) FROM megasena')
-        row = cursor.fetchone()
-        return row[0] or 0
+        with sqlite3.connect(path, timeout=20.0) as conn:
+            cursor: sqlite3.Cursor = conn.cursor()
+            cursor.execute('SELECT MAX(concurso) FROM megasena')
+            row = cursor.fetchone()
+            return row[0] or 0
     except sqlite3.Error as e:
         logging.error(f"Erro ao obter o último concurso do banco de dados: {e}")
         return 0
-    finally:
-        if conn:
-            conn.close()
 
 # --- API Integration ---
 API_LOTERIAS: Dict[str, str] = {
@@ -260,34 +253,31 @@ def update_db(path: str = DB_PATH) -> None:
         logging.info(f"Base já está atualizada até o concurso {ultimo_db}")
         return
 
-    conn: Optional[sqlite3.Connection] = None
     try:
-        conn = sqlite3.connect(path)
-        cursor: sqlite3.Cursor = conn.cursor()
+        with sqlite3.connect(path, timeout=20.0) as conn:
+            conn.execute('PRAGMA journal_mode=WAL')
+            cursor: sqlite3.Cursor = conn.cursor()
 
-        for concurso in range(ultimo_db + 1, ultimo_api + 1):
-            try:
-                jogo: Dict[str, Any] = fetch_lottery_data("megasena", concurso)
-                dezenas: List[int] = sorted(list(map(int, jogo['dezenas']))) # Always store sorted
-                cursor.execute('''
-                    INSERT OR IGNORE INTO megasena
-                    (concurso, data, dez1, dez2, dez3, dez4, dez5, dez6)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                ''', (concurso, jogo['data'], *dezenas))
-                logging.info(f"Inserido concurso {concurso}")
-            except Exception as e:
-                logging.warning(f"Concurso {concurso} indisponível ou inválido: {e}")
-                # Don't break the loop, try next contest
-                continue
-        conn.commit()
-        logging.info(f"Atualização concluída até o concurso {ultimo_api}")
-        # Invalidar cache após atualização
-        invalidate_cache()
+            for concurso in range(ultimo_db + 1, ultimo_api + 1):
+                try:
+                    jogo: Dict[str, Any] = fetch_lottery_data("megasena", concurso)
+                    dezenas: List[int] = sorted(list(map(int, jogo['dezenas']))) # Always store sorted
+                    cursor.execute('''
+                        INSERT OR IGNORE INTO megasena
+                        (concurso, data, dez1, dez2, dez3, dez4, dez5, dez6)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    ''', (concurso, jogo['data'], *dezenas))
+                    logging.info(f"Inserido concurso {concurso}")
+                except Exception as e:
+                    logging.warning(f"Concurso {concurso} indisponível ou inválido: {e}")
+                    # Don't break the loop, try next contest
+                    continue
+            conn.commit()
+            logging.info(f"Atualização concluída até o concurso {ultimo_api}")
+            # Invalidar cache após atualização
+            invalidate_cache()
     except sqlite3.Error as e:
         logging.error(f"Erro ao inserir dados no banco de dados: {e}")
-    finally:
-        if conn:
-            conn.close()
 
 # --- Cálculos Estatísticos ---
 def load_all_draws(path: str = DB_PATH) -> List[Draw]:
@@ -302,31 +292,28 @@ def load_all_draws(path: str = DB_PATH) -> List[Draw]:
     if _draws_cache is not None and _cache_hash == current_hash:
         return _draws_cache
     
-    conn: Optional[sqlite3.Connection] = None
     draws: List[Draw] = []
     try:
-        conn = sqlite3.connect(path)
-        cursor: sqlite3.Cursor = conn.cursor()
-        cursor.execute('SELECT data, dez1, dez2, dez3, dez4, dez5, dez6 FROM megasena ORDER BY concurso ASC')
-        rows = cursor.fetchall()
-        for data_str, *dez in rows:
-            try:
-                date = datetime.datetime.strptime(data_str, '%d/%m/%Y').date()
-                draws.append((date, tuple(sorted(dez)))) # Ensure dezenas are sorted
-            except ValueError as e:
-                logging.warning(f"Erro ao parsear data '{data_str}' ou dezenas '{dez}': {e}. Pulando registro.")
-                continue
-        
-        # Atualizar cache
-        _draws_cache = draws
-        _cache_hash = current_hash
-        logging.info(f"Cache de draws atualizado. {len(draws)} sorteios carregados.")
-        
+        with sqlite3.connect(path, timeout=20.0) as conn:
+            conn.execute('PRAGMA query_only = ON')  # Modo read-only
+            cursor: sqlite3.Cursor = conn.cursor()
+            cursor.execute('SELECT data, dez1, dez2, dez3, dez4, dez5, dez6 FROM megasena ORDER BY concurso ASC')
+            rows = cursor.fetchall()
+            for data_str, *dez in rows:
+                try:
+                    date = datetime.datetime.strptime(data_str, '%d/%m/%Y').date()
+                    draws.append((date, tuple(sorted(dez)))) # Ensure dezenas are sorted
+                except ValueError as e:
+                    logging.warning(f"Erro ao parsear data '{data_str}' ou dezenas '{dez}': {e}. Pulando registro.")
+                    continue
+            
+            # Atualizar cache
+            _draws_cache = draws
+            _cache_hash = current_hash
+            logging.info(f"Cache de draws atualizado. {len(draws)} sorteios carregados.")
+            
     except sqlite3.Error as e:
         logging.error(f"Erro ao carregar sorteios do banco de dados: {e}")
-    finally:
-        if conn:
-            conn.close()
     return draws
 
 def get_most_frequent(draws: List[Draw], k: int = NUM_DEZENAS) -> List[int]:
@@ -615,7 +602,7 @@ def connect_external_db(conn_str: str) -> Optional[sqlite3.Connection]:
     logging.info(f"Tentando conectar ao banco de dados externo com: {conn_str}")
     try:
         # For SQLite, conn_str is typically the path to the database file
-        conn = sqlite3.connect(conn_str)
+        conn = sqlite3.connect(conn_str, timeout=20.0)
         logging.info("Conexão com o banco de dados externo estabelecida.")
         return conn
     except sqlite3.Error as e:
@@ -845,122 +832,106 @@ def init_user_sets_db(path: str = USER_SETS_DB_PATH) -> None:
     """
     Inicializa a base de dados SQLite para os conjuntos de números do usuário.
     """
-    conn: Optional[sqlite3.Connection] = None
     try:
-        conn = sqlite3.connect(path)
-        cursor: sqlite3.Cursor = conn.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS user_sets (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                date_generated TEXT NOT NULL,
-                dez1 INTEGER, dez2 INTEGER, dez3 INTEGER,
-                dez4 INTEGER, dez5 INTEGER, dez6 INTEGER,
-                comparison_result TEXT,
-                comparison_concurso INTEGER,
-                UNIQUE(name)
-            )
-        ''')
-        conn.commit()
+        with sqlite3.connect(path, timeout=20.0) as conn:
+            cursor: sqlite3.Cursor = conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS user_sets (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    date_generated TEXT NOT NULL,
+                    dez1 INTEGER, dez2 INTEGER, dez3 INTEGER,
+                    dez4 INTEGER, dez5 INTEGER, dez6 INTEGER,
+                    comparison_result TEXT,
+                    comparison_concurso INTEGER,
+                    UNIQUE(name)
+                )
+            ''')
+            conn.commit()
     except sqlite3.Error as e:
         logging.error(f"Erro ao inicializar o banco de dados de conjuntos do usuário: {e}")
-    finally:
-        if conn:
-            conn.close()
 
 def save_user_set(name: str, numbers: List[int], path: str = USER_SETS_DB_PATH) -> bool:
     """
     Salva um conjunto de 6 números gerados pelo usuário na base de dados.
     """
     init_user_sets_db(path)
-    conn: Optional[sqlite3.Connection] = None
     try:
-        conn = sqlite3.connect(path)
-        cursor: sqlite3.Cursor = conn.cursor()
-        
-        if len(numbers) != NUM_DEZENAS:
-            logging.error(f"O conjunto de números deve conter {NUM_DEZENAS} dezenas.")
-            return False
+        with sqlite3.connect(path, timeout=20.0) as conn:
+            cursor: sqlite3.Cursor = conn.cursor()
+            
+            if len(numbers) != NUM_DEZENAS:
+                logging.error(f"O conjunto de números deve conter {NUM_DEZENAS} dezenas.")
+                return False
 
-        sorted_numbers = sorted(numbers)
-        date_generated = datetime.date.today().strftime('%Y-%m-%d')
+            sorted_numbers = sorted(numbers)
+            date_generated = datetime.date.today().strftime('%Y-%m-%d')
 
-        cursor.execute("SELECT id FROM user_sets WHERE name = ?", (name,))
-        existing_id = cursor.fetchone()
+            cursor.execute("SELECT id FROM user_sets WHERE name = ?", (name,))
+            existing_id = cursor.fetchone()
 
-        if existing_id:
-            cursor.execute(f'''
-                UPDATE user_sets
-                SET date_generated = ?, dez1 = ?, dez2 = ?, dez3 = ?, dez4 = ?, dez5 = ?, dez6 = ?,
-                    comparison_result = NULL, comparison_concurso = NULL
-                WHERE id = ?
-            ''', (date_generated, *sorted_numbers, existing_id[0]))
-            logging.info(f"Conjunto de números '{name}' atualizado.")
-        else:
-            cursor.execute(f'''
-                INSERT INTO user_sets (name, date_generated, dez1, dez2, dez3, dez4, dez5, dez6, comparison_result, comparison_concurso)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)
-            ''', (name, date_generated, *sorted_numbers))
-            logging.info(f"Novo conjunto de números '{name}' salvo.")
-        
-        conn.commit()
-        return True
+            if existing_id:
+                cursor.execute(f'''
+                    UPDATE user_sets
+                    SET date_generated = ?, dez1 = ?, dez2 = ?, dez3 = ?, dez4 = ?, dez5 = ?, dez6 = ?,
+                        comparison_result = NULL, comparison_concurso = NULL
+                    WHERE id = ?
+                ''', (date_generated, *sorted_numbers, existing_id[0]))
+                logging.info(f"Conjunto de números '{name}' atualizado.")
+            else:
+                cursor.execute(f'''
+                    INSERT INTO user_sets (name, date_generated, dez1, dez2, dez3, dez4, dez5, dez6, comparison_result, comparison_concurso)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)
+                ''', (name, date_generated, *sorted_numbers))
+                logging.info(f"Novo conjunto de números '{name}' salvo.")
+            
+            conn.commit()
+            return True
     except sqlite3.IntegrityError:
         logging.error(f"Erro: Um conjunto com o nome '{name}' já existe.")
         return False
     except sqlite3.Error as e:
         logging.error(f"Erro ao salvar/atualizar conjunto de números do usuário: {e}")
         return False
-    finally:
-        if conn:
-            conn.close()
 
 def load_user_sets(path: str = USER_SETS_DB_PATH) -> List[Dict[str, Any]]:
     """
     Carrega todos os conjuntos de números salvos pelo usuário.
     """
     init_user_sets_db(path)
-    conn: Optional[sqlite3.Connection] = None
     user_sets: List[Dict[str, Any]] = []
     try:
-        conn = sqlite3.connect(path)
-        cursor: sqlite3.Cursor = conn.cursor()
-        cursor.execute('SELECT id, name, date_generated, dez1, dez2, dez3, dez4, dez5, dez6, comparison_result, comparison_concurso FROM user_sets')
-        rows = cursor.fetchall()
-        for row in rows:
-            user_sets.append({
-                'id': row[0],
-                'name': row[1],
-                'date_generated': row[2],
-                'numbers': sorted([row[3], row[4], row[5], row[6], row[7], row[8]]),
-                'comparison_result': row[9],
-                'comparison_concurso': row[10]
-            })
+        with sqlite3.connect(path, timeout=20.0) as conn:
+            cursor: sqlite3.Cursor = conn.cursor()
+            cursor.execute('SELECT id, name, date_generated, dez1, dez2, dez3, dez4, dez5, dez6, comparison_result, comparison_concurso FROM user_sets')
+            rows = cursor.fetchall()
+            for row in rows:
+                user_sets.append({
+                    'id': row[0],
+                    'name': row[1],
+                    'date_generated': row[2],
+                    'numbers': sorted([row[3], row[4], row[5], row[6], row[7], row[8]]),
+                    'comparison_result': row[9],
+                    'comparison_concurso': row[10]
+                })
     except sqlite3.Error as e:
         logging.error(f"Erro ao carregar conjuntos de números do usuário: {e}")
-    finally:
-        if conn:
-            conn.close()
     return user_sets
 
 def delete_user_set(set_id: int, path: str = USER_SETS_DB_PATH) -> bool:
     """
     Deleta um conjunto de números do usuário pelo ID.
     """
-    conn: Optional[sqlite3.Connection] = None
     try:
-        conn = sqlite3.connect(path)
-        cursor: sqlite3.Cursor = conn.cursor()
-        cursor.execute("DELETE FROM user_sets WHERE id = ?", (set_id,))
-        conn.commit()
-        logging.info(f"Conjunto de números com ID {set_id} deletado.")
-        return True
+        with sqlite3.connect(path, timeout=20.0) as conn:
+            cursor: sqlite3.Cursor = conn.cursor()
+            cursor.execute("DELETE FROM user_sets WHERE id = ?", (set_id,))
+            conn.commit()
+            logging.info(f"Conjunto de números com ID {set_id} deletado.")
+            return True
     except sqlite3.Error as e:
         logging.error(f"Erro ao deletar conjunto de números do usuário (ID: {set_id}): {e}")
         return False
-    finally:
-        if conn:
-            conn.close()
 
 def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, mega_sena_db_path: str = DB_PATH) -> List[Dict[str, Any]]:
     """
@@ -976,16 +947,15 @@ def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, 
     except Exception as e:
         logging.warning(f"Não foi possível buscar o último sorteio da API para comparação: {e}. Tentando usar o último do DB.")
         try:
-            conn_db = sqlite3.connect(mega_sena_db_path)
-            cursor_db = conn_db.cursor()
-            cursor_db.execute('SELECT concurso, dez1, dez2, dez3, dez4, dez5, dez6 FROM megasena ORDER BY concurso DESC LIMIT 1')
-            last_db_row = cursor_db.fetchone()
-            conn_db.close()
-            if last_db_row:
-                latest_draw_data = {
-                    'concurso': last_db_row[0],
-                    'dezenas': sorted([last_db_row[i] for i in range(1, 7)])
-                }
+            with sqlite3.connect(mega_sena_db_path, timeout=20.0) as conn_db:
+                cursor_db = conn_db.cursor()
+                cursor_db.execute('SELECT concurso, dez1, dez2, dez3, dez4, dez5, dez6 FROM megasena ORDER BY concurso DESC LIMIT 1')
+                last_db_row = cursor_db.fetchone()
+                if last_db_row:
+                    latest_draw_data = {
+                        'concurso': last_db_row[0],
+                        'dezenas': sorted([last_db_row[i] for i in range(1, 7)])
+                    }
         except Exception as e:
             logging.error(f"Erro ao obter o último sorteio do banco de dados local para comparação: {e}")
             return []
@@ -1000,42 +970,38 @@ def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, 
     user_sets = load_user_sets(user_sets_path)
     comparison_results = []
     
-    conn_user = None
     try:
-        conn_user = sqlite3.connect(user_sets_path)
-        cursor_user = conn_user.cursor()
+        with sqlite3.connect(user_sets_path, timeout=20.0) as conn_user:
+            cursor_user = conn_user.cursor()
 
-        for user_set in user_sets:
-            user_set_numbers = set(user_set['numbers'])
-            matches = len(user_set_numbers.intersection(latest_dezenas))
-            
-            result_text = "Perdeu"
-            if matches == 6: result_text = "Sena (6 acertos)!"
-            elif matches == 5: result_text = "Quina (5 acertos)!"
-            elif matches == 4: result_text = "Quadra (4 acertos)!"
-            elif matches >= 3: result_text = f"Terno ({matches} acertos)" # Changed to >=3 to show matches
-            else: result_text = f"Nenhum prêmio ({matches} acertos)"
+            for user_set in user_sets:
+                user_set_numbers = set(user_set['numbers'])
+                matches = len(user_set_numbers.intersection(latest_dezenas))
+                
+                result_text = "Perdeu"
+                if matches == 6: result_text = "Sena (6 acertos)!"
+                elif matches == 5: result_text = "Quina (5 acertos)!"
+                elif matches == 4: result_text = "Quadra (4 acertos)!"
+                elif matches >= 3: result_text = f"Terno ({matches} acertos)" # Changed to >=3 to show matches
+                else: result_text = f"Nenhum prêmio ({matches} acertos)"
 
-            cursor_user.execute(f'''
-                UPDATE user_sets
-                SET comparison_result = ?, comparison_concurso = ?
-                WHERE id = ?
-            ''', (result_text, latest_concurso_num, user_set['id']))
+                cursor_user.execute(f'''
+                    UPDATE user_sets
+                    SET comparison_result = ?, comparison_concurso = ?
+                    WHERE id = ?
+                ''', (result_text, latest_concurso_num, user_set['id']))
+                
+                user_set['comparison_result'] = result_text
+                user_set['comparison_concurso'] = latest_concurso_num
+                user_set['matches'] = matches
+                user_set['latest_draw_dezenas'] = latest_draw_data['dezenas']
+                
+                comparison_results.append(user_set)
             
-            user_set['comparison_result'] = result_text
-            user_set['comparison_concurso'] = latest_concurso_num
-            user_set['matches'] = matches
-            user_set['latest_draw_dezenas'] = latest_draw_data['dezenas']
-            
-            comparison_results.append(user_set)
-        
-        conn_user.commit()
+            conn_user.commit()
 
     except sqlite3.Error as e:
         logging.error(f"Erro ao atualizar resultados de comparação na base de dados de conjuntos do usuário: {e}")
-    finally:
-        if conn_user:
-            conn_user.close()
     
     return comparison_results
 
@@ -1044,26 +1010,22 @@ def init_backtest_db(path: str = BACKTEST_DB_PATH) -> None:
     Inicializa a base de dados para armazenar os resultados do backtest,
     criando a tabela 'backtest_results' se não existir.
     """
-    conn: Optional[sqlite3.Connection] = None
     try:
-        conn = sqlite3.connect(path)
-        cursor: sqlite3.Cursor = conn.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS backtest_results (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                method TEXT NOT NULL,
-                date_tested TEXT NOT NULL,
-                generated_numbers TEXT NOT NULL,
-                draw_date TEXT NOT NULL,
-                matches INTEGER NOT NULL
-            )
-        ''')
-        conn.commit()
+        with sqlite3.connect(path, timeout=20.0) as conn:
+            cursor: sqlite3.Cursor = conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS backtest_results (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    method TEXT NOT NULL,
+                    date_tested TEXT NOT NULL,
+                    generated_numbers TEXT NOT NULL,
+                    draw_date TEXT NOT NULL,
+                    matches INTEGER NOT NULL
+                )
+            ''')
+            conn.commit()
     except sqlite3.Error as e:
         logging.error(f"Erro ao inicializar o banco de dados de backtest: {e}")
-    finally:
-        if conn:
-            conn.close()
 
 def run_backtest(method: str) -> bool:
     """
@@ -1094,36 +1056,31 @@ def run_backtest(method: str) -> bool:
     generated_numbers_str = ','.join(map(str, generated_numbers))
     date_tested = datetime.date.today().strftime('%Y-%m-%d')
 
-    conn: Optional[sqlite3.Connection] = None
     try:
-        conn = sqlite3.connect(BACKTEST_DB_PATH)
-        cursor: sqlite3.Cursor = conn.cursor()
+        with sqlite3.connect(BACKTEST_DB_PATH, timeout=20.0) as conn:
+            cursor: sqlite3.Cursor = conn.cursor()
 
-        cursor.execute("DELETE FROM backtest_results WHERE method = ?", (method,))
-        
-        for draw_date, draw_numbers in draws:
-            draw_set = set(draw_numbers)
-            matches = len(generated_set.intersection(draw_set))
-            cursor.execute('''
-                INSERT INTO backtest_results (method, date_tested, generated_numbers, draw_date, matches)
-                VALUES (?, ?, ?, ?, ?)
-            ''', (method, date_tested, generated_numbers_str, str(draw_date), matches))
+            cursor.execute("DELETE FROM backtest_results WHERE method = ?", (method,))
+            
+            for draw_date, draw_numbers in draws:
+                draw_set = set(draw_numbers)
+                matches = len(generated_set.intersection(draw_set))
+                cursor.execute('''
+                    INSERT INTO backtest_results (method, date_tested, generated_numbers, draw_date, matches)
+                    VALUES (?, ?, ?, ?, ?)
+                ''', (method, date_tested, generated_numbers_str, str(draw_date), matches))
 
-        conn.commit()
-        logging.info(f"Backtest para o método '{method}' concluído com sucesso. Resultados salvos.")
-        return True
+            conn.commit()
+            logging.info(f"Backtest para o método '{method}' concluído com sucesso. Resultados salvos.")
+            return True
     except sqlite3.Error as e:
         logging.error(f"Erro ao salvar os resultados do backtest: {e}")
         return False
-    finally:
-        if conn:
-            conn.close()
 
 def get_backtest_summary(method: str) -> Dict[str, Any]:
     """
     Carrega os resultados do backtest para um método e retorna um resumo.
     """
-    conn: Optional[sqlite3.Connection] = None
     summary = {
         'method': method,
         'numbers': [],
@@ -1131,24 +1088,21 @@ def get_backtest_summary(method: str) -> Dict[str, Any]:
         'matches': Counter()
     }
     try:
-        conn = sqlite3.connect(BACKTEST_DB_PATH)
-        cursor: sqlite3.Cursor = conn.cursor()
-        
-        cursor.execute("SELECT generated_numbers, COUNT(id) FROM backtest_results WHERE method = ? GROUP BY generated_numbers LIMIT 1", (method,))
-        result = cursor.fetchone()
-        if result:
-            summary['numbers'] = [int(n) for n in result[0].split(',')]
-            summary['total_draws'] = result[1]
-        
-        cursor.execute("SELECT matches, COUNT(*) FROM backtest_results WHERE method = ? GROUP BY matches", (method,))
-        for matches, count in cursor.fetchall():
-            summary['matches'][matches] = count
+        with sqlite3.connect(BACKTEST_DB_PATH, timeout=20.0) as conn:
+            cursor: sqlite3.Cursor = conn.cursor()
             
+            cursor.execute("SELECT generated_numbers, COUNT(id) FROM backtest_results WHERE method = ? GROUP BY generated_numbers LIMIT 1", (method,))
+            result = cursor.fetchone()
+            if result:
+                summary['numbers'] = [int(n) for n in result[0].split(',')]
+                summary['total_draws'] = result[1]
+            
+            cursor.execute("SELECT matches, COUNT(*) FROM backtest_results WHERE method = ? GROUP BY matches", (method,))
+            for matches, count in cursor.fetchall():
+                summary['matches'][matches] = count
+                
     except sqlite3.Error as e:
         logging.error(f"Erro ao carregar o resumo do backtest para o método '{method}': {e}")
-    finally:
-        if conn:
-            conn.close()
     return summary
 
 # --- Interface de Linha de Comando ---

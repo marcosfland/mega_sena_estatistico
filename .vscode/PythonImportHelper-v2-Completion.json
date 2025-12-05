@@ -85,6 +85,14 @@
         "documentation": {}
     },
     {
+        "label": "Tuple",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "Optional",
         "importPath": "typing",
         "description": "typing",
@@ -162,6 +170,15 @@
         "description": "typing",
         "isExtraImport": true,
         "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "sqlite3",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlite3",
+        "description": "sqlite3",
+        "detail": "sqlite3",
         "documentation": {}
     },
     {
@@ -499,15 +516,6 @@
         "documentation": {}
     },
     {
-        "label": "sqlite3",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "sqlite3",
-        "description": "sqlite3",
-        "detail": "sqlite3",
-        "documentation": {}
-    },
-    {
         "label": "random",
         "kind": 6,
         "isExtraImport": true,
@@ -761,6 +769,60 @@
         "description": "config",
         "peekOfCode": "app_config = Config()\ndef get_config() -> Config:\n    \"\"\"Retorna a instância global de configuração\"\"\"\n    return app_config\n# Funções de conveniência para acessar configurações comuns\ndef get_db_path() -> str:\n    \"\"\"Retorna o caminho do banco de dados\"\"\"\n    return app_config.get('DATABASE', 'path', 'megasena.db')\ndef get_monte_carlo_simulations() -> int:\n    \"\"\"Retorna o número de simulações Monte Carlo\"\"\"",
         "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "check_db_integrity",
+        "kind": 2,
+        "importPath": "db_utils",
+        "description": "db_utils",
+        "peekOfCode": "def check_db_integrity(db_path: str) -> Tuple[bool, str]:\n    \"\"\"\n    Verifica a integridade do banco de dados SQLite.\n    Retorna: (is_healthy, message)\n    \"\"\"\n    if not os.path.exists(db_path):\n        return False, f\"Banco de dados não encontrado: {db_path}\"\n    try:\n        conn = sqlite3.connect(db_path, timeout=20.0)\n        conn.execute('PRAGMA journal_mode=WAL')",
+        "detail": "db_utils",
+        "documentation": {}
+    },
+    {
+        "label": "vacuum_db",
+        "kind": 2,
+        "importPath": "db_utils",
+        "description": "db_utils",
+        "peekOfCode": "def vacuum_db(db_path: str) -> Tuple[bool, str]:\n    \"\"\"\n    Otimiza o banco de dados removendo espaço vazio.\n    Retorna: (success, message)\n    \"\"\"\n    if not os.path.exists(db_path):\n        return False, f\"Banco de dados não encontrado: {db_path}\"\n    try:\n        conn = sqlite3.connect(db_path, timeout=20.0)\n        conn.execute('VACUUM')",
+        "detail": "db_utils",
+        "documentation": {}
+    },
+    {
+        "label": "enable_wal_mode",
+        "kind": 2,
+        "importPath": "db_utils",
+        "description": "db_utils",
+        "peekOfCode": "def enable_wal_mode(db_path: str) -> Tuple[bool, str]:\n    \"\"\"\n    Ativa o modo Write-Ahead Logging (WAL) para reduzir locks.\n    Retorna: (success, message)\n    \"\"\"\n    if not os.path.exists(db_path):\n        return False, f\"Banco de dados não encontrado: {db_path}\"\n    try:\n        conn = sqlite3.connect(db_path, timeout=20.0)\n        conn.execute('PRAGMA journal_mode=WAL')",
+        "detail": "db_utils",
+        "documentation": {}
+    },
+    {
+        "label": "analyze_db",
+        "kind": 2,
+        "importPath": "db_utils",
+        "description": "db_utils",
+        "peekOfCode": "def analyze_db(db_path: str) -> Tuple[bool, str]:\n    \"\"\"\n    Analisa o banco para otimizar performance de queries.\n    Retorna: (success, message)\n    \"\"\"\n    if not os.path.exists(db_path):\n        return False, f\"Banco de dados não encontrado: {db_path}\"\n    try:\n        conn = sqlite3.connect(db_path, timeout=20.0)\n        conn.execute('ANALYZE')",
+        "detail": "db_utils",
+        "documentation": {}
+    },
+    {
+        "label": "get_db_info",
+        "kind": 2,
+        "importPath": "db_utils",
+        "description": "db_utils",
+        "peekOfCode": "def get_db_info(db_path: str) -> dict:\n    \"\"\"\n    Retorna informações sobre o banco de dados.\n    Retorna: dicionário com info de tamanho, número de tabelas, etc.\n    \"\"\"\n    if not os.path.exists(db_path):\n        return {'error': f'Banco não encontrado: {db_path}'}\n    try:\n        size_bytes = os.path.getsize(db_path)\n        size_mb = size_bytes / (1024 * 1024)",
+        "detail": "db_utils",
+        "documentation": {}
+    },
+    {
+        "label": "cleanup_databases",
+        "kind": 2,
+        "importPath": "db_utils",
+        "description": "db_utils",
+        "peekOfCode": "def cleanup_databases() -> dict:\n    \"\"\"\n    Realiza limpeza e otimização de todos os bancos do projeto.\n    Retorna: dicionário com resultados de cada operação\n    \"\"\"\n    databases = [\n        'megasena.db',\n        'user_sets.db',\n        'backtest.db'\n    ]",
+        "detail": "db_utils",
         "documentation": {}
     },
     {
@@ -1038,7 +1100,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    Adiciona índices para melhor performance.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('''",
+        "peekOfCode": "def init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    Adiciona índices para melhor performance.\n    \"\"\"\n    try:\n        with sqlite3.connect(path, timeout=20.0) as conn:\n            conn.execute('PRAGMA journal_mode=WAL')  # Write-Ahead Logging reduz locks\n            cursor: sqlite3.Cursor = conn.cursor()\n            cursor.execute('''",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1047,7 +1109,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def get_last_db_concurso(path: str = DB_PATH) -> int:\n    \"\"\"\n    Retorna o número do último concurso registrado no banco de dados.\n    Retorna 0 se o banco de dados estiver vazio ou houver um erro.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('SELECT MAX(concurso) FROM megasena')",
+        "peekOfCode": "def get_last_db_concurso(path: str = DB_PATH) -> int:\n    \"\"\"\n    Retorna o número do último concurso registrado no banco de dados.\n    Retorna 0 se o banco de dados estiver vazio ou houver um erro.\n    \"\"\"\n    try:\n        with sqlite3.connect(path, timeout=20.0) as conn:\n            cursor: sqlite3.Cursor = conn.cursor()\n            cursor.execute('SELECT MAX(concurso) FROM megasena')\n            row = cursor.fetchone()",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1191,7 +1253,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def connect_external_db(conn_str: str) -> Optional[sqlite3.Connection]:\n    \"\"\"\n    Conecta-se a um banco de dados externo (exemplo para SQLite).\n    Pode ser adaptado para outros tipos de banco de dados (PostgreSQL, MySQL, etc.)\n    requerendo as bibliotecas apropriadas (e.g., psycopg2, mysql-connector-python).\n    \"\"\"\n    logging.info(f\"Tentando conectar ao banco de dados externo com: {conn_str}\")\n    try:\n        # For SQLite, conn_str is typically the path to the database file\n        conn = sqlite3.connect(conn_str)",
+        "peekOfCode": "def connect_external_db(conn_str: str) -> Optional[sqlite3.Connection]:\n    \"\"\"\n    Conecta-se a um banco de dados externo (exemplo para SQLite).\n    Pode ser adaptado para outros tipos de banco de dados (PostgreSQL, MySQL, etc.)\n    requerendo as bibliotecas apropriadas (e.g., psycopg2, mysql-connector-python).\n    \"\"\"\n    logging.info(f\"Tentando conectar ao banco de dados externo com: {conn_str}\")\n    try:\n        # For SQLite, conn_str is typically the path to the database file\n        conn = sqlite3.connect(conn_str, timeout=20.0)",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1290,7 +1352,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def init_user_sets_db(path: str = USER_SETS_DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite para os conjuntos de números do usuário.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('''\n            CREATE TABLE IF NOT EXISTS user_sets (",
+        "peekOfCode": "def init_user_sets_db(path: str = USER_SETS_DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite para os conjuntos de números do usuário.\n    \"\"\"\n    try:\n        with sqlite3.connect(path, timeout=20.0) as conn:\n            cursor: sqlite3.Cursor = conn.cursor()\n            cursor.execute('''\n                CREATE TABLE IF NOT EXISTS user_sets (\n                    id INTEGER PRIMARY KEY AUTOINCREMENT,",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1299,7 +1361,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def save_user_set(name: str, numbers: List[int], path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Salva um conjunto de 6 números gerados pelo usuário na base de dados.\n    \"\"\"\n    init_user_sets_db(path)\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        if len(numbers) != NUM_DEZENAS:",
+        "peekOfCode": "def save_user_set(name: str, numbers: List[int], path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Salva um conjunto de 6 números gerados pelo usuário na base de dados.\n    \"\"\"\n    init_user_sets_db(path)\n    try:\n        with sqlite3.connect(path, timeout=20.0) as conn:\n            cursor: sqlite3.Cursor = conn.cursor()\n            if len(numbers) != NUM_DEZENAS:\n                logging.error(f\"O conjunto de números deve conter {NUM_DEZENAS} dezenas.\")",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1308,7 +1370,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def load_user_sets(path: str = USER_SETS_DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Carrega todos os conjuntos de números salvos pelo usuário.\n    \"\"\"\n    init_user_sets_db(path)\n    conn: Optional[sqlite3.Connection] = None\n    user_sets: List[Dict[str, Any]] = []\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()",
+        "peekOfCode": "def load_user_sets(path: str = USER_SETS_DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Carrega todos os conjuntos de números salvos pelo usuário.\n    \"\"\"\n    init_user_sets_db(path)\n    user_sets: List[Dict[str, Any]] = []\n    try:\n        with sqlite3.connect(path, timeout=20.0) as conn:\n            cursor: sqlite3.Cursor = conn.cursor()\n            cursor.execute('SELECT id, name, date_generated, dez1, dez2, dez3, dez4, dez5, dez6, comparison_result, comparison_concurso FROM user_sets')",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1317,7 +1379,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def delete_user_set(set_id: int, path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Deleta um conjunto de números do usuário pelo ID.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute(\"DELETE FROM user_sets WHERE id = ?\", (set_id,))\n        conn.commit()",
+        "peekOfCode": "def delete_user_set(set_id: int, path: str = USER_SETS_DB_PATH) -> bool:\n    \"\"\"\n    Deleta um conjunto de números do usuário pelo ID.\n    \"\"\"\n    try:\n        with sqlite3.connect(path, timeout=20.0) as conn:\n            cursor: sqlite3.Cursor = conn.cursor()\n            cursor.execute(\"DELETE FROM user_sets WHERE id = ?\", (set_id,))\n            conn.commit()\n            logging.info(f\"Conjunto de números com ID {set_id} deletado.\")",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1335,7 +1397,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def init_backtest_db(path: str = BACKTEST_DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados para armazenar os resultados do backtest,\n    criando a tabela 'backtest_results' se não existir.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    try:\n        conn = sqlite3.connect(path)\n        cursor: sqlite3.Cursor = conn.cursor()\n        cursor.execute('''",
+        "peekOfCode": "def init_backtest_db(path: str = BACKTEST_DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados para armazenar os resultados do backtest,\n    criando a tabela 'backtest_results' se não existir.\n    \"\"\"\n    try:\n        with sqlite3.connect(path, timeout=20.0) as conn:\n            cursor: sqlite3.Cursor = conn.cursor()\n            cursor.execute('''\n                CREATE TABLE IF NOT EXISTS backtest_results (",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1353,7 +1415,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def get_backtest_summary(method: str) -> Dict[str, Any]:\n    \"\"\"\n    Carrega os resultados do backtest para um método e retorna um resumo.\n    \"\"\"\n    conn: Optional[sqlite3.Connection] = None\n    summary = {\n        'method': method,\n        'numbers': [],\n        'total_draws': 0,\n        'matches': Counter()",
+        "peekOfCode": "def get_backtest_summary(method: str) -> Dict[str, Any]:\n    \"\"\"\n    Carrega os resultados do backtest para um método e retorna um resumo.\n    \"\"\"\n    summary = {\n        'method': method,\n        'numbers': [],\n        'total_draws': 0,\n        'matches': Counter()\n    }",
         "detail": "mega_sena_app",
         "documentation": {}
     },
