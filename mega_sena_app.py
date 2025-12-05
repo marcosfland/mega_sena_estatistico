@@ -361,6 +361,81 @@ def get_weighted(draws: List[Draw], k: int = NUM_DEZENAS) -> List[int]:
         chosen.update(picks)
     return sorted(list(chosen)) # Convert set to list and sort
 
+def get_from_backtest_insights(method: str = "weighted", k: int = NUM_DEZENAS) -> List[int]:
+    """
+    Gera um conjunto de números baseado na análise de resultados de backtest.
+    Utiliza os dados históricos de quais números foram mais bem-sucedidos
+    em acertar durante os backtests.
+    
+    Args:
+        method: Qual método de backtest usar ('alltime', 'lastyear', 'weighted')
+        k: Número de dezenas a gerar (padrão 6)
+    
+    Returns:
+        Lista de k números ordenados, baseados no desempenho histórico
+    """
+    try:
+        init_backtest_db()
+        all_nums: List[int] = list(range(1, MAX_NUM_MEGA_SENA + 1))
+        number_scores: Dict[int, float] = {n: 0.0 for n in all_nums}
+        
+        with sqlite3.connect(BACKTEST_DB_PATH, timeout=20.0) as conn:
+            cursor: sqlite3.Cursor = conn.cursor()
+            
+            # Buscar todos os backtest results para o método especificado
+            cursor.execute('''
+                SELECT generated_numbers, matches
+                FROM backtest_results
+                WHERE method = ?
+            ''', (method,))
+            
+            results = cursor.fetchall()
+            
+            if not results:
+                logging.warning(f"Nenhum resultado de backtest encontrado para o método '{method}'. Usando método ponderado.")
+                draws = load_all_draws()
+                return get_weighted(draws, k) if draws else sorted(random.sample(all_nums, k))
+            
+            # Analisar cada resultado de backtest
+            for generated_numbers_str, matches in results:
+                try:
+                    generated_numbers = [int(n) for n in generated_numbers_str.split(',')]
+                    
+                    # Cada número que apareceu neste backtest recebe um score baseado em matches
+                    # Números que levaram a mais acertos recebem scores maiores
+                    for num in generated_numbers:
+                        if num in number_scores:
+                            # Score = quantidade de acertos, com bônus exponencial para acertos maiores
+                            if matches >= 4:  # Quadra ou mais
+                                number_scores[num] += (matches ** 2)  # Bônus exponencial
+                            else:
+                                number_scores[num] += matches
+                
+                except (ValueError, IndexError):
+                    logging.warning(f"Erro ao processar resultado de backtest: {generated_numbers_str}")
+                    continue
+        
+        # Se todos os scores são zero, usar método ponderado como fallback
+        if sum(number_scores.values()) == 0:
+            logging.info("Nenhum acerto histórico encontrado no backtest. Usando método ponderado como fallback.")
+            draws = load_all_draws()
+            return get_weighted(draws, k) if draws else sorted(random.sample(all_nums, k))
+        
+        # Selecionar os k números com maiores scores
+        sorted_numbers = sorted(number_scores.items(), key=lambda x: x[1], reverse=True)
+        top_numbers = [num for num, score in sorted_numbers[:k]]
+        
+        logging.info(f"Números gerados usando insights de backtest ({method}): {sorted(top_numbers)}")
+        logging.debug(f"Scores: {[(num, number_scores[num]) for num in sorted(top_numbers)]}")
+        
+        return sorted(top_numbers)
+        
+    except Exception as e:
+        logging.error(f"Erro ao gerar números a partir de backtest insights: {e}")
+        # Fallback para weighted
+        draws = load_all_draws()
+        return get_weighted(draws, k) if draws else sorted(random.sample(list(range(1, MAX_NUM_MEGA_SENA + 1)), k))
+
 def plot_frequency(draws: List[Draw]) -> None:
     """
     Gera um gráfico de barras da frequência de cada número sorteado.
@@ -1077,6 +1152,140 @@ def run_backtest(method: str) -> bool:
         logging.error(f"Erro ao salvar os resultados do backtest: {e}")
         return False
 
+def run_backtest_multiple(method: str, times: int = 1) -> Dict[str, Any]:
+    """
+    Executa o backtest múltiplas vezes para um método e retorna resumo consolidado.
+    
+    Args:
+        method: Método de geração ('alltime', 'lastyear', 'weighted')
+        times: Número de vezes a executar o backtest (padrão: 1)
+    
+    Returns:
+        Dicionário com resumo consolidado dos backtests
+    """
+    if times < 1:
+        logging.error("Número de backtests deve ser >= 1")
+        return {'success': False, 'message': 'Número inválido', 'times_requested': 0, 'times_successful': 0, 'times_failed': 0}
+    
+    if times == 1:
+        # Se for apenas 1, usa a função original mas retorna no mesmo formato
+        success = run_backtest(method)
+        return {
+            'success': success,
+            'times_executed': 1,
+            'times_requested': 1,
+            'times_successful': 1 if success else 0,
+            'times_failed': 0 if success else 1,
+            'method': method,
+            'message': f"Backtest executado 1 vez com {'sucesso' if success else 'falha'}",
+            'consolidated_numbers': [],
+            'consolidated_frequency': {}
+        }
+    
+    init_backtest_db()
+    draws = load_all_draws()
+    if not draws:
+        logging.error('Base de dados vazia para backtest. Execute --update primeiro.')
+        return {'success': False, 'times_executed': 0, 'message': 'Base de dados vazia'}
+    
+    logging.info(f"Iniciando {times} execuções de backtest para o método '{method}'...")
+    
+    total_results: Dict[str, int] = {}  # Armazenar resultados consolidados
+    successful_runs = 0
+    failed_runs = 0
+    
+    try:
+        with sqlite3.connect(BACKTEST_DB_PATH, timeout=20.0) as conn:
+            cursor: sqlite3.Cursor = conn.cursor()
+            
+            # Limpar dados anteriores
+            cursor.execute("DELETE FROM backtest_results WHERE method = ?", (method,))
+            conn.commit()
+        
+        for i in range(times):
+            try:
+                generated_numbers: Optional[List[int]] = []
+                
+                # Re-gerar números a cada iteração (para que sejam diferentes)
+                if method == "alltime":
+                    generated_numbers = get_most_frequent(draws)
+                elif method == "lastyear":
+                    generated_numbers = get_most_frequent_period(draws)
+                elif method == "weighted":
+                    generated_numbers = get_weighted(draws)
+                else:
+                    logging.error(f"Método de backtest '{method}' não suportado.")
+                    failed_runs += 1
+                    continue
+                
+                if not generated_numbers:
+                    logging.warning(f"Execução {i+1}: Não foi possível gerar números.")
+                    failed_runs += 1
+                    continue
+                
+                generated_set = set(generated_numbers)
+                generated_numbers_str = ','.join(map(str, generated_numbers))
+                date_tested = datetime.date.today().strftime('%Y-%m-%d')
+                
+                with sqlite3.connect(BACKTEST_DB_PATH, timeout=20.0) as conn:
+                    cursor: sqlite3.Cursor = conn.cursor()
+                    
+                    # Inserir resultados desta execução
+                    for draw_date, draw_numbers in draws:
+                        draw_set = set(draw_numbers)
+                        matches = len(generated_set.intersection(draw_set))
+                        cursor.execute('''
+                            INSERT INTO backtest_results (method, date_tested, generated_numbers, draw_date, matches)
+                            VALUES (?, ?, ?, ?, ?)
+                        ''', (method, date_tested, generated_numbers_str, str(draw_date), matches))
+                    
+                    conn.commit()
+                
+                logging.info(f"Execução {i+1}/{times} concluída com sucesso para método '{method}'")
+                successful_runs += 1
+                
+                # Armazenar informação de quais números foram gerados
+                key = f"exec_{i+1}_numbers"
+                total_results[key] = generated_numbers
+                
+            except Exception as e:
+                logging.error(f"Erro na execução {i+1} do backtest: {e}")
+                failed_runs += 1
+                continue
+        
+        # Consolidar números mais frequentes
+        if successful_runs > 0:
+            number_frequency: Dict[int, int] = {}
+            for i in range(1, successful_runs + 1):
+                key = f"exec_{i}_numbers"
+                if key in total_results:
+                    for num in total_results[key]:
+                        number_frequency[num] = number_frequency.get(num, 0) + 1
+            
+            # Ordenar por frequência e pegar top 6
+            consolidated = sorted(number_frequency.items(), key=lambda x: (-x[1], x[0]))[:6]
+            total_results['consolidated_numbers'] = [num for num, _ in consolidated]
+            total_results['consolidated_frequency'] = dict(consolidated)
+        
+        total_results['method'] = method
+        total_results['times_requested'] = times
+        total_results['times_successful'] = successful_runs
+        total_results['times_failed'] = failed_runs
+        total_results['success'] = successful_runs > 0
+        total_results['message'] = f"Execução de backtests concluída: {successful_runs} sucesso(s), {failed_runs} falha(s) de {times}"
+        
+        logging.info(f"Backtests múltiplos concluídos: {successful_runs} sucesso(s), {failed_runs} falha(s)")
+        
+        return total_results
+        
+    except Exception as e:
+        logging.error(f"Erro ao executar backtests múltiplos: {e}")
+        return {
+            'success': False,
+            'times_executed': successful_runs,
+            'message': f'Erro na execução: {str(e)}'
+        }
+
 def get_backtest_summary(method: str) -> Dict[str, Any]:
     """
     Carrega os resultados do backtest para um método e retorna um resumo.
@@ -1112,6 +1321,7 @@ def main() -> None:
     parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')
     parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')
     parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')
+    parser.add_argument('--backtest-insights', nargs='?', const='weighted', choices=['alltime', 'lastyear', 'weighted'], help='Gera números usando histórico de backtest (opção: alltime, lastyear, weighted)')
     parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')
     parser.add_argument('--plot', action='store_true', help='Visualizar frequência dos números')
     parser.add_argument('--montecarlo', action='store_true', help='Simulação de Monte Carlo')
@@ -1128,6 +1338,8 @@ def main() -> None:
     parser.add_argument('--external-db', type=str, help='String de conexão para banco de dados externo')
     parser.add_argument('--web', action='store_true', help='Inicia interface web Flask')
     parser.add_argument('--prediction', action='store_true', help='Geração inteligente de números com scoring')
+    parser.add_argument('--backtest', nargs='?', const='weighted', choices=['alltime', 'lastyear', 'weighted'], help='Executa backtest (opção: alltime, lastyear, weighted)')
+    parser.add_argument('--backtest-times', type=int, default=1, help='Número de vezes a executar o backtest (padrão: 1)')
     parser.add_argument('--gaps', action='store_true', help='Análise de intervalos entre aparições')
     parser.add_argument('--cycles', action='store_true', help='Análise de padrões cíclicos')
     parser.add_argument('--sequences', action='store_true', help='Análise de sequências numéricas')
@@ -1151,7 +1363,7 @@ def main() -> None:
         return
 
     draws: List[Draw] = []
-    if any([args.alltime, args.lastyear, args.stat, args.plot, args.montecarlo,
+    if any([args.alltime, args.lastyear, args.stat, args.backtest_insights, args.plot, args.montecarlo,
             args.correlation, args.timeseries, args.distribution, args.pairs,
             args.triplets, args.conditional, args.export_analysis, args.web, args.export,
             args.prediction, args.gaps, args.cycles, args.sequences]):
@@ -1185,6 +1397,39 @@ def main() -> None:
     elif args.stat:
         result = get_weighted(draws)
         print('Conjunto estatístico ponderado:', result)
+    elif args.backtest_insights:
+        result = get_from_backtest_insights(method=args.backtest_insights)
+        print(f'Números gerados por insights de backtest ({args.backtest_insights}):', result)
+    elif args.backtest:
+        result = run_backtest_multiple(method=args.backtest, times=args.backtest_times)
+        if result['success']:
+            print(f'\n✓ Backtests executados com sucesso!')
+            print(f'  Execuções solicitadas: {result["times_requested"]}')
+            print(f'  Execuções bem-sucedidas: {result["times_successful"]}')
+            if result['times_failed'] > 0:
+                print(f'  Falhas: {result["times_failed"]}')
+            
+            consolidated = result.get('consolidated_numbers', [])
+            freq = result.get('consolidated_frequency', {})
+            
+            if consolidated:
+                print(f'\n📊 Números consolidados (mais frequentes): {consolidated}')
+                if result['times_requested'] > 1:
+                    print('  Frequência:')
+                    for num in consolidated:
+                        if num in freq:
+                            count = freq[num][1] if isinstance(freq[num], tuple) else freq[num]
+                            print(f'    {num}: apareceu {count}x em {result["times_successful"]} execuções')
+            
+            # Mostrar resultados individuais se houver
+            if result['times_requested'] > 1:
+                print('\n📋 Resultados individuais:')
+                for i in range(1, result['times_successful'] + 1):
+                    exec_key = f'exec_{i}_numbers'
+                    if exec_key in result:
+                        print(f'  Execução {i}: {result[exec_key]}')
+        else:
+            print(f'\n✗ Erro ao executar backtests: {result["message"]}')
     elif args.plot:
         plot_frequency(draws)
     elif args.montecarlo:
