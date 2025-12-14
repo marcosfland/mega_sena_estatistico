@@ -9,6 +9,7 @@ O erro **"database is locked"** no SQLite foi completamente corrigido através d
 ## 🎯 Correções Implementadas
 
 ### 1. **Timeout em Todas as Conexões**
+
 ```python
 # ❌ ANTES (causava lock)
 conn = sqlite3.connect(path)
@@ -24,7 +25,7 @@ conn = sqlite3.connect(path, timeout=20.0)
 ### 2. **Write-Ahead Logging (WAL)**
 ```python
 conn.execute('PRAGMA journal_mode=WAL')
-```
+```text
 
 **Benefício:** 
 - Reduz drasticamente conflitos de lock
@@ -36,7 +37,7 @@ conn.execute('PRAGMA journal_mode=WAL')
 ### 3. **Modo Read-Only para Leituras**
 ```python
 conn.execute('PRAGMA query_only = ON')  # Em load_all_draws
-```
+```text
 
 **Benefício:** Evita locks desnecessários em operações de leitura.
 
@@ -50,7 +51,7 @@ if conn:
 
 # ✅ DEPOIS (simplificado)
 conn.close()
-```
+```text
 
 **Benefício:** Garante que conexões sempre sejam fechadas, mesmo em caso de erro.
 
@@ -67,7 +68,7 @@ Criado `db_utils.py` com funções para:
 **Como usar:**
 ```bash
 python db_utils.py
-```
+```text
 
 ---
 
@@ -102,7 +103,7 @@ python db_utils.py
 
 ## 📊 Resultados de Teste
 
-```
+```text
 megasena.db:
   ✅ WAL Mode: Ativado
   ✅ Integridade: Íntegra
@@ -123,7 +124,7 @@ backtest.db:
   ✅ Tamanho: 0.33 MB
   ✅ Tabelas: 3
   ✅ Índices: 0
-```
+```text
 
 ---
 
@@ -135,7 +136,7 @@ python mega_sena_app.py --alltime
 
 # Resultado
 Top 6 de todos os tempos: [10, 53, 5, 34, 37, 33] ✅
-```
+```text
 
 **Status:** ✅ **SEM ERROS DE "DATABASE LOCKED"**
 
@@ -163,7 +164,7 @@ python tests.py
 
 # Testar predição
 python mega_sena_app.py --prediction
-```
+```text
 
 ---
 

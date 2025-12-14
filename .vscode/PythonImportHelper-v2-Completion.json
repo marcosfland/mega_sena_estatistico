@@ -1,5 +1,22 @@
 [
     {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
         "label": "sys",
         "kind": 6,
         "isExtraImport": true,
@@ -407,6 +424,14 @@
         "documentation": {}
     },
     {
+        "label": "get_from_backtest_insights",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "analyze_number_gaps",
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
@@ -543,15 +568,6 @@
         "documentation": {}
     },
     {
-        "label": "re",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "re",
-        "description": "re",
-        "detail": "re",
-        "documentation": {}
-    },
-    {
         "label": "functools",
         "kind": 6,
         "isExtraImport": true,
@@ -625,6 +641,33 @@
         "description": "unittest.mock",
         "isExtraImport": true,
         "detail": "unittest.mock",
+        "documentation": {}
+    },
+    {
+        "label": "ROOT",
+        "kind": 5,
+        "importPath": "scripts.clean_markdown",
+        "description": "scripts.clean_markdown",
+        "peekOfCode": "ROOT = Path(__file__).resolve().parent.parent\nfiles = [\n    ROOT / 'SOLUCAO_DATABASE_LOCKED.md',\n    ROOT / 'BACKTEST_INSIGHTS_FEATURE.md',\n    ROOT / 'BACKTEST_INSIGHTS_IMPLEMENTATION.md'\n]\nlang_whitelist = ('bash','python','sql','text','sh','json','yaml','ini')\nfor f in files:\n    if not f.exists():\n        print(f\"Skipping {f}: not found\")",
+        "detail": "scripts.clean_markdown",
+        "documentation": {}
+    },
+    {
+        "label": "files",
+        "kind": 5,
+        "importPath": "scripts.clean_markdown",
+        "description": "scripts.clean_markdown",
+        "peekOfCode": "files = [\n    ROOT / 'SOLUCAO_DATABASE_LOCKED.md',\n    ROOT / 'BACKTEST_INSIGHTS_FEATURE.md',\n    ROOT / 'BACKTEST_INSIGHTS_IMPLEMENTATION.md'\n]\nlang_whitelist = ('bash','python','sql','text','sh','json','yaml','ini')\nfor f in files:\n    if not f.exists():\n        print(f\"Skipping {f}: not found\")\n        continue",
+        "detail": "scripts.clean_markdown",
+        "documentation": {}
+    },
+    {
+        "label": "lang_whitelist",
+        "kind": 5,
+        "importPath": "scripts.clean_markdown",
+        "description": "scripts.clean_markdown",
+        "peekOfCode": "lang_whitelist = ('bash','python','sql','text','sh','json','yaml','ini')\nfor f in files:\n    if not f.exists():\n        print(f\"Skipping {f}: not found\")\n        continue\n    s = f.read_text(encoding='utf-8')\n    original = s\n    # Remove outer fences if file starts with a fence and ends with a matching fence\n    lines = s.splitlines()\n    if lines and lines[0].strip().startswith('```') and lines[-1].strip().startswith('```'):",
+        "detail": "scripts.clean_markdown",
         "documentation": {}
     },
     {
@@ -826,6 +869,24 @@
         "documentation": {}
     },
     {
+        "label": "run_command",
+        "kind": 2,
+        "importPath": "demo_multiple_backtest",
+        "description": "demo_multiple_backtest",
+        "peekOfCode": "def run_command(cmd):\n    \"\"\"Executa um comando e exibe resultado\"\"\"\n    print(f\"\\n{'='*70}\")\n    print(f\"Executando: {cmd}\")\n    print(f\"{'='*70}\")\n    result = subprocess.run(cmd, shell=True, capture_output=False, text=True)\n    return result.returncode\ndef main():\n    \"\"\"Demonstra diferentes usos da funcionalidade\"\"\"\n    print(\"\\n\" + \"=\"*70)",
+        "detail": "demo_multiple_backtest",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "demo_multiple_backtest",
+        "description": "demo_multiple_backtest",
+        "peekOfCode": "def main():\n    \"\"\"Demonstra diferentes usos da funcionalidade\"\"\"\n    print(\"\\n\" + \"=\"*70)\n    print(\"DEMONSTRAÇÃO: Multiple Backtest Execution\")\n    print(\"=\"*70)\n    # Teste 1: Backtests simples (default)\n    print(\"\\n\\n[TESTE 1] Execução simples com default (weighted, 1x)\")\n    print(\"-\" * 70)\n    run_command(\"python mega_sena_app.py --backtest\")\n    # Teste 2: Alltime 1x",
+        "detail": "demo_multiple_backtest",
+        "documentation": {}
+    },
+    {
         "label": "show_message",
         "kind": 2,
         "importPath": "gui",
@@ -884,7 +945,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def generate_and_save_user_set_gui():\n    def _generate_and_save():\n        draws = load_all_draws()\n        if not draws:\n            show_message(\"Erro\", \"Base de dados vazia. Atualize primeiro para gerar números.\", True)\n            return\n        method = simpledialog.askstring(\"Gerar Meus Números\", \"Escolha o método (alltime, lastyear, weighted, prediction):\", parent=root)\n        if not method: return\n        generated_numbers: Optional[List[int]] = []\n        if method == \"alltime\":",
+        "peekOfCode": "def generate_and_save_user_set_gui():\n    def _generate_and_save():\n        draws = load_all_draws()\n        if not draws:\n            show_message(\"Erro\", \"Base de dados vazia. Atualize primeiro para gerar números.\", True)\n            return\n        method = simpledialog.askstring(\"Gerar Meus Números\", \"Escolha o método (alltime, lastyear, weighted, prediction, backtest-insights):\", parent=root)\n        if not method: return\n        generated_numbers: Optional[List[int]] = []\n        if method == \"alltime\":",
         "detail": "gui",
         "documentation": {}
     },
@@ -1177,6 +1238,15 @@
         "documentation": {}
     },
     {
+        "label": "get_from_backtest_insights",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def get_from_backtest_insights(method: str = \"weighted\", k: int = NUM_DEZENAS) -> List[int]:\n    \"\"\"\n    Gera um conjunto de números baseado na análise de resultados de backtest.\n    Utiliza os dados históricos de quais números foram mais bem-sucedidos\n    em acertar durante os backtests.\n    Args:\n        method: Qual método de backtest usar ('alltime', 'lastyear', 'weighted')\n        k: Número de dezenas a gerar (padrão 6)\n    Returns:\n        Lista de k números ordenados, baseados no desempenho histórico",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "plot_frequency",
         "kind": 2,
         "importPath": "mega_sena_app",
@@ -1411,6 +1481,15 @@
         "documentation": {}
     },
     {
+        "label": "run_backtest_multiple",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def run_backtest_multiple(method: str, times: int = 1) -> Dict[str, Any]:\n    \"\"\"\n    Executa o backtest múltiplas vezes para um método e retorna resumo consolidado.\n    Args:\n        method: Método de geração ('alltime', 'lastyear', 'weighted')\n        times: Número de vezes a executar o backtest (padrão: 1)\n    Returns:\n        Dicionário com resumo consolidado dos backtests\n    \"\"\"\n    if times < 1:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "get_backtest_summary",
         "kind": 2,
         "importPath": "mega_sena_app",
@@ -1424,7 +1503,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def main() -> None:\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')\n    parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')\n    parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')\n    parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')\n    parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')\n    parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')\n    parser.add_argument('--plot', action='store_true', help='Visualizar frequência dos números')\n    parser.add_argument('--montecarlo', action='store_true', help='Simulação de Monte Carlo')\n    parser.add_argument('--correlation', action='store_true', help='Calcular correlação entre números')",
+        "peekOfCode": "def main() -> None:\n    parser = argparse.ArgumentParser(description='Mega-Sena Analyzer')\n    parser.add_argument('--update', action='store_true', help='Atualiza a base de dados local')\n    parser.add_argument('--alltime', action='store_true', help='Top 6 de todos os tempos')\n    parser.add_argument('--lastyear', action='store_true', help='Top 6 do último ano')\n    parser.add_argument('--stat', action='store_true', help='Conjunto estatístico ponderado')\n    parser.add_argument('--backtest-insights', nargs='?', const='weighted', choices=['alltime', 'lastyear', 'weighted'], help='Gera números usando histórico de backtest (opção: alltime, lastyear, weighted)')\n    parser.add_argument('--db-path', type=str, help='Caminho personalizado para o banco de dados')\n    parser.add_argument('--plot', action='store_true', help='Visualizar frequência dos números')\n    parser.add_argument('--montecarlo', action='store_true', help='Simulação de Monte Carlo')",
         "detail": "mega_sena_app",
         "documentation": {}
     },

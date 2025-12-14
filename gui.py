@@ -7,7 +7,7 @@ from mega_sena_app import (
     update_db, export_results, get_most_frequent_pairs, get_most_frequent_triplets,
     conditional_probability, filter_draws_by_period, sanitize_filename,
     save_user_set, load_user_sets, compare_user_sets_with_latest_draw,
-    run_backtest, get_backtest_summary, generate_smart_prediction,
+    run_backtest, get_backtest_summary, generate_smart_prediction, get_from_backtest_insights,
     analyze_number_gaps, analyze_cycles, analyze_sequences,
     NUM_DEZENAS, MAX_NUM_MEGA_SENA
 )
@@ -159,6 +159,12 @@ def run_analysis_gui(option):
                                                 for i, (num, score) in enumerate(top_numbers, 1)])
                 top_6 = [num for num, _ in prediction[:6]]
                 result_message = f"Predição Inteligente (Top 10):\n{formatted_prediction}\n\nTop 6 Sugeridos: {top_6}"
+            elif option == "backtest-insights":
+                method = simpledialog.askstring("Backtest Insights", "Escolha o método (alltime, lastyear, weighted):", parent=root)
+                if not method:
+                    return
+                result = get_from_backtest_insights(method=method)
+                result_message = f"Números por Backtest Insights ({method}):\n{result}\n\nEsses números foram selecionados com base no histórico de acertos dos backtests."
             elif option == "gaps":
                 gaps = analyze_number_gaps(draws)
                 avg_gaps = {num: sum(gap_list)/len(gap_list) if gap_list else 0 
@@ -285,7 +291,7 @@ def generate_and_save_user_set_gui():
             show_message("Erro", "Base de dados vazia. Atualize primeiro para gerar números.", True)
             return
 
-        method = simpledialog.askstring("Gerar Meus Números", "Escolha o método (alltime, lastyear, weighted, prediction):", parent=root)
+        method = simpledialog.askstring("Gerar Meus Números", "Escolha o método (alltime, lastyear, weighted, prediction, backtest-insights):", parent=root)
         if not method: return
 
         generated_numbers: Optional[List[int]] = []
@@ -298,6 +304,11 @@ def generate_and_save_user_set_gui():
         elif method == "prediction":
             prediction = generate_smart_prediction(draws)
             generated_numbers = [num for num, _ in prediction[:6]]
+        elif method == "backtest-insights":
+            backtest_method = simpledialog.askstring("Método de Backtest", "Escolha o método de backtest (alltime, lastyear, weighted):", parent=root)
+            if not backtest_method:
+                return
+            generated_numbers = get_from_backtest_insights(method=backtest_method)
         else:
             show_message("Erro", "Método de geração inválido.", True)
             return
@@ -510,6 +521,7 @@ def create_gui():
         ("Top 6 do Último Ano", "lastyear"),
         ("Conjunto Estatístico Ponderado", "weighted"),
         ("Predição Inteligente", "prediction"),
+        ("Backtest Insights", "backtest-insights"),
         ("Visualizar Frequência", "plot"),
         ("Simulação de Monte Carlo", "montecarlo"),
         ("Correlação", "correlation"),
