@@ -456,6 +456,22 @@
         "documentation": {}
     },
     {
+        "label": "find_exact_sequence",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "find_best_match_draw",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "NUM_DEZENAS",
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
@@ -959,6 +975,15 @@
         "documentation": {}
     },
     {
+        "label": "search_sequence_gui",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def search_sequence_gui():\n    \"\"\"Solicita 6 números ao usuário e procura no histórico por essa sequência.\n    Se não encontrada, mostra o sorteio com maior número de acertos.\"\"\"\n    s = simpledialog.askstring(\"Pesquisar Sequência\", \"Informe 6 números separados por vírgula (ex: 1,4,23,34,45,56):\", parent=root)\n    if not s:\n        return\n    try:\n        nums = [int(x.strip()) for x in s.split(',') if x.strip() != '']\n    except ValueError:\n        show_message(\"Erro\", \"Formato inválido. Informe somente números separados por vírgula.\", True)",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
         "label": "toggle_compare_button_state",
         "kind": 2,
         "importPath": "gui",
@@ -1333,6 +1358,24 @@
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
         "peekOfCode": "def filter_draws_by_period(draws: List[Draw], start_date: Optional[datetime.date] = None, end_date: Optional[datetime.date] = None) -> List[Draw]:\n    \"\"\"\n    Filtra os sorteios por um período de datas.\n    \"\"\"\n    if not start_date and not end_date:\n        return draws\n    filtered_draws: List[Draw] = []\n    for d, nums in draws:\n        if start_date and d < start_date:\n            continue",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "find_exact_sequence",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def find_exact_sequence(numbers: List[int], path: str = DB_PATH) -> Optional[Dict[str, Any]]:\n    \"\"\"\n    Verifica se uma sequência exata de 6 números já foi sorteada.\n    Retorna um dicionário com 'concurso' e 'data' se encontrada, ou None caso contrário.\n    \"\"\"\n    if len(numbers) != NUM_DEZENAS:\n        raise ValueError(f\"A sequência deve conter exatamente {NUM_DEZENAS} números.\")\n    sorted_nums = sorted(numbers)\n    try:\n        with sqlite3.connect(path, timeout=20.0) as conn:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "find_best_match_draw",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def find_best_match_draw(numbers: List[int], path: str = DB_PATH) -> Dict[str, Any]:\n    \"\"\"\n    Procura o (ou os) sorteio(s) que possui(em) a maior quantidade de acertos em relação à lista de números fornecida.\n    Retorna um dicionário com 'max_matches' e 'draws' onde 'draws' é uma lista de dicionários\n    contendo 'concurso', 'data' e 'dezenas'.\n    \"\"\"\n    if len(numbers) != NUM_DEZENAS:\n        raise ValueError(f\"A entrada deve conter exatamente {NUM_DEZENAS} números.\")\n    target_set = set(numbers)\n    best = {'max_matches': 0, 'draws': []}",
         "detail": "mega_sena_app",
         "documentation": {}
     },

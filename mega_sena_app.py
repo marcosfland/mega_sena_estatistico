@@ -704,6 +704,61 @@ def filter_draws_by_period(draws: List[Draw], start_date: Optional[datetime.date
         filtered_draws.append((d, nums))
     return filtered_draws
 
+
+def find_exact_sequence(numbers: List[int], path: str = DB_PATH) -> Optional[Dict[str, Any]]:
+    """
+    Verifica se uma sequência exata de 6 números já foi sorteada.
+    Retorna um dicionário com 'concurso' e 'data' se encontrada, ou None caso contrário.
+    """
+    if len(numbers) != NUM_DEZENAS:
+        raise ValueError(f"A sequência deve conter exatamente {NUM_DEZENAS} números.")
+    sorted_nums = sorted(numbers)
+    try:
+        with sqlite3.connect(path, timeout=20.0) as conn:
+            cursor: sqlite3.Cursor = conn.cursor()
+            cursor.execute('''
+                SELECT concurso, data
+                FROM megasena
+                WHERE dez1 = ? AND dez2 = ? AND dez3 = ? AND dez4 = ? AND dez5 = ? AND dez6 = ?
+            ''', tuple(sorted_nums))
+            row = cursor.fetchone()
+            if row:
+                return {'concurso': int(row[0]), 'data': row[1], 'numbers': sorted_nums}
+    except sqlite3.Error as e:
+        logging.error(f"Erro ao buscar sequência exata no banco de dados: {e}")
+    return None
+
+
+def find_best_match_draw(numbers: List[int], path: str = DB_PATH) -> Dict[str, Any]:
+    """
+    Procura o (ou os) sorteio(s) que possui(em) a maior quantidade de acertos em relação à lista de números fornecida.
+    Retorna um dicionário com 'max_matches' e 'draws' onde 'draws' é uma lista de dicionários
+    contendo 'concurso', 'data' e 'dezenas'.
+    """
+    if len(numbers) != NUM_DEZENAS:
+        raise ValueError(f"A entrada deve conter exatamente {NUM_DEZENAS} números.")
+    target_set = set(numbers)
+    best = {'max_matches': 0, 'draws': []}
+    try:
+        with sqlite3.connect(path, timeout=20.0) as conn:
+            cursor: sqlite3.Cursor = conn.cursor()
+            cursor.execute('SELECT concurso, data, dez1, dez2, dez3, dez4, dez5, dez6 FROM megasena')
+            rows = cursor.fetchall()
+            for row in rows:
+                concurso = int(row[0])
+                data = row[1]
+                dez = tuple(sorted([row[i] for i in range(2, 8)]))
+                matches = len(target_set.intersection(set(dez)))
+                if matches > best['max_matches']:
+                    best['max_matches'] = matches
+                    best['draws'] = [{'concurso': concurso, 'data': data, 'dezenas': list(dez)}]
+                elif matches == best['max_matches'] and matches > 0:
+                    best['draws'].append({'concurso': concurso, 'data': data, 'dezenas': list(dez)})
+    except sqlite3.Error as e:
+        logging.error(f"Erro ao buscar melhor acerto no banco de dados: {e}")
+    return best
+
+
 def get_most_frequent_pairs(draws: List[Draw], k: int = NUM_DEZENAS) -> List[Tuple[Tuple[int, int], int]]:
     """
     Calcula os k pares de números mais frequentes em todos os sorteios.

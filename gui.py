@@ -9,6 +9,7 @@ from mega_sena_app import (
     save_user_set, load_user_sets, compare_user_sets_with_latest_draw,
     run_backtest, get_backtest_summary, generate_smart_prediction, get_from_backtest_insights,
     analyze_number_gaps, analyze_cycles, analyze_sequences,
+    find_exact_sequence, find_best_match_draw,
     NUM_DEZENAS, MAX_NUM_MEGA_SENA
 )
 import webbrowser
@@ -356,6 +357,56 @@ def compare_user_sets_gui():
 
     run_in_thread(_compare)
 
+
+def search_sequence_gui():
+    """Solicita 6 números ao usuário e procura no histórico por essa sequência.
+    Se não encontrada, mostra o sorteio com maior número de acertos."""
+    s = simpledialog.askstring("Pesquisar Sequência", "Informe 6 números separados por vírgula (ex: 1,4,23,34,45,56):", parent=root)
+    if not s:
+        return
+    try:
+        nums = [int(x.strip()) for x in s.split(',') if x.strip() != '']
+    except ValueError:
+        show_message("Erro", "Formato inválido. Informe somente números separados por vírgula.", True)
+        return
+
+    if len(nums) != NUM_DEZENAS or len(set(nums)) != NUM_DEZENAS:
+        show_message("Erro", f"Informe exatamente {NUM_DEZENAS} números únicos.", True)
+        return
+
+    for n in nums:
+        if not (1 <= n <= MAX_NUM_MEGA_SENA):
+            show_message("Erro", f"Números devem estar entre 1 e {MAX_NUM_MEGA_SENA}.", True)
+            return
+
+    def _search(numbers: List[int]):
+        try:
+            exact = find_exact_sequence(numbers)
+            if exact:
+                msg = f"A sequência {sorted(numbers)} foi sorteada no concurso {exact['concurso']} em {exact['data']}."
+                show_message("Sequência Encontrada", msg, False)
+                return
+
+            best = find_best_match_draw(numbers)
+            max_matches = best.get('max_matches', 0)
+            if max_matches == 0 or not best.get('draws'):
+                show_message("Resultado", "Nenhuma coincidência encontrada em um único sorteio.", False)
+                return
+
+            # Escolhe o primeiro (pode haver empates)
+            draw = best['draws'][0]
+            msg = (
+                f"Nenhum sorteio com as 6 dezenas exatas foi encontrado.\n"
+                f"Maior número de acertos em um concurso: {max_matches}.\n"
+                f"Concurso {draw['concurso']} em {draw['data']}: {draw['dezenas']}"
+            )
+            show_message("Melhor Acerto Encontrado", msg, False)
+        except Exception as e:
+            show_message("Erro", f"Erro ao procurar sequência: {e}", True)
+
+    run_in_thread(_search, nums)
+
+
 def toggle_compare_button_state():
     global compare_button
     if compare_button is not None:
@@ -510,6 +561,9 @@ def create_gui():
     compare_button = ttk.Button(user_numbers_frame, text="Comparar Meus Números com Último Sorteio", command=compare_user_sets_gui,
                                 style='Accent.TButton', state=tk.DISABLED)
     compare_button.pack(pady=5, fill=tk.X)
+
+    ttk.Button(user_numbers_frame, text="Pesquisar Sequência na História", command=search_sequence_gui,
+               style='Accent.TButton').pack(pady=5, fill=tk.X)
     
     root.after(100, toggle_compare_button_state)
 
