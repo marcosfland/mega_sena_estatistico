@@ -244,7 +244,18 @@ class TestDatabaseOperations(unittest.TestCase):
         """Limpeza após os testes"""
         # Remover banco temporário
         if os.path.exists(self.temp_db_path):
-            os.unlink(self.temp_db_path)
+            try:
+                os.unlink(self.temp_db_path)
+            except PermissionError:
+                # Em Windows pode haver um handle aberto; tentar fechar e remover novamente
+                try:
+                    sqlite3.connect(self.temp_db_path).close()
+                except Exception:
+                    pass
+                try:
+                    os.unlink(self.temp_db_path)
+                except Exception as e:
+                    print(f"Aviso: não foi possível remover {self.temp_db_path}: {e}")
     
     def test_init_db(self):
         """Testa inicialização do banco de dados"""
@@ -292,6 +303,25 @@ class TestMathematicalFunctions(unittest.TestCase):
         if hasattr(mega_sena_app, 'get_weighted'):
             result = mega_sena_app.get_weighted(single_draw, k=6)
             self.assertEqual(len(result), 6)
+
+    def test_compare_numbers_with_latest_draw(self):
+        """Testa comparação de um conjunto manual com último sorteio (mock da API)"""
+        if not hasattr(mega_sena_app, 'compare_numbers_with_latest_draw'):
+            self.skipTest("Função compare_numbers_with_latest_draw não está disponível")
+
+        with patch('mega_sena_app.fetch_lottery_data') as mock_fetch:
+            mock_fetch.return_value = {'concurso': '999', 'dezenas': ['01', '02', '03', '04', '05', '06']}
+            nums = [1, 2, 3, 7, 8, 9]
+            result = mega_sena_app.compare_numbers_with_latest_draw(nums)
+            self.assertIsInstance(result, dict)
+            self.assertEqual(result.get('matches'), 3)
+            self.assertIn('comparison_result', result)
+            self.assertEqual(result.get('comparison_concurso'), 999)
+            self.assertEqual(result.get('numbers'), sorted(nums))
+
+        # Testa input inválido
+        invalid = mega_sena_app.compare_numbers_with_latest_draw([1,2,3])
+        self.assertEqual(invalid, {})
 
 if __name__ == '__main__':
     # Executar os testes

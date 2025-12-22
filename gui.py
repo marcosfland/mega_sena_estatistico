@@ -6,7 +6,7 @@ from mega_sena_app import (
     calculate_correlation, analyze_time_series, analyze_probability_distribution,
     update_db, export_results, get_most_frequent_pairs, get_most_frequent_triplets,
     conditional_probability, filter_draws_by_period, sanitize_filename,
-    save_user_set, load_user_sets, compare_user_sets_with_latest_draw,
+    save_user_set, load_user_sets, compare_user_sets_with_latest_draw, compare_numbers_with_latest_draw,
     run_backtest, get_backtest_summary, generate_smart_prediction, get_from_backtest_insights,
     analyze_number_gaps, analyze_cycles, analyze_sequences,
     find_exact_sequence, find_best_match_draw,
@@ -33,6 +33,7 @@ logging.basicConfig(filename="gui_actions.log", level=logging.INFO, format="%(as
 root = None
 status_bar = None
 compare_button = None
+compare_hint_label = None
 
 def show_message(title, message, is_error=False):
     if status_bar:
@@ -45,6 +46,41 @@ def show_message(title, message, is_error=False):
         messagebox.showinfo(title, message)
     if root and status_bar:
         root.after(5000, lambda: status_bar.config(text="Pronto") if status_bar else None)
+
+
+class Tooltip:
+    """Simples tooltip para widgets Tkinter."""
+    def __init__(self, widget, text=""):
+        self.widget = widget
+        self.text = text
+        self.tipwindow = None
+        widget.bind("<Enter>", self._on_enter)
+        widget.bind("<Leave>", self._on_leave)
+
+    def _on_enter(self, event=None):
+        self.showtip()
+
+    def _on_leave(self, event=None):
+        self.hidetip()
+
+    def showtip(self):
+        if self.tipwindow or not self.text:
+            return
+        x = self.widget.winfo_rootx() + 20
+        y = self.widget.winfo_rooty() + self.widget.winfo_height() + 10
+        self.tipwindow = tw = tk.Toplevel(self.widget)
+        tw.wm_overrideredirect(True)
+        tw.wm_geometry(f"+{x}+{y}")
+        label = tk.Label(tw, text=self.text, justify=tk.LEFT, background="#ffffe0", relief=tk.SOLID, borderwidth=1, font=("tahoma", "8", "normal"))
+        label.pack(ipadx=4, ipady=2)
+
+    def hidetip(self):
+        if self.tipwindow:
+            self.tipwindow.destroy()
+            self.tipwindow = None
+
+    def set_text(self, text):
+        self.text = text
 
 def open_file_location(filepath):
     try:
@@ -331,29 +367,98 @@ def generate_and_save_user_set_gui():
 
 def compare_user_sets_gui():
     def _compare():
-        user_sets = load_user_sets()
-        if not user_sets:
-            show_message("Erro", "Nenhum conjunto de números salvo para comparação.", True)
-            return
+        try:
+            user_sets = load_user_sets()
+            if user_sets:
+                comparison_results = compare_user_sets_with_latest_draw()
 
-        comparison_results = compare_user_sets_with_latest_draw()
+                if not comparison_results:
+                    if root:
+                        root.after(0, lambda: show_message("Erro", "Não foi possível realizar a comparação. Verifique a base de dados da Mega-Sena e a conexão com a API.", True))
+                    else:
+                        show_message("Erro", "Não foi possível realizar a comparação. Verifique a base de dados da Mega-Sena e a conexão com a API.", True)
+                    return
 
-        if not comparison_results:
-            show_message("Erro", "Não foi possível realizar a comparação. Verifique a base de dados da Mega-Sena e a conexão com a API.", True)
-            return
-        
-        latest_concurso_num = comparison_results[0].get('comparison_concurso', "N/A")
-        latest_draw_dezenas = comparison_results[0].get('latest_draw_dezenas', [])
+                latest_concurso_num = comparison_results[0].get('comparison_concurso', "N/A")
+                latest_draw_dezenas = comparison_results[0].get('latest_draw_dezenas', [])
 
-        result_display = f"Comparação com o Sorteio {latest_concurso_num} ({latest_draw_dezenas}):\n\n"
-        for user_set in comparison_results:
-            set_name = user_set.get('name', 'N/A')
-            numbers = user_set.get('numbers', [])
-            comp_result = user_set.get('comparison_result', 'N/A')
-            matches = user_set.get('matches', 0)
-            result_display += f"Conjunto '{set_name}' ({numbers}): {comp_result} ({matches} acertos)\n"
-        
-        show_message("Resultado da Comparação", result_display, False)
+                result_display = f"Comparação com o Sorteio {latest_concurso_num} ({latest_draw_dezenas}):\n\n"
+                for user_set in comparison_results:
+                    set_name = user_set.get('name', 'N/A')
+                    numbers = user_set.get('numbers', [])
+                    comp_result = user_set.get('comparison_result', 'N/A')
+                    matches = user_set.get('matches', 0)
+                    result_display += f"Conjunto '{set_name}' ({numbers}): {comp_result} ({matches} acertos)\n"
+
+                if root:
+                    root.after(0, lambda rd=result_display: show_message("Resultado da Comparação", rd, False))
+                else:
+                    show_message("Resultado da Comparação", result_display, False)
+                return
+
+            # Se não há conjuntos salvos, pergunte ao usuário se deseja comparar manualmente
+            def ask_manual():
+                try:
+                    ans = messagebox.askyesno("Comparar Manual", "Nenhum conjunto salvo. Deseja comparar números manualmente agora?", parent=root)
+                    if not ans:
+                        return
+
+                    s = simpledialog.askstring("Comparar Manual", f"Informe {NUM_DEZENAS} números separados por vírgula (ex: 1,4,23,34,45,56):", parent=root)
+                    if not s:
+                        return
+
+                    try:
+                        nums = [int(x.strip()) for x in s.split(',') if x.strip() != '']
+                    except ValueError:
+                        show_message("Erro", "Formato inválido. Informe somente números separados por vírgula.", True)
+                        return
+
+                    if len(nums) != NUM_DEZENAS or len(set(nums)) != NUM_DEZENAS:
+                        show_message("Erro", f"Informe exatamente {NUM_DEZENAS} números únicos.", True)
+                        return
+
+                    for n in nums:
+                        if not (1 <= n <= MAX_NUM_MEGA_SENA):
+                            show_message("Erro", f"Números devem estar entre 1 e {MAX_NUM_MEGA_SENA}.", True)
+                            return
+
+                    # Executa a comparação em thread para não bloquear a GUI
+                    def do_manual_compare(numbers: List[int]):
+                        try:
+                            result = compare_numbers_with_latest_draw(numbers)
+                            if not result:
+                                if root:
+                                    root.after(0, lambda: show_message("Erro", "Não foi possível obter o último sorteio para comparação.", True))
+                                else:
+                                    show_message("Erro", "Não foi possível obter o último sorteio para comparação.", True)
+                                return
+
+                            msg = f"Comparação com o Sorteio {result.get('comparison_concurso', 'N/A')} ({result.get('latest_draw_dezenas', [])}):\n\n"
+                            msg += f"Conjunto Manual ({result.get('numbers', [])}): {result.get('comparison_result', 'N/A')} ({result.get('matches', 0)} acertos)"
+
+                            if root:
+                                root.after(0, lambda m=msg: show_message("Resultado da Comparação", m, False))
+                            else:
+                                show_message("Resultado da Comparação", msg, False)
+                        except Exception as e:
+                            if root:
+                                root.after(0, lambda exc=e: show_message("Erro", f"Erro ao comparar conjunto manual: {exc}", True))
+                            else:
+                                show_message("Erro", f"Erro ao comparar conjunto manual: {e}", True)
+
+                    run_in_thread(do_manual_compare, nums)
+                except Exception as e:
+                    show_message("Erro", f"Erro durante entrada manual: {e}", True)
+
+            if root:
+                root.after(0, ask_manual)
+            else:
+                show_message("Erro", "Nenhum conjunto de números salvo para comparação.", True)
+        except Exception as e:
+            if root:
+                root.after(0, lambda exc=e: show_message("Erro", f"Erro ao comparar conjuntos: {exc}", True))
+            else:
+                show_message("Erro", f"Erro ao comparar conjuntos: {e}", True)
 
     run_in_thread(_compare)
 
@@ -408,13 +513,27 @@ def search_sequence_gui():
 
 
 def toggle_compare_button_state():
-    global compare_button
+    global compare_button, compare_hint_label
     if compare_button is not None:
         user_sets = load_user_sets()
-        if user_sets:
-            compare_button.config(state=tk.NORMAL)
+        # Mantém o botão habilitado para permitir comparação manual quando não há conjuntos salvos
+        compare_button.config(state=tk.NORMAL)
+
+        if not user_sets:
+            # DX: mostrar dica clara quando não há conjuntos salvos
+            if compare_hint_label is not None:
+                compare_hint_label.config(text=f"Nenhum conjunto salvo — clique para comparar manualmente {NUM_DEZENAS} números")
+            if hasattr(compare_button, 'tooltip'):
+                compare_button.tooltip.set_text(f"Nenhum conjunto salvo — clique para comparar manualmente um conjunto de {NUM_DEZENAS} números")
+            if status_bar:
+                status_bar.config(text="Pronto (botão permite comparação manual quando não há conjuntos salvos)")
         else:
-            compare_button.config(state=tk.DISABLED)
+            if compare_hint_label is not None:
+                compare_hint_label.config(text="Clique para comparar todos os seus conjuntos com o último sorteio")
+            if hasattr(compare_button, 'tooltip'):
+                compare_button.tooltip.set_text("Comparar seus conjuntos salvos com o último sorteio")
+            if status_bar:
+                status_bar.config(text="Pronto")
 
 def run_backtest_gui(method: Optional[str] = None):
     """Permite ao usuário escolher um método e executa o backtest."""
@@ -559,8 +678,22 @@ def create_gui():
                style='Accent.TButton').pack(pady=5, fill=tk.X)
     
     compare_button = ttk.Button(user_numbers_frame, text="Comparar Meus Números com Último Sorteio", command=compare_user_sets_gui,
-                                style='Accent.TButton', state=tk.DISABLED)
+                                style='Accent.TButton')
     compare_button.pack(pady=5, fill=tk.X)
+
+    # Rótulo explicativo para melhorar UX quando não há conjuntos salvos
+    compare_hint_label = ttk.Label(user_numbers_frame, text="", font=('Helvetica', 9), foreground='#555555')
+    compare_hint_label.pack(pady=2, fill=tk.X)
+
+    # Tooltip simples para o botão de comparação
+    compare_button.tooltip = Tooltip(compare_button, text="Comparar seus conjuntos salvos com o último sorteio")
+    # Inicializa o estado do rótulo baseado na existência de conjuntos salvos
+    if not load_user_sets():
+        compare_hint_label.config(text=f"Nenhum conjunto salvo — clique para comparar manualmente {NUM_DEZENAS} números")
+        compare_button.tooltip.set_text(f"Nenhum conjunto salvo — clique para comparar manualmente um conjunto de {NUM_DEZENAS} números")
+    else:
+        compare_hint_label.config(text="Clique para comparar todos os seus conjuntos com o último sorteio")
+        compare_button.tooltip.set_text("Comparar seus conjuntos salvos com o último sorteio")
 
     ttk.Button(user_numbers_frame, text="Pesquisar Sequência na História", command=search_sequence_gui,
                style='Accent.TButton').pack(pady=5, fill=tk.X)

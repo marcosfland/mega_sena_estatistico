@@ -1135,6 +1135,74 @@ def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, 
     
     return comparison_results
 
+
+def compare_numbers_with_latest_draw(numbers: List[int], mega_sena_db_path: str = DB_PATH) -> Dict[str, Any]:
+    """
+    Compara um único conjunto de números com o último sorteio da Mega-Sena.
+    Retorna um dicionário com o resultado da comparação ou {} em caso de erro.
+    """
+    if not numbers or len(numbers) != NUM_DEZENAS:
+        logging.error("Número de dezenas para comparação inválido.")
+        return {}
+
+    latest_draw_data: Optional[Dict[str, Any]] = None
+    try:
+        latest_draw_api = fetch_lottery_data("megasena", None)
+        latest_draw_data = {
+            'concurso': int(latest_draw_api['concurso']),
+            'dezenas': sorted(list(map(int, latest_draw_api['dezenas'])))
+        }
+    except Exception as e:
+        logging.warning(f"Não foi possível buscar o último sorteio da API para comparação: {e}. Tentando usar o último do DB.")
+        try:
+            with sqlite3.connect(mega_sena_db_path, timeout=20.0) as conn_db:
+                cursor_db = conn_db.cursor()
+                cursor_db.execute('SELECT concurso, dez1, dez2, dez3, dez4, dez5, dez6 FROM megasena ORDER BY concurso DESC LIMIT 1')
+                last_db_row = cursor_db.fetchone()
+                if last_db_row:
+                    latest_draw_data = {
+                        'concurso': last_db_row[0],
+                        'dezenas': sorted([last_db_row[i] for i in range(1, 7)])
+                    }
+        except Exception as e:
+            logging.error(f"Erro ao obter o último sorteio do banco de dados local para comparação: {e}")
+            return {}
+
+    if latest_draw_data is None:
+        logging.error("Não foi possível obter o último sorteio da Mega-Sena.")
+        return {}
+
+    latest_concurso_num = latest_draw_data['concurso']
+    latest_dezenas = set(latest_draw_data['dezenas'])
+
+    try:
+        user_set_numbers = set(numbers)
+        matches = len(user_set_numbers.intersection(latest_dezenas))
+        result_text = "Perdeu"
+        if matches == 6:
+            result_text = "Sena (6 acertos)!"
+        elif matches == 5:
+            result_text = "Quina (5 acertos)!"
+        elif matches == 4:
+            result_text = "Quadra (4 acertos)!"
+        elif matches >= 3:
+            result_text = f"Terno ({matches} acertos)"
+        else:
+            result_text = f"Nenhum prêmio ({matches} acertos)"
+
+        return {
+            'name': 'Manual',
+            'numbers': sorted(numbers),
+            'comparison_result': result_text,
+            'matches': matches,
+            'comparison_concurso': latest_concurso_num,
+            'latest_draw_dezenas': latest_draw_data['dezenas']
+        }
+    except Exception as e:
+        logging.error(f"Erro ao comparar conjunto manual com o último sorteio: {e}")
+        return {}
+
+
 def init_backtest_db(path: str = BACKTEST_DB_PATH) -> None:
     """
     Inicializa a base de dados para armazenar os resultados do backtest,

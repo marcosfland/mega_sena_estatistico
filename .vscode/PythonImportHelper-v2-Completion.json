@@ -400,6 +400,14 @@
         "documentation": {}
     },
     {
+        "label": "compare_numbers_with_latest_draw",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "run_backtest",
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
@@ -903,6 +911,15 @@
         "documentation": {}
     },
     {
+        "label": "Tooltip",
+        "kind": 6,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "class Tooltip:\n    \"\"\"Simples tooltip para widgets Tkinter.\"\"\"\n    def __init__(self, widget, text=\"\"):\n        self.widget = widget\n        self.text = text\n        self.tipwindow = None\n        widget.bind(\"<Enter>\", self._on_enter)\n        widget.bind(\"<Leave>\", self._on_leave)\n    def _on_enter(self, event=None):\n        self.showtip()",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
         "label": "show_message",
         "kind": 2,
         "importPath": "gui",
@@ -970,7 +987,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def compare_user_sets_gui():\n    def _compare():\n        user_sets = load_user_sets()\n        if not user_sets:\n            show_message(\"Erro\", \"Nenhum conjunto de números salvo para comparação.\", True)\n            return\n        comparison_results = compare_user_sets_with_latest_draw()\n        if not comparison_results:\n            show_message(\"Erro\", \"Não foi possível realizar a comparação. Verifique a base de dados da Mega-Sena e a conexão com a API.\", True)\n            return",
+        "peekOfCode": "def compare_user_sets_gui():\n    def _compare():\n        try:\n            user_sets = load_user_sets()\n            if user_sets:\n                comparison_results = compare_user_sets_with_latest_draw()\n                if not comparison_results:\n                    if root:\n                        root.after(0, lambda: show_message(\"Erro\", \"Não foi possível realizar a comparação. Verifique a base de dados da Mega-Sena e a conexão com a API.\", True))\n                    else:",
         "detail": "gui",
         "documentation": {}
     },
@@ -988,7 +1005,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def toggle_compare_button_state():\n    global compare_button\n    if compare_button is not None:\n        user_sets = load_user_sets()\n        if user_sets:\n            compare_button.config(state=tk.NORMAL)\n        else:\n            compare_button.config(state=tk.DISABLED)\ndef run_backtest_gui(method: Optional[str] = None):\n    \"\"\"Permite ao usuário escolher um método e executa o backtest.\"\"\"",
+        "peekOfCode": "def toggle_compare_button_state():\n    global compare_button, compare_hint_label\n    if compare_button is not None:\n        user_sets = load_user_sets()\n        # Mantém o botão habilitado para permitir comparação manual quando não há conjuntos salvos\n        compare_button.config(state=tk.NORMAL)\n        if not user_sets:\n            # DX: mostrar dica clara quando não há conjuntos salvos\n            if compare_hint_label is not None:\n                compare_hint_label.config(text=f\"Nenhum conjunto salvo — clique para comparar manualmente {NUM_DEZENAS} números\")",
         "detail": "gui",
         "documentation": {}
     },
@@ -1060,7 +1077,7 @@
         "kind": 5,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "root = None\nstatus_bar = None\ncompare_button = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:",
+        "peekOfCode": "root = None\nstatus_bar = None\ncompare_button = None\ncompare_hint_label = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)",
         "detail": "gui",
         "documentation": {}
     },
@@ -1069,7 +1086,7 @@
         "kind": 5,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "status_bar = None\ncompare_button = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")",
+        "peekOfCode": "status_bar = None\ncompare_button = None\ncompare_hint_label = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:",
         "detail": "gui",
         "documentation": {}
     },
@@ -1078,7 +1095,16 @@
         "kind": 5,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "compare_button = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")\n        messagebox.showinfo(title, message)",
+        "peekOfCode": "compare_button = None\ncompare_hint_label = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "compare_hint_label",
+        "kind": 5,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "compare_hint_label = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")\n        messagebox.showinfo(title, message)",
         "detail": "gui",
         "documentation": {}
     },
@@ -1502,6 +1528,15 @@
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
         "peekOfCode": "def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, mega_sena_db_path: str = DB_PATH) -> List[Dict[str, Any]]:\n    \"\"\"\n    Compara todos os conjuntos de números do usuário com o último sorteio da Mega-Sena.\n    \"\"\"\n    latest_draw_data: Optional[Dict[str, Any]] = None\n    try:\n        latest_draw_api = fetch_lottery_data(\"megasena\", None)\n        latest_draw_data = {\n            'concurso': int(latest_draw_api['concurso']),\n            'dezenas': sorted(list(map(int, latest_draw_api['dezenas'])))",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "compare_numbers_with_latest_draw",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def compare_numbers_with_latest_draw(numbers: List[int], mega_sena_db_path: str = DB_PATH) -> Dict[str, Any]:\n    \"\"\"\n    Compara um único conjunto de números com o último sorteio da Mega-Sena.\n    Retorna um dicionário com o resultado da comparação ou {} em caso de erro.\n    \"\"\"\n    if not numbers or len(numbers) != NUM_DEZENAS:\n        logging.error(\"Número de dezenas para comparação inválido.\")\n        return {}\n    latest_draw_data: Optional[Dict[str, Any]] = None\n    try:",
         "detail": "mega_sena_app",
         "documentation": {}
     },
