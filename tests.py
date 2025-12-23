@@ -13,8 +13,9 @@ import tempfile
 import sqlite3
 from unittest.mock import patch, MagicMock
 
-# Adicionar o diretório pai ao path para importar o módulo
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Adicionar o diretório do projeto (raiz) ao path para importar o módulo
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, project_root)
 
 # Tentar importar o módulo principal
 try:

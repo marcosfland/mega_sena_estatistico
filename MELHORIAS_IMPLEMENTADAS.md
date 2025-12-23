@@ -202,6 +202,23 @@ python mega_sena_app.py --cycles
 
 ---
 
+## **13. MELHORIAS ADICIONAIS NA GUI (RECENTE)**
+
+### **Implementado:**
+- Seletor de arquivo `.db` na interface, com persistência em `mega_sena_config.ini` (menu e botão)
+- Painel de **Resultados** com `ttk.Treeview` para exibição tabular e botão "Exportar Resultados"
+- Integração opcional de gráficos embutidos via `matplotlib.backends.backend_tkagg` (quando disponível)
+- Indicadores de processamento: `ttk.Progressbar` indeterminado, mudança de cursor para `watch` e desabilitação temporária de botões durante operações longas
+- Correções na exportação (diálogos executados no mainloop, suporte a JSON vazio, salvamento de correlação em arquivo escolhido)
+- Fallback de ícone embutido (pequeno GIF base64) caso `icon.png` não esteja disponível
+
+### **Benefícios:**
+- Melhor feedback visual durante operações demoradas
+- Visualização e exportação de resultados diretamente na interface (sem necessitar de popups massivos)
+- Mais robustez em ambientes Windows e quando bibliotecas opcionais não estão instaladas
+
+---
+
 ## **COMO TESTAR AS MELHORIAS**
 
 ### **1. Teste básico:**

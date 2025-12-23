@@ -21,6 +21,13 @@ import subprocess
 import threading
 import sys
 from typing import Optional, List, Dict, Any
+from config import get_config, get_db_path
+from gui_db import select_db_gui
+# Matplotlib embedding (opcional)
+try:
+    from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+except Exception:
+    FigureCanvasTkAgg = None
 try:
     from PIL import Image, ImageDraw
 except ImportError:
@@ -34,18 +41,66 @@ root = None
 status_bar = None
 compare_button = None
 compare_hint_label = None
+progress_bar = None
+interactive_buttons = []  # Lista de botões que devem ser desativados durante processamento
 
 def show_message(title, message, is_error=False):
-    if status_bar:
-        status_bar.config(text=message)
-    if is_error:
-        logging.error(f"{title}: {message}")
-        messagebox.showerror(title, message)
+    """Mostra mensagens de forma thread-safe (agendando no mainloop quando necessário)."""
+    try:
+        is_main = threading.current_thread() is threading.main_thread()
+    except Exception:
+        is_main = True
+
+    def _show():
+        if status_bar:
+            status_bar.config(text=message)
+        if is_error:
+            logging.error(f"{title}: {message}")
+            messagebox.showerror(title, message)
+        else:
+            logging.info(f"{title}: {message}")
+            messagebox.showinfo(title, message)
+        if root and status_bar:
+            root.after(5000, lambda: status_bar.config(text="Pronto") if status_bar else None)
+
+    if is_main or root is None:
+        _show()
     else:
-        logging.info(f"{title}: {message}")
-        messagebox.showinfo(title, message)
-    if root and status_bar:
-        root.after(5000, lambda: status_bar.config(text="Pronto") if status_bar else None)
+        root.after(0, _show)
+
+
+def ask_on_main_thread(func, *args, **kwargs):
+    """Executa uma chamada de UI no thread principal de forma síncrona e retorna o resultado.
+
+    Usa um Event para aguardar o término da chamada agendada via root.after. Se já estiver
+    no thread principal, executa diretamente.
+    """
+    try:
+        if threading.current_thread() is threading.main_thread() or root is None:
+            return func(*args, **kwargs)
+    except Exception:
+        # Se qualquer verificação falhar, tente executar diretamente
+        return func(*args, **kwargs)
+
+    result = {}
+    evt = threading.Event()
+
+    def _call():
+        try:
+            result['value'] = func(*args, **kwargs)
+        except Exception as e:
+            result['exc'] = e
+        finally:
+            evt.set()
+
+    # Agendar no loop principal
+    root.after(0, _call)
+    # Aguardar retorno
+    evt.wait()
+    if 'exc' in result:
+        # Re-levantar a exceção no thread chamador para que ela seja tratada
+        raise result['exc']
+    return result.get('value')
 
 
 class Tooltip:
@@ -99,7 +154,138 @@ def run_in_thread(func, *args, **kwargs):
     thread = threading.Thread(target=lambda: func(*args, **kwargs))
     thread.start()
 
+def start_processing():
+    """Ativa indicadores visuais de processamento: barra de progresso, cursor e desabilita botões."""
+    try:
+        if status_bar:
+            status_bar.config(text="Processando... Por favor, aguarde.")
+        if progress_bar:
+            progress_bar.start(10)
+        if root:
+            try:
+                root.config(cursor='watch')
+            except Exception:
+                root.config(cursor='')
+        for b in interactive_buttons:
+            try:
+                b.config(state=tk.DISABLED)
+            except Exception:
+                pass
+    except Exception as e:
+        logging.warning(f"Erro ao iniciar indicador de processamento: {e}")
+
+
+def display_results_table(headers, rows):
+    """Preenche o Treeview com os cabeçalhos e linhas fornecidas.
+
+    headers: lista de strings para as colunas
+    rows: lista de iterables que correspondem às colunas
+    """
+    global results_tree, current_results_data, current_results_headers
+    try:
+        if not results_tree:
+            return
+        # limpar árvore
+        for col in results_tree['columns']:
+            results_tree.heading(col, text='')
+        results_tree.delete(*results_tree.get_children())
+
+        # definir novas colunas
+        results_tree['columns'] = headers
+        for h in headers:
+            results_tree.heading(h, text=h)
+            results_tree.column(h, width=100, anchor=tk.W)
+
+        # inserir linhas
+        for r in rows:
+            results_tree.insert('', tk.END, values=list(r))
+
+        current_results_headers = headers
+        current_results_data = [list(r) for r in rows]
+    except Exception as e:
+        logging.error(f"Erro ao exibir resultados na Treeview: {e}")
+
+
+def export_results_gui():
+    """Exporta os resultados atualmente exibidos na Treeview para arquivo CSV/JSON."""
+    global current_results_headers, current_results_data
+    try:
+        if not current_results_data or not current_results_headers:
+            show_message("Erro", "Nenhum resultado disponível para exportar.", True)
+            return
+
+        file_path = ask_on_main_thread(filedialog.asksaveasfilename, defaultextension=".csv", filetypes=[("CSV files", "*.csv"), ("JSON files", "*.json")], parent=root)
+        if not file_path:
+            return
+
+        file_format = file_path.split('.')[-1]
+        filename_base = sanitize_filename(os.path.splitext(os.path.basename(file_path))[0])
+
+        # Converter para lista de tuplas
+        rows = [tuple(r) for r in current_results_data]
+        export_results(rows, file_format, filename_base, header=current_results_headers)
+        show_message("Exportação", f"Resultados exportados para {file_path}", False)
+    except Exception as e:
+        show_message("Erro na Exportação", f"Falha ao exportar resultados: {e}", True)
+
+
+def embed_figure(fig):
+    """Insere um objeto matplotlib.figure.Figure no painel de resultados (se suportado)."""
+    global mpl_canvas, results_tree
+    try:
+        if not FigureCanvasTkAgg:
+            show_message("Gráfico", "Matplotlib/TkAgg não disponível; abrindo em janela externa.", False)
+            try:
+                import matplotlib.pyplot as _plt
+                _plt.figure(fig.number if hasattr(fig, 'number') else None)
+                _plt.show()
+            except Exception:
+                pass
+            return
+
+        # Remover canvas anterior
+        try:
+            if mpl_canvas:
+                mpl_canvas.get_tk_widget().destroy()
+        except Exception:
+            pass
+
+        canvas = FigureCanvasTkAgg(fig, master=results_tree.master)
+        canvas.draw()
+        widget = canvas.get_tk_widget()
+        widget.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        mpl_canvas = canvas
+    except Exception as e:
+        logging.error(f"Erro ao embutir figura: {e}")
+        show_message("Erro", f"Não foi possível embutir o gráfico: {e}", True)
+
+def stop_processing():
+    """Desativa indicadores visuais de processamento e restaura estado da UI."""
+    try:
+        if progress_bar:
+            progress_bar.stop()
+        if status_bar:
+            status_bar.config(text="Pronto")
+        if root:
+            try:
+                root.config(cursor='')
+            except Exception:
+                pass
+        for b in interactive_buttons:
+            try:
+                b.config(state=tk.NORMAL)
+            except Exception:
+                pass
+        toggle_compare_button_state()
+    except Exception as e:
+        logging.warning(f"Erro ao parar indicador de processamento: {e}")
+
+
 def run_analysis_gui(option):
+    # Iniciar indicador antes de disparar a thread
+    if root:
+        root.after(0, start_processing)
+
     def _run():
         try:
             draws = load_all_draws()
@@ -150,12 +336,19 @@ def run_analysis_gui(option):
                     return
             elif option == "pairs":
                 result = get_most_frequent_pairs(draws, 10)
-                formatted_pairs = "\n".join([f"{pair}: {freq}" for pair, freq in result])
-                result_message = f"Pares Mais Frequentes (Top 10):\n{formatted_pairs}"
+                # Exibir em tabela
+                rows = [ (f"{a},{b}", freq) for (a, b), freq in result ]
+                if root:
+                    root.after(0, lambda: display_results_table(["Par", "Frequência"], rows))
+                else:
+                    result_message = "Pares Mais Frequentes: " + str(rows)
             elif option == "triplets":
                 result = get_most_frequent_triplets(draws, 10)
-                formatted_triplets = "\n".join([f"{triplet}: {freq}" for triplet, freq in result])
-                result_message = f"Trios Mais Frequentes (Top 10):\n{formatted_triplets}"
+                rows = [ ("-".join(map(str, triplet)), freq) for triplet, freq in result ]
+                if root:
+                    root.after(0, lambda: display_results_table(["Trio", "Frequência"], rows))
+                else:
+                    result_message = "Trios Mais Frequentes: " + str(rows)
             elif option == "conditional":
                 given = simpledialog.askinteger("Probabilidade Condicional", "Informe o número dado (GIVEN):", parent=root, minvalue=1, maxvalue=MAX_NUM_MEGA_SENA)
                 if given is None: return
@@ -197,29 +390,38 @@ def run_analysis_gui(option):
                 top_6 = [num for num, _ in prediction[:6]]
                 result_message = f"Predição Inteligente (Top 10):\n{formatted_prediction}\n\nTop 6 Sugeridos: {top_6}"
             elif option == "backtest-insights":
-                method = simpledialog.askstring("Backtest Insights", "Escolha o método (alltime, lastyear, weighted):", parent=root)
+                method = ask_on_main_thread(simpledialog.askstring, "Backtest Insights", "Escolha o método (alltime, lastyear, weighted):", parent=root)
                 if not method:
                     return
                 result = get_from_backtest_insights(method=method)
-                result_message = f"Números por Backtest Insights ({method}):\n{result}\n\nEsses números foram selecionados com base no histórico de acertos dos backtests."
+                # Exibir como tabela (índice, número)
+                rows = [(i+1, n) for i, n in enumerate(result)]
+                if root:
+                    root.after(0, lambda: display_results_table(["Posição", "Número"], rows))
+                else:
+                    result_message = f"Números por Backtest Insights ({method}): {result}"
             elif option == "gaps":
                 gaps = analyze_number_gaps(draws)
                 avg_gaps = {num: sum(gap_list)/len(gap_list) if gap_list else 0 
                            for num, gap_list in gaps.items()}
                 sorted_gaps = sorted(avg_gaps.items(), key=lambda x: x[1], reverse=True)[:10]
-                formatted_gaps = "\n".join([f"{i}. Número {num}: Gap médio {avg:.1f}" 
-                                          for i, (num, avg) in enumerate(sorted_gaps, 1)])
-                result_message = f"Análise de Intervalos (Top 10):\n{formatted_gaps}"
+                rows = [ (i, num, f"{avg:.1f}") for i, (num, avg) in enumerate(sorted_gaps, 1) ]
+                if root:
+                    root.after(0, lambda: display_results_table(["Rank", "Número", "Gap Médio"], rows))
+                else:
+                    result_message = "Análise de Intervalos: " + str(rows)
             elif option == "cycles":
                 cycles = analyze_cycles(draws)
                 weekdays = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
                 months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
                 
-                weekday_info = "\n".join([f"  {weekdays[day]}: {freq}" 
-                                        for day, freq in cycles['weekday_distribution'].items()])
-                month_info = "\n".join([f"  {months[month-1]}: {freq}" 
-                                      for month, freq in cycles['month_distribution'].items()])
-                result_message = f"Padrões Cíclicos:\n\nPor dia da semana:\n{weekday_info}\n\nPor mês:\n{month_info}"
+                weekday_rows = [(weekdays[day], freq) for day, freq in cycles['weekday_distribution'].items()]
+                month_rows = [(months[month-1], freq) for month, freq in cycles['month_distribution'].items()]
+                # Mostrar primeiro os weekdays; o usuário pode exportar e visualizar ambos
+                if root:
+                    root.after(0, lambda: display_results_table(["Período", "Frequência"], weekday_rows))
+                else:
+                    result_message = f"Padrões Cíclicos (weekday): {weekday_rows} \n (month): {month_rows}"
             elif option == "sequences":
                 sequences = analyze_sequences(draws)
                 consec_info = "\n".join([f"  {consec} consecutivos: {freq}" 
@@ -231,15 +433,30 @@ def run_analysis_gui(option):
             
             if plot_needed:
                 if option == "plot":
-                    plot_frequency(draws)
+                    try:
+                        fig = plot_frequency(draws, return_fig=True)
+                        if fig and FigureCanvasTkAgg:
+                            # Embutir no frame de resultados
+                            if root:
+                                root.after(0, lambda: embed_figure(fig))
+                        else:
+                            # Fallback: abrir em nova janela
+                            plot_frequency(draws, return_fig=False)
+                    except Exception as e:
+                        logging.error(f"Erro ao gerar gráfico embutido: {e}")
                 elif option == "timeseries":
+                    # timeseries ainda exibe usando a implementação existente
                     analyze_time_series(draws)
-                show_message("Gráfico Exibido", "Verifique a janela do gráfico.", False)
+                show_message("Gráfico Exibido", "Verifique a janela do gráfico ou o painel de Resultados.", False)
             else:
                 show_message("Análise Concluída", result_message, False)
 
         except Exception as e:
             show_message("Erro na Análise", f"Ocorreu um erro ao executar a análise '{option}': {e}", True)
+        finally:
+            # Sempre parar o indicador ao final
+            if root:
+                root.after(0, stop_processing)
     
     run_in_thread(_run)
 
@@ -252,14 +469,16 @@ def export_data_gui(advanced=False):
                 return
 
             if advanced:
-                tipo = simpledialog.askstring("Exportação Avançada", "Tipo de análise (frequencia, pares, trios, correlacao):", parent=root)
+                # Pedir o tipo em thread-safe no mainloop
+                tipo = ask_on_main_thread(simpledialog.askstring, "Exportação Avançada", "Tipo de análise (frequencia, pares, trios, correlacao):", parent=root)
                 if not tipo: return
 
                 if tipo not in ["frequencia", "pares", "trios", "correlacao"]:
                     show_message("Erro", "Tipo de exportação avançada não suportado.", True)
                     return
 
-                file_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")], parent=root)
+                # Pedir o caminho do arquivo no mainloop para evitar erros de GUI em background thread
+                file_path = ask_on_main_thread(filedialog.asksaveasfilename, defaultextension=".csv", filetypes=[("CSV files", "*.csv")], parent=root)
                 if not file_path: return
 
                 filename_base = sanitize_filename(os.path.splitext(os.path.basename(file_path))[0])
@@ -278,7 +497,12 @@ def export_data_gui(advanced=False):
                 elif tipo == "correlacao":
                     corr = calculate_correlation(draws)
                     if corr is not None:
-                        corr.to_csv(f"{filename_base}.csv")
+                        # Usar o caminho escolhido pelo usuário ao salvar a correlação
+                        try:
+                            corr.to_csv(file_path)
+                        except Exception as e:
+                            show_message("Erro", f"Falha ao salvar correlação em {file_path}: {e}", True)
+                            return
                     else:
                         show_message("Erro", "Não foi possível calcular a correlação. Verifique se Pandas está instalado.", True)
                         return
@@ -286,16 +510,17 @@ def export_data_gui(advanced=False):
                 show_message("Exportação Avançada", f"Análise '{tipo}' exportada para {file_path}", False)
 
             else: # Simple export
-                file_path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv"), ("JSON files", "*.json")], parent=root)
+                # Pedir caminho de saída de forma thread-safe
+                file_path = ask_on_main_thread(filedialog.asksaveasfilename, defaultextension=".csv", filetypes=[("CSV files", "*.csv"), ("JSON files", "*.json")], parent=root)
                 if not file_path: return
-                
+
                 file_format = file_path.split('.')[-1]
                 filename_base = sanitize_filename(os.path.splitext(os.path.basename(file_path))[0])
 
                 export_data = []
                 for d, nums in draws:
                     export_data.append([d.strftime('%Y-%m-%d')] + list(nums))
-                
+
                 export_results(
                     export_data,
                     file_format,
@@ -630,7 +855,13 @@ def create_gui():
         except tk.TclError as e:
             logging.warning(f"Erro ao carregar ícone: {e}. Certifique-se de que 'icon.png' é um formato suportado pelo Tkinter ou Pillow está instalado.")
     else:
-        logging.warning("Ícone 'icon.png' não encontrado ou Pillow não instalado. O ícone da aplicação não será exibido.")
+        # Tentar fallback embutido (pequeno GIF 1x1 transparente)
+        gif_b64 = "R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+        try:
+            icon_image = tk.PhotoImage(data=gif_b64)
+            root.iconphoto(False, icon_image)
+        except Exception as e:
+            logging.warning(f"Ícone não encontrado e fallback embutido falhou: {e}. O ícone da aplicação não será exibido.")
 
     style = ttk.Style()
     style.theme_use('clam')
@@ -671,12 +902,25 @@ def create_gui():
 
     ttk.Label(main_frame, text="Escolha uma análise ou gerencie seus números:", font=('Helvetica', 11)).pack(pady=10)
 
+    # Exibir e selecionar base de dados (persistida em mega_sena_config.ini)
+    db_frame = ttk.Frame(main_frame)
+    db_frame.pack(pady=5, padx=20, fill=tk.X)
+    current_db = get_db_path()
+    db_label = ttk.Label(db_frame, text=f"Base de Dados: {current_db}", font=('Helvetica', 9))
+    db_label.pack(side=tk.LEFT, fill=tk.X, expand=True)
+    btn_select_db = ttk.Button(db_frame, text="Selecionar Base de Dados...", command=lambda: select_db_gui(db_label))
+    btn_select_db.pack(side=tk.RIGHT)
+
+    # Adicionar menu para seleção de DB também
+    file_menu.add_command(label="Selecionar Base de Dados", command=lambda: select_db_gui(db_label))
+
     user_numbers_frame = ttk.LabelFrame(main_frame, text=" Meus Números ", padding="15 10 15 15")
     user_numbers_frame.pack(pady=10, padx=20, fill=tk.X)
 
-    ttk.Button(user_numbers_frame, text="Gerar e Salvar Meus Números", command=generate_and_save_user_set_gui,
-               style='Accent.TButton').pack(pady=5, fill=tk.X)
-    
+    btn_generate = ttk.Button(user_numbers_frame, text="Gerar e Salvar Meus Números", command=generate_and_save_user_set_gui,
+               style='Accent.TButton')
+    btn_generate.pack(pady=5, fill=tk.X)
+
     compare_button = ttk.Button(user_numbers_frame, text="Comparar Meus Números com Último Sorteio", command=compare_user_sets_gui,
                                 style='Accent.TButton')
     compare_button.pack(pady=5, fill=tk.X)
@@ -695,47 +939,85 @@ def create_gui():
         compare_hint_label.config(text="Clique para comparar todos os seus conjuntos com o último sorteio")
         compare_button.tooltip.set_text("Comparar seus conjuntos salvos com o último sorteio")
 
+    btn_search = ttk.Button(user_numbers_frame, text="Pesquisar Sequência na História", command=search_sequence_gui,
+               style='Accent.TButton')
+    btn_search.pack(pady=5, fill=tk.X)
+
+    # Registrar botões interativos para gerenciamento de estado durante processamento
+    interactive_buttons.extend([btn_generate, compare_button, btn_search])
     ttk.Button(user_numbers_frame, text="Pesquisar Sequência na História", command=search_sequence_gui,
                style='Accent.TButton').pack(pady=5, fill=tk.X)
     
     root.after(100, toggle_compare_button_state)
 
-    analysis_frame = ttk.LabelFrame(main_frame, text=" Análises Estatísticas ", padding="15 10 15 15")
-    analysis_frame.pack(pady=10, padx=20, fill=tk.X)
+    # Usando Notebook para organizar as análises em abas (Melhora a usabilidade)
+    notebook = ttk.Notebook(main_frame)
+    notebook.pack(pady=10, padx=20, fill=tk.BOTH, expand=True)
 
-    button_configs = [
+    gen_frame = ttk.Frame(notebook, padding="10 10 10 10")
+    hist_frame = ttk.Frame(notebook, padding="10 10 10 10")
+    adv_frame = ttk.Frame(notebook, padding="10 10 10 10")
+
+    notebook.add(gen_frame, text="Geração")
+    notebook.add(hist_frame, text="Estatísticas Históricas")
+    notebook.add(adv_frame, text="Avançadas")
+
+    # Registrar botões das abas (serão preenchidos abaixo) para permitir gerenciamento de estado
+    # (apenas será feito logo após criação dos botões)
+    # interactive_buttons estendido ao criar cada botão abaixo
+
+    # Aba Geração: sugestões e predições
+    gen_buttons = [
         ("Top 6 de Todos os Tempos", "alltime"),
         ("Top 6 do Último Ano", "lastyear"),
         ("Conjunto Estatístico Ponderado", "weighted"),
         ("Predição Inteligente", "prediction"),
-        ("Backtest Insights", "backtest-insights"),
+        ("Top 6 por Período", "period"),
+    ]
+
+    for idx, (text, opt) in enumerate(gen_buttons):
+        btn = ttk.Button(gen_frame, text=text, command=lambda o=opt: run_analysis_gui(o))
+        btn.grid(row=idx // 2, column=idx % 2, padx=6, pady=6, sticky="ew")
+        interactive_buttons.append(btn)
+
+    gen_frame.grid_columnconfigure(0, weight=1)
+    gen_frame.grid_columnconfigure(1, weight=1)
+
+    # Aba Estatísticas Históricas: frequência, pares, trios, ciclos, sequências, gaps
+    hist_buttons = [
         ("Visualizar Frequência", "plot"),
+        ("Pares Mais Frequentes", "pairs"),
+        ("Trios Mais Frequentes", "triplets"),
+        ("Padrões Cíclicos", "cycles"),
+        ("Análise de Intervalos", "gaps"),
+        ("Análise de Sequências", "sequences"),
+    ]
+
+    for idx, (text, opt) in enumerate(hist_buttons):
+        btn = ttk.Button(hist_frame, text=text, command=lambda o=opt: run_analysis_gui(o))
+        btn.grid(row=idx // 2, column=idx % 2, padx=6, pady=6, sticky="ew")
+        interactive_buttons.append(btn)
+
+    hist_frame.grid_columnconfigure(0, weight=1)
+    hist_frame.grid_columnconfigure(1, weight=1)
+
+    # Aba Avançadas: Monte Carlo, Correlação, Timeseries, Distribuição, Condicional, Backtest
+    adv_buttons = [
         ("Simulação de Monte Carlo", "montecarlo"),
         ("Correlação", "correlation"),
         ("Séries Temporais", "timeseries"),
         ("Distribuição de Probabilidade", "distribution"),
-        ("Pares Mais Frequentes", "pairs"),
-        ("Trios Mais Frequentes", "triplets"),
         ("Probabilidade Condicional", "conditional"),
-        ("Top 6 por Período", "period"),
-        ("Análise de Intervalos", "gaps"),
-        ("Padrões Cíclicos", "cycles"),
-        ("Análise de Sequências", "sequences"),
+        ("Backtest Insights", "backtest-insights"),
     ]
 
-    row_idx = 0
-    col_idx = 0
-    for text, option in button_configs:
-        button = ttk.Button(analysis_frame, text=text, command=lambda opt=option: run_analysis_gui(opt))
-        button.grid(row=row_idx, column=col_idx, padx=5, pady=5, sticky="ew")
-        col_idx += 1
-        if col_idx > 2:  # 3 colunas agora
-            col_idx = 0
-            row_idx += 1
-    
-    analysis_frame.grid_columnconfigure(0, weight=1)
-    analysis_frame.grid_columnconfigure(1, weight=1)
-    analysis_frame.grid_columnconfigure(2, weight=1)
+    for idx, (text, opt) in enumerate(adv_buttons):
+        btn = ttk.Button(adv_frame, text=text, command=lambda o=opt: run_analysis_gui(o))
+        btn.grid(row=idx // 2, column=idx % 2, padx=6, pady=6, sticky="ew")
+        interactive_buttons.append(btn)
+
+    adv_frame.grid_columnconfigure(0, weight=1)
+    adv_frame.grid_columnconfigure(1, weight=1)
 
     # --- Nova seção de Backtesting ---
     backtest_frame = ttk.LabelFrame(main_frame, text=" Backtest de Estratégias ", padding="15 10 15 15")
@@ -750,7 +1032,39 @@ def create_gui():
     method_menu = ttk.OptionMenu(backtest_options_frame, method_var, methods[0], *methods)
     method_menu.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
 
-    ttk.Button(backtest_options_frame, text="Executar Backtest", command=lambda: run_backtest_gui(method_var.get()), style='Accent.TButton').pack(side=tk.LEFT, padx=5)
+    btn_backtest = ttk.Button(backtest_options_frame, text="Executar Backtest", command=lambda: run_backtest_gui(method_var.get()), style='Accent.TButton')
+    btn_backtest.pack(side=tk.LEFT, padx=5)
+
+    # Registrar botão de backtest
+    interactive_buttons.append(btn_backtest)
+
+    # --- Área de Resultados (Treeview) ---
+    results_frame = ttk.LabelFrame(main_frame, text=" Resultados ", padding="10 10 10 10")
+    results_frame.pack(pady=10, padx=20, fill=tk.BOTH, expand=True)
+
+    # Treeview para exibir resultados em formato tabular
+    global results_tree, current_results_data, current_results_headers
+    results_tree = ttk.Treeview(results_frame, columns=(), show='headings')
+    results_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+    results_scroll = ttk.Scrollbar(results_frame, orient=tk.VERTICAL, command=results_tree.yview)
+    results_tree.configure(yscrollcommand=results_scroll.set)
+    results_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+
+    btn_export_results = ttk.Button(results_frame, text="Exportar Resultados", command=lambda: export_results_gui(), style='TButton')
+    btn_export_results.pack(side=tk.BOTTOM, pady=6)
+
+    # Inicializar variáveis de resultados
+    current_results_data = []
+    current_results_headers = []
+
+    # Canvas Matplotlib embutido (opcional)
+    global mpl_canvas
+    mpl_canvas = None
+    # Barra de progresso para operações longas
+    global progress_bar
+    progress_bar = ttk.Progressbar(root, mode='indeterminate')
+    progress_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
     status_bar = ttk.Label(root, text="Pronto", relief=tk.SUNKEN, anchor=tk.W, font=('Helvetica', 9), background='#f0f0f0', foreground='#555555')
     status_bar.pack(side=tk.BOTTOM, fill=tk.X)

@@ -21,15 +21,13 @@ def check_db_integrity(db_path: str) -> Tuple[bool, str]:
         return False, f"Banco de dados não encontrado: {db_path}"
     
     try:
-        conn = sqlite3.connect(db_path, timeout=20.0)
-        conn.execute('PRAGMA journal_mode=WAL')
-        cursor = conn.cursor()
-        
-        # Executar verificação de integridade
-        cursor.execute('PRAGMA integrity_check')
-        result = cursor.fetchone()
-        conn.close()
-        
+        with sqlite3.connect(db_path, timeout=20.0) as conn:
+            conn.execute('PRAGMA journal_mode=WAL')
+            cursor = conn.cursor()
+            # Executar verificação de integridade
+            cursor.execute('PRAGMA integrity_check')
+            result = cursor.fetchone()
+
         if result and result[0] == 'ok':
             return True, "Banco de dados íntegro"
         else:
@@ -49,9 +47,8 @@ def vacuum_db(db_path: str) -> Tuple[bool, str]:
         return False, f"Banco de dados não encontrado: {db_path}"
     
     try:
-        conn = sqlite3.connect(db_path, timeout=20.0)
-        conn.execute('VACUUM')
-        conn.close()
+        with sqlite3.connect(db_path, timeout=20.0) as conn:
+            conn.execute('VACUUM')
         return True, "Banco de dados otimizado com sucesso"
     except Exception as e:
         return False, f"Erro ao otimizar banco: {e}"
@@ -66,11 +63,10 @@ def enable_wal_mode(db_path: str) -> Tuple[bool, str]:
         return False, f"Banco de dados não encontrado: {db_path}"
     
     try:
-        conn = sqlite3.connect(db_path, timeout=20.0)
-        conn.execute('PRAGMA journal_mode=WAL')
-        conn.execute('PRAGMA synchronous=NORMAL')  # Aumenta performance
-        conn.execute('PRAGMA cache_size=10000')    # Maior cache
-        conn.close()
+        with sqlite3.connect(db_path, timeout=20.0) as conn:
+            conn.execute('PRAGMA journal_mode=WAL')
+            conn.execute('PRAGMA synchronous=NORMAL')  # Aumenta performance
+            conn.execute('PRAGMA cache_size=10000')    # Maior cache
         return True, "Modo WAL ativado com sucesso"
     except Exception as e:
         return False, f"Erro ao ativar WAL: {e}"
@@ -85,9 +81,8 @@ def analyze_db(db_path: str) -> Tuple[bool, str]:
         return False, f"Banco de dados não encontrado: {db_path}"
     
     try:
-        conn = sqlite3.connect(db_path, timeout=20.0)
-        conn.execute('ANALYZE')
-        conn.close()
+        with sqlite3.connect(db_path, timeout=20.0) as conn:
+            conn.execute('ANALYZE')
         return True, "Análise do banco concluída"
     except Exception as e:
         return False, f"Erro ao analisar banco: {e}"
@@ -105,23 +100,18 @@ def get_db_info(db_path: str) -> dict:
         size_bytes = os.path.getsize(db_path)
         size_mb = size_bytes / (1024 * 1024)
         
-        conn = sqlite3.connect(db_path, timeout=20.0)
-        cursor = conn.cursor()
-        
-        # Contar tabelas
-        cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table'")
-        table_count = cursor.fetchone()[0]
-        
-        # Contar índices
-        cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='index'")
-        index_count = cursor.fetchone()[0]
-        
-        # Informações de modo journal
-        cursor.execute('PRAGMA journal_mode')
-        journal_mode = cursor.fetchone()[0]
-        
-        conn.close()
-        
+        with sqlite3.connect(db_path, timeout=20.0) as conn:
+            cursor = conn.cursor()
+            # Contar tabelas
+            cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table'")
+            table_count = cursor.fetchone()[0]
+            # Contar índices
+            cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='index'")
+            index_count = cursor.fetchone()[0]
+            # Informações de modo journal
+            cursor.execute('PRAGMA journal_mode')
+            journal_mode = cursor.fetchone()[0]
+
         return {
             'path': db_path,
             'size_bytes': size_bytes,

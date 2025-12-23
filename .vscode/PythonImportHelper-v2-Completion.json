@@ -150,6 +150,14 @@
         "documentation": {}
     },
     {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
         "label": "List",
         "importPath": "typing",
         "description": "typing",
@@ -245,6 +253,23 @@
         "description": "tkinter",
         "isExtraImport": true,
         "detail": "tkinter",
+        "documentation": {}
+    },
+    {
+        "label": "filedialog",
+        "importPath": "tkinter",
+        "description": "tkinter",
+        "isExtraImport": true,
+        "detail": "tkinter",
+        "documentation": {}
+    },
+    {
+        "label": "mega_sena_app",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "detail": "mega_sena_app",
         "documentation": {}
     },
     {
@@ -496,6 +521,30 @@
         "documentation": {}
     },
     {
+        "label": "export_results",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "load_all_draws",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "init_db",
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "isExtraImport": true,
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "webbrowser",
         "kind": 6,
         "isExtraImport": true,
@@ -544,6 +593,47 @@
         "importPath": "threading",
         "description": "threading",
         "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "get_config",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "get_db_path",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "get_config",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "gui_db",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "gui_db",
+        "description": "gui_db",
+        "detail": "gui_db",
+        "documentation": {}
+    },
+    {
+        "label": "select_db_gui",
+        "importPath": "gui_db",
+        "description": "gui_db",
+        "isExtraImport": true,
+        "detail": "gui_db",
         "documentation": {}
     },
     {
@@ -601,6 +691,14 @@
         "documentation": {}
     },
     {
+        "label": "lru_cache",
+        "importPath": "functools",
+        "description": "functools",
+        "isExtraImport": true,
+        "detail": "functools",
+        "documentation": {}
+    },
+    {
         "label": "hashlib",
         "kind": 6,
         "isExtraImport": true,
@@ -610,11 +708,37 @@
         "documentation": {}
     },
     {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "gc",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "gc",
+        "description": "gc",
+        "detail": "gc",
+        "documentation": {}
+    },
+    {
         "label": "combinations",
         "importPath": "itertools",
         "description": "itertools",
         "isExtraImport": true,
         "detail": "itertools",
+        "documentation": {}
+    },
+    {
+        "label": "contextmanager",
+        "importPath": "contextlib",
+        "description": "contextlib",
+        "isExtraImport": true,
+        "detail": "contextlib",
         "documentation": {}
     },
     {
@@ -665,6 +789,65 @@
         "description": "unittest.mock",
         "isExtraImport": true,
         "detail": "unittest.mock",
+        "documentation": {}
+    },
+    {
+        "label": "patch",
+        "importPath": "unittest.mock",
+        "description": "unittest.mock",
+        "isExtraImport": true,
+        "detail": "unittest.mock",
+        "documentation": {}
+    },
+    {
+        "label": "patch",
+        "importPath": "unittest.mock",
+        "description": "unittest.mock",
+        "isExtraImport": true,
+        "detail": "unittest.mock",
+        "documentation": {}
+    },
+    {
+        "label": "patch",
+        "importPath": "unittest.mock",
+        "description": "unittest.mock",
+        "isExtraImport": true,
+        "detail": "unittest.mock",
+        "documentation": {}
+    },
+    {
+        "label": "patch",
+        "importPath": "unittest.mock",
+        "description": "unittest.mock",
+        "isExtraImport": true,
+        "detail": "unittest.mock",
+        "documentation": {}
+    },
+    {
+        "label": "tempfile,",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "tempfile.",
+        "description": "tempfile.",
+        "detail": "tempfile.",
+        "documentation": {}
+    },
+    {
+        "label": "gui",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "gui",
+        "description": "gui",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "os,",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os.",
+        "description": "os.",
+        "detail": "os.",
         "documentation": {}
     },
     {
@@ -843,7 +1026,7 @@
         "kind": 2,
         "importPath": "db_utils",
         "description": "db_utils",
-        "peekOfCode": "def check_db_integrity(db_path: str) -> Tuple[bool, str]:\n    \"\"\"\n    Verifica a integridade do banco de dados SQLite.\n    Retorna: (is_healthy, message)\n    \"\"\"\n    if not os.path.exists(db_path):\n        return False, f\"Banco de dados não encontrado: {db_path}\"\n    try:\n        conn = sqlite3.connect(db_path, timeout=20.0)\n        conn.execute('PRAGMA journal_mode=WAL')",
+        "peekOfCode": "def check_db_integrity(db_path: str) -> Tuple[bool, str]:\n    \"\"\"\n    Verifica a integridade do banco de dados SQLite.\n    Retorna: (is_healthy, message)\n    \"\"\"\n    if not os.path.exists(db_path):\n        return False, f\"Banco de dados não encontrado: {db_path}\"\n    try:\n        with sqlite3.connect(db_path, timeout=20.0) as conn:\n            conn.execute('PRAGMA journal_mode=WAL')",
         "detail": "db_utils",
         "documentation": {}
     },
@@ -852,7 +1035,7 @@
         "kind": 2,
         "importPath": "db_utils",
         "description": "db_utils",
-        "peekOfCode": "def vacuum_db(db_path: str) -> Tuple[bool, str]:\n    \"\"\"\n    Otimiza o banco de dados removendo espaço vazio.\n    Retorna: (success, message)\n    \"\"\"\n    if not os.path.exists(db_path):\n        return False, f\"Banco de dados não encontrado: {db_path}\"\n    try:\n        conn = sqlite3.connect(db_path, timeout=20.0)\n        conn.execute('VACUUM')",
+        "peekOfCode": "def vacuum_db(db_path: str) -> Tuple[bool, str]:\n    \"\"\"\n    Otimiza o banco de dados removendo espaço vazio.\n    Retorna: (success, message)\n    \"\"\"\n    if not os.path.exists(db_path):\n        return False, f\"Banco de dados não encontrado: {db_path}\"\n    try:\n        with sqlite3.connect(db_path, timeout=20.0) as conn:\n            conn.execute('VACUUM')",
         "detail": "db_utils",
         "documentation": {}
     },
@@ -861,7 +1044,7 @@
         "kind": 2,
         "importPath": "db_utils",
         "description": "db_utils",
-        "peekOfCode": "def enable_wal_mode(db_path: str) -> Tuple[bool, str]:\n    \"\"\"\n    Ativa o modo Write-Ahead Logging (WAL) para reduzir locks.\n    Retorna: (success, message)\n    \"\"\"\n    if not os.path.exists(db_path):\n        return False, f\"Banco de dados não encontrado: {db_path}\"\n    try:\n        conn = sqlite3.connect(db_path, timeout=20.0)\n        conn.execute('PRAGMA journal_mode=WAL')",
+        "peekOfCode": "def enable_wal_mode(db_path: str) -> Tuple[bool, str]:\n    \"\"\"\n    Ativa o modo Write-Ahead Logging (WAL) para reduzir locks.\n    Retorna: (success, message)\n    \"\"\"\n    if not os.path.exists(db_path):\n        return False, f\"Banco de dados não encontrado: {db_path}\"\n    try:\n        with sqlite3.connect(db_path, timeout=20.0) as conn:\n            conn.execute('PRAGMA journal_mode=WAL')",
         "detail": "db_utils",
         "documentation": {}
     },
@@ -870,7 +1053,7 @@
         "kind": 2,
         "importPath": "db_utils",
         "description": "db_utils",
-        "peekOfCode": "def analyze_db(db_path: str) -> Tuple[bool, str]:\n    \"\"\"\n    Analisa o banco para otimizar performance de queries.\n    Retorna: (success, message)\n    \"\"\"\n    if not os.path.exists(db_path):\n        return False, f\"Banco de dados não encontrado: {db_path}\"\n    try:\n        conn = sqlite3.connect(db_path, timeout=20.0)\n        conn.execute('ANALYZE')",
+        "peekOfCode": "def analyze_db(db_path: str) -> Tuple[bool, str]:\n    \"\"\"\n    Analisa o banco para otimizar performance de queries.\n    Retorna: (success, message)\n    \"\"\"\n    if not os.path.exists(db_path):\n        return False, f\"Banco de dados não encontrado: {db_path}\"\n    try:\n        with sqlite3.connect(db_path, timeout=20.0) as conn:\n            conn.execute('ANALYZE')",
         "detail": "db_utils",
         "documentation": {}
     },
@@ -924,7 +1107,16 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")\n        messagebox.showinfo(title, message)\n    if root and status_bar:",
+        "peekOfCode": "def show_message(title, message, is_error=False):\n    \"\"\"Mostra mensagens de forma thread-safe (agendando no mainloop quando necessário).\"\"\"\n    try:\n        is_main = threading.current_thread() is threading.main_thread()\n    except Exception:\n        is_main = True\n    def _show():\n        if status_bar:\n            status_bar.config(text=message)\n        if is_error:",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "ask_on_main_thread",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def ask_on_main_thread(func, *args, **kwargs):\n    \"\"\"Executa uma chamada de UI no thread principal de forma síncrona e retorna o resultado.\n    Usa um Event para aguardar o término da chamada agendada via root.after. Se já estiver\n    no thread principal, executa diretamente.\n    \"\"\"\n    try:\n        if threading.current_thread() is threading.main_thread() or root is None:\n            return func(*args, **kwargs)\n    except Exception:\n        # Se qualquer verificação falhar, tente executar diretamente",
         "detail": "gui",
         "documentation": {}
     },
@@ -942,7 +1134,52 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def run_in_thread(func, *args, **kwargs):\n    if status_bar:\n        status_bar.config(text=\"Processando... Por favor, aguarde.\")\n    thread = threading.Thread(target=lambda: func(*args, **kwargs))\n    thread.start()\ndef run_analysis_gui(option):\n    def _run():\n        try:\n            draws = load_all_draws()\n            if not draws:",
+        "peekOfCode": "def run_in_thread(func, *args, **kwargs):\n    if status_bar:\n        status_bar.config(text=\"Processando... Por favor, aguarde.\")\n    thread = threading.Thread(target=lambda: func(*args, **kwargs))\n    thread.start()\ndef start_processing():\n    \"\"\"Ativa indicadores visuais de processamento: barra de progresso, cursor e desabilita botões.\"\"\"\n    try:\n        if status_bar:\n            status_bar.config(text=\"Processando... Por favor, aguarde.\")",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "start_processing",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def start_processing():\n    \"\"\"Ativa indicadores visuais de processamento: barra de progresso, cursor e desabilita botões.\"\"\"\n    try:\n        if status_bar:\n            status_bar.config(text=\"Processando... Por favor, aguarde.\")\n        if progress_bar:\n            progress_bar.start(10)\n        if root:\n            try:\n                root.config(cursor='watch')",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "display_results_table",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def display_results_table(headers, rows):\n    \"\"\"Preenche o Treeview com os cabeçalhos e linhas fornecidas.\n    headers: lista de strings para as colunas\n    rows: lista de iterables que correspondem às colunas\n    \"\"\"\n    global results_tree, current_results_data, current_results_headers\n    try:\n        if not results_tree:\n            return\n        # limpar árvore",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "export_results_gui",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def export_results_gui():\n    \"\"\"Exporta os resultados atualmente exibidos na Treeview para arquivo CSV/JSON.\"\"\"\n    global current_results_headers, current_results_data\n    try:\n        if not current_results_data or not current_results_headers:\n            show_message(\"Erro\", \"Nenhum resultado disponível para exportar.\", True)\n            return\n        file_path = ask_on_main_thread(filedialog.asksaveasfilename, defaultextension=\".csv\", filetypes=[(\"CSV files\", \"*.csv\"), (\"JSON files\", \"*.json\")], parent=root)\n        if not file_path:\n            return",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "embed_figure",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def embed_figure(fig):\n    \"\"\"Insere um objeto matplotlib.figure.Figure no painel de resultados (se suportado).\"\"\"\n    global mpl_canvas, results_tree\n    try:\n        if not FigureCanvasTkAgg:\n            show_message(\"Gráfico\", \"Matplotlib/TkAgg não disponível; abrindo em janela externa.\", False)\n            try:\n                import matplotlib.pyplot as _plt\n                _plt.figure(fig.number if hasattr(fig, 'number') else None)\n                _plt.show()",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "stop_processing",
+        "kind": 2,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "def stop_processing():\n    \"\"\"Desativa indicadores visuais de processamento e restaura estado da UI.\"\"\"\n    try:\n        if progress_bar:\n            progress_bar.stop()\n        if status_bar:\n            status_bar.config(text=\"Pronto\")\n        if root:\n            try:\n                root.config(cursor='')",
         "detail": "gui",
         "documentation": {}
     },
@@ -951,7 +1188,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def run_analysis_gui(option):\n    def _run():\n        try:\n            draws = load_all_draws()\n            if not draws:\n                show_message(\"Erro\", \"Base de dados vazia. Execute a atualização primeiro.\", True)\n                return\n            result_message = \"\"\n            plot_needed = False\n            if option == \"alltime\":",
+        "peekOfCode": "def run_analysis_gui(option):\n    # Iniciar indicador antes de disparar a thread\n    if root:\n        root.after(0, start_processing)\n    def _run():\n        try:\n            draws = load_all_draws()\n            if not draws:\n                show_message(\"Erro\", \"Base de dados vazia. Execute a atualização primeiro.\", True)\n                return",
         "detail": "gui",
         "documentation": {}
     },
@@ -960,7 +1197,7 @@
         "kind": 2,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "def export_data_gui(advanced=False):\n    def _export():\n        try:\n            draws = load_all_draws()\n            if not draws:\n                show_message(\"Erro\", \"Base de dados vazia. Execute a atualização primeiro.\", True)\n                return\n            if advanced:\n                tipo = simpledialog.askstring(\"Exportação Avançada\", \"Tipo de análise (frequencia, pares, trios, correlacao):\", parent=root)\n                if not tipo: return",
+        "peekOfCode": "def export_data_gui(advanced=False):\n    def _export():\n        try:\n            draws = load_all_draws()\n            if not draws:\n                show_message(\"Erro\", \"Base de dados vazia. Execute a atualização primeiro.\", True)\n                return\n            if advanced:\n                # Pedir o tipo em thread-safe no mainloop\n                tipo = ask_on_main_thread(simpledialog.askstring, \"Exportação Avançada\", \"Tipo de análise (frequencia, pares, trios, correlacao):\", parent=root)",
         "detail": "gui",
         "documentation": {}
     },
@@ -1077,7 +1314,7 @@
         "kind": 5,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "root = None\nstatus_bar = None\ncompare_button = None\ncompare_hint_label = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)",
+        "peekOfCode": "root = None\nstatus_bar = None\ncompare_button = None\ncompare_hint_label = None\nprogress_bar = None\ninteractive_buttons = []  # Lista de botões que devem ser desativados durante processamento\ndef show_message(title, message, is_error=False):\n    \"\"\"Mostra mensagens de forma thread-safe (agendando no mainloop quando necessário).\"\"\"\n    try:\n        is_main = threading.current_thread() is threading.main_thread()",
         "detail": "gui",
         "documentation": {}
     },
@@ -1086,7 +1323,7 @@
         "kind": 5,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "status_bar = None\ncompare_button = None\ncompare_hint_label = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:",
+        "peekOfCode": "status_bar = None\ncompare_button = None\ncompare_hint_label = None\nprogress_bar = None\ninteractive_buttons = []  # Lista de botões que devem ser desativados durante processamento\ndef show_message(title, message, is_error=False):\n    \"\"\"Mostra mensagens de forma thread-safe (agendando no mainloop quando necessário).\"\"\"\n    try:\n        is_main = threading.current_thread() is threading.main_thread()\n    except Exception:",
         "detail": "gui",
         "documentation": {}
     },
@@ -1095,7 +1332,7 @@
         "kind": 5,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "compare_button = None\ncompare_hint_label = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")",
+        "peekOfCode": "compare_button = None\ncompare_hint_label = None\nprogress_bar = None\ninteractive_buttons = []  # Lista de botões que devem ser desativados durante processamento\ndef show_message(title, message, is_error=False):\n    \"\"\"Mostra mensagens de forma thread-safe (agendando no mainloop quando necessário).\"\"\"\n    try:\n        is_main = threading.current_thread() is threading.main_thread()\n    except Exception:\n        is_main = True",
         "detail": "gui",
         "documentation": {}
     },
@@ -1104,8 +1341,35 @@
         "kind": 5,
         "importPath": "gui",
         "description": "gui",
-        "peekOfCode": "compare_hint_label = None\ndef show_message(title, message, is_error=False):\n    if status_bar:\n        status_bar.config(text=message)\n    if is_error:\n        logging.error(f\"{title}: {message}\")\n        messagebox.showerror(title, message)\n    else:\n        logging.info(f\"{title}: {message}\")\n        messagebox.showinfo(title, message)",
+        "peekOfCode": "compare_hint_label = None\nprogress_bar = None\ninteractive_buttons = []  # Lista de botões que devem ser desativados durante processamento\ndef show_message(title, message, is_error=False):\n    \"\"\"Mostra mensagens de forma thread-safe (agendando no mainloop quando necessário).\"\"\"\n    try:\n        is_main = threading.current_thread() is threading.main_thread()\n    except Exception:\n        is_main = True\n    def _show():",
         "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "progress_bar",
+        "kind": 5,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "progress_bar = None\ninteractive_buttons = []  # Lista de botões que devem ser desativados durante processamento\ndef show_message(title, message, is_error=False):\n    \"\"\"Mostra mensagens de forma thread-safe (agendando no mainloop quando necessário).\"\"\"\n    try:\n        is_main = threading.current_thread() is threading.main_thread()\n    except Exception:\n        is_main = True\n    def _show():\n        if status_bar:",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "interactive_buttons",
+        "kind": 5,
+        "importPath": "gui",
+        "description": "gui",
+        "peekOfCode": "interactive_buttons = []  # Lista de botões que devem ser desativados durante processamento\ndef show_message(title, message, is_error=False):\n    \"\"\"Mostra mensagens de forma thread-safe (agendando no mainloop quando necessário).\"\"\"\n    try:\n        is_main = threading.current_thread() is threading.main_thread()\n    except Exception:\n        is_main = True\n    def _show():\n        if status_bar:\n            status_bar.config(text=message)",
+        "detail": "gui",
+        "documentation": {}
+    },
+    {
+        "label": "select_db_gui",
+        "kind": 2,
+        "importPath": "gui_db",
+        "description": "gui_db",
+        "peekOfCode": "def select_db_gui(label_widget: Optional[object] = None, parent=None):\n    \"\"\"Abre um diálogo para selecionar/criar uma base de dados SQLite e persiste a escolha.\"\"\"\n    try:\n        file_path = filedialog.asksaveasfilename(defaultextension='.db', filetypes=[('SQLite DB','*.db'),('All files','*.*')], parent=parent)\n        if not file_path:\n            return None\n        cfg = get_config()\n        cfg.set('DATABASE', 'path', file_path)\n        cfg.save_config()\n        # Atualizar caminho global na aplicação",
+        "detail": "gui_db",
         "documentation": {}
     },
     {
@@ -1194,7 +1458,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def get_db_hash(path: str = DB_PATH) -> str:\n    \"\"\"Gera hash do arquivo de banco para invalidar cache quando necessário\"\"\"\n    try:\n        with open(path, 'rb') as f:\n            return hashlib.md5(f.read()).hexdigest()\n    except (FileNotFoundError, IOError):\n        return \"no_db\"\ndef invalidate_cache():\n    \"\"\"Invalida o cache de draws\"\"\"\n    global _draws_cache, _cache_hash",
+        "peekOfCode": "def get_db_hash(path: str = DB_PATH) -> str:\n    \"\"\"Gera hash do arquivo de banco para invalidar cache quando necessário\"\"\"\n    try:\n        with open(path, 'rb') as f:\n            return hashlib.md5(f.read()).hexdigest()\n    except (FileNotFoundError, IOError):\n        return \"no_db\"\ndef invalidate_cache():\n    \"\"\"Invalida o cache de draws\"\"\"\n    try:",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1203,7 +1467,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def invalidate_cache():\n    \"\"\"Invalida o cache de draws\"\"\"\n    global _draws_cache, _cache_hash\n    _draws_cache = None\n    _cache_hash = None\n# --- Banco de Dados ---\ndef init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    Adiciona índices para melhor performance.",
+        "peekOfCode": "def invalidate_cache():\n    \"\"\"Invalida o cache de draws\"\"\"\n    try:\n        _load_all_draws_cached.cache_clear()\n    except Exception:\n        pass\n# --- Banco de Dados ---\ndef init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1212,7 +1476,16 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    Adiciona índices para melhor performance.\n    \"\"\"\n    try:\n        with sqlite3.connect(path, timeout=20.0) as conn:\n            conn.execute('PRAGMA journal_mode=WAL')  # Write-Ahead Logging reduz locks\n            cursor: sqlite3.Cursor = conn.cursor()\n            cursor.execute('''",
+        "peekOfCode": "def init_db(path: str = DB_PATH) -> None:\n    \"\"\"\n    Inicializa a base de dados SQLite, criando a tabela megasena se não existir.\n    Adiciona índices para melhor performance.\n    \"\"\"\n    try:\n        # Se o arquivo existe mas está vazio (criado por NamedTemporaryFile em testes),\n        # removê-lo antes de abrir para evitar locks do descritor do arquivo original no Windows.\n        try:\n            if os.path.exists(path) and os.path.getsize(path) == 0:",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
+        "label": "set_db_path",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def set_db_path(path: str) -> None:\n    \"\"\"Atualiza o caminho do banco de dados usado por padrão nas operações.\n    Atualiza a variável global `DB_PATH` e tenta invalidar caches relacionados.\n    \"\"\"\n    global DB_PATH\n    try:\n        if not path:\n            raise ValueError(\"Caminho inválido para DB\")\n        DB_PATH = path\n        try:",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1230,7 +1503,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def fetch_lottery_data(lottery: str = \"megasena\", concurso: Optional[int] = None) -> Dict[str, Any]:\n    \"\"\"\n    Busca dados de um concurso específico de uma loteria na API.\n    Se 'concurso' for None, busca o último resultado.\n    \"\"\"\n    if lottery not in API_LOTERIAS:\n        raise ValueError(f\"Loteria '{lottery}' não suportada.\")\n    url: str = f\"{API_LOTERIAS[lottery]}/{concurso}\" if concurso else f\"{API_LOTERIAS[lottery]}/latest\"\n    try:\n        resp: requests.Response = requests.get(url)",
+        "peekOfCode": "def fetch_lottery_data(lottery: str = \"megasena\", concurso: Optional[int] = None, retries: int = 3, timeout: int = 10) -> Dict[str, Any]:\n    \"\"\"\n    Busca dados de um concurso específico de uma loteria na API com retries e timeout.\n    Se 'concurso' for None, busca o último resultado.\n    \"\"\"\n    if lottery not in API_LOTERIAS:\n        raise ValueError(f\"Loteria '{lottery}' não suportada.\")\n    url: str = f\"{API_LOTERIAS[lottery]}/{concurso}\" if concurso else f\"{API_LOTERIAS[lottery]}/latest\"\n    last_exc = None\n    for attempt in range(1, retries + 1):",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1257,7 +1530,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def load_all_draws(path: str = DB_PATH) -> List[Draw]:\n    \"\"\"\n    Carrega todos os sorteios da Mega-Sena do banco de dados com cache.\n    Retorna uma lista de tuplas (data, dezenas).\n    \"\"\"\n    global _draws_cache, _cache_hash\n    # Verificar se o cache ainda é válido\n    current_hash = get_db_hash(path)\n    if _draws_cache is not None and _cache_hash == current_hash:\n        return _draws_cache",
+        "peekOfCode": "def load_all_draws(path: str = DB_PATH) -> List[Draw]:\n    \"\"\"Carrega todos os sorteios da Mega-Sena do banco de dados com cache baseado em hash do arquivo.\"\"\"\n    current_hash = get_db_hash(path)\n    return _load_all_draws_cached((path, current_hash))\ndef get_most_frequent(draws: List[Draw], k: int = NUM_DEZENAS) -> List[int]:\n    \"\"\"\n    Calcula os k números mais frequentes em todos os sorteios.\n    \"\"\"\n    counter: Counter = Counter()\n    for _, nums in draws:",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1289,6 +1562,15 @@
         "documentation": {}
     },
     {
+        "label": "open_db",
+        "kind": 2,
+        "importPath": "mega_sena_app",
+        "description": "mega_sena_app",
+        "peekOfCode": "def open_db(path: str, timeout: float = 20.0):\n    \"\"\"Context manager para abrir conexão com DB garantindo que o modo WAL seja habilitado\n    e que a conexão seja fechada ao sair do contexto.\n    Usage:\n        with open_db(path) as conn:\n            # use conn\n    \"\"\"\n    @contextmanager\n    def _ctx():\n        conn = sqlite3.connect(path, timeout=timeout)",
+        "detail": "mega_sena_app",
+        "documentation": {}
+    },
+    {
         "label": "get_from_backtest_insights",
         "kind": 2,
         "importPath": "mega_sena_app",
@@ -1302,7 +1584,7 @@
         "kind": 2,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "def plot_frequency(draws: List[Draw]) -> None:\n    \"\"\"\n    Gera um gráfico de barras da frequência de cada número sorteado.\n    \"\"\"\n    if not plt:\n        logging.error(\"Matplotlib não está instalado. Não é possível gerar o gráfico de frequência.\")\n        return\n    counter: Counter = Counter()\n    for _, nums in draws:\n        counter.update(nums)",
+        "peekOfCode": "def plot_frequency(draws: List[Draw], return_fig: bool = False):\n    \"\"\"\n    Gera um gráfico de barras da frequência de cada número sorteado.\n    Se return_fig=True, retorna o objeto Figure ao invés de chamar plt.show().\n    \"\"\"\n    if not plt:\n        logging.error(\"Matplotlib não está instalado. Não é possível gerar o gráfico de frequência.\")\n        return None if return_fig else None\n    counter: Counter = Counter()\n    for _, nums in draws:",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1671,25 +1953,7 @@
         "kind": 5,
         "importPath": "mega_sena_app",
         "description": "mega_sena_app",
-        "peekOfCode": "Draw = Tuple[datetime.date, Tuple[int, int, int, int, int, int]]\n# Cache para melhorar performance\n_draws_cache = None\n_cache_hash = None\ndef get_db_hash(path: str = DB_PATH) -> str:\n    \"\"\"Gera hash do arquivo de banco para invalidar cache quando necessário\"\"\"\n    try:\n        with open(path, 'rb') as f:\n            return hashlib.md5(f.read()).hexdigest()\n    except (FileNotFoundError, IOError):",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "_draws_cache",
-        "kind": 5,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "_draws_cache = None\n_cache_hash = None\ndef get_db_hash(path: str = DB_PATH) -> str:\n    \"\"\"Gera hash do arquivo de banco para invalidar cache quando necessário\"\"\"\n    try:\n        with open(path, 'rb') as f:\n            return hashlib.md5(f.read()).hexdigest()\n    except (FileNotFoundError, IOError):\n        return \"no_db\"\ndef invalidate_cache():",
-        "detail": "mega_sena_app",
-        "documentation": {}
-    },
-    {
-        "label": "_cache_hash",
-        "kind": 5,
-        "importPath": "mega_sena_app",
-        "description": "mega_sena_app",
-        "peekOfCode": "_cache_hash = None\ndef get_db_hash(path: str = DB_PATH) -> str:\n    \"\"\"Gera hash do arquivo de banco para invalidar cache quando necessário\"\"\"\n    try:\n        with open(path, 'rb') as f:\n            return hashlib.md5(f.read()).hexdigest()\n    except (FileNotFoundError, IOError):\n        return \"no_db\"\ndef invalidate_cache():\n    \"\"\"Invalida o cache de draws\"\"\"",
+        "peekOfCode": "Draw = Tuple[datetime.date, Tuple[int, int, int, int, int, int]]\n# Cache para melhorar performance\n# Usamos lru_cache para um cache simples e robusto. invalidate_cache() limpa o cache.\nfrom functools import lru_cache\n# Mantemos get_db_hash para invalidar o cache quando o banco muda\ndef get_db_hash(path: str = DB_PATH) -> str:\n    \"\"\"Gera hash do arquivo de banco para invalidar cache quando necessário\"\"\"\n    try:\n        with open(path, 'rb') as f:\n            return hashlib.md5(f.read()).hexdigest()",
         "detail": "mega_sena_app",
         "documentation": {}
     },
@@ -1721,6 +1985,15 @@
         "documentation": {}
     },
     {
+        "label": "project_root",
+        "kind": 5,
+        "importPath": "tests",
+        "description": "tests",
+        "peekOfCode": "project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))\nsys.path.insert(0, project_root)\n# Tentar importar o módulo principal\ntry:\n    import mega_sena_app\n    MODULE_AVAILABLE = True\nexcept ImportError as e:\n    print(f\"Erro ao importar mega_sena_app: {e}\")\n    MODULE_AVAILABLE = False\n    mega_sena_app = None",
+        "detail": "tests",
+        "documentation": {}
+    },
+    {
         "label": "TestMegaSenaAnalyzer",
         "kind": 6,
         "importPath": "tests_fixed",
@@ -1745,6 +2018,537 @@
         "description": "tests_fixed",
         "peekOfCode": "class TestMathematicalFunctions(unittest.TestCase):\n    \"\"\"Testes para funções matemáticas e estatísticas\"\"\"\n    def test_edge_cases(self):\n        \"\"\"Testa casos extremos\"\"\"\n        if not MODULE_AVAILABLE:\n            self.skipTest(\"Módulo mega_sena_app não pode ser importado\")\n        # Lista vazia\n        empty_draws = []\n        if hasattr(mega_sena_app, 'get_most_frequent'):\n            result = mega_sena_app.get_most_frequent(empty_draws, k=6)",
         "detail": "tests_fixed",
+        "documentation": {}
+    },
+    {
+        "label": "fake_draws",
+        "kind": 2,
+        "importPath": "tmp_headless_export",
+        "description": "tmp_headless_export",
+        "peekOfCode": "def fake_draws():\n    return [(datetime.date(2025,1,1), [1,2,3,4,5,6]), (datetime.date(2025,1,8), [1,2,7,8,9,10])]\n# Monkeypatch load_all_draws\ngui.load_all_draws = lambda: fake_draws()\n# Create temp file for output\ntemp = tempfile.NamedTemporaryFile(delete=False, suffix='.csv')\npath = temp.name\ntemp.close()\nprint('Temp file path:', path)\n# Patch ask_on_main_thread to return our choices",
+        "detail": "tmp_headless_export",
+        "documentation": {}
+    },
+    {
+        "label": "ask_override",
+        "kind": 2,
+        "importPath": "tmp_headless_export",
+        "description": "tmp_headless_export",
+        "peekOfCode": "def ask_override(func, *args, **kwargs):\n    name = getattr(func, '__name__', '')\n    if 'askstring' in name:\n        return 'frequencia'\n    if 'asksaveasfilename' in name:\n        return path\n    return func(*args, **kwargs)\n# Replace helper\ngui.ask_on_main_thread = ask_override\n# Trigger advanced export",
+        "detail": "tmp_headless_export",
+        "documentation": {}
+    },
+    {
+        "label": "gui.load_all_draws",
+        "kind": 5,
+        "importPath": "tmp_headless_export",
+        "description": "tmp_headless_export",
+        "peekOfCode": "gui.load_all_draws = lambda: fake_draws()\n# Create temp file for output\ntemp = tempfile.NamedTemporaryFile(delete=False, suffix='.csv')\npath = temp.name\ntemp.close()\nprint('Temp file path:', path)\n# Patch ask_on_main_thread to return our choices\ndef ask_override(func, *args, **kwargs):\n    name = getattr(func, '__name__', '')\n    if 'askstring' in name:",
+        "detail": "tmp_headless_export",
+        "documentation": {}
+    },
+    {
+        "label": "temp",
+        "kind": 5,
+        "importPath": "tmp_headless_export",
+        "description": "tmp_headless_export",
+        "peekOfCode": "temp = tempfile.NamedTemporaryFile(delete=False, suffix='.csv')\npath = temp.name\ntemp.close()\nprint('Temp file path:', path)\n# Patch ask_on_main_thread to return our choices\ndef ask_override(func, *args, **kwargs):\n    name = getattr(func, '__name__', '')\n    if 'askstring' in name:\n        return 'frequencia'\n    if 'asksaveasfilename' in name:",
+        "detail": "tmp_headless_export",
+        "documentation": {}
+    },
+    {
+        "label": "path",
+        "kind": 5,
+        "importPath": "tmp_headless_export",
+        "description": "tmp_headless_export",
+        "peekOfCode": "path = temp.name\ntemp.close()\nprint('Temp file path:', path)\n# Patch ask_on_main_thread to return our choices\ndef ask_override(func, *args, **kwargs):\n    name = getattr(func, '__name__', '')\n    if 'askstring' in name:\n        return 'frequencia'\n    if 'asksaveasfilename' in name:\n        return path",
+        "detail": "tmp_headless_export",
+        "documentation": {}
+    },
+    {
+        "label": "gui.ask_on_main_thread",
+        "kind": 5,
+        "importPath": "tmp_headless_export",
+        "description": "tmp_headless_export",
+        "peekOfCode": "gui.ask_on_main_thread = ask_override\n# Trigger advanced export\ngui.export_data_gui(advanced=True)\n# Wait for background thread to finish\nfor _ in range(50):\n    import threading\n    alive = any(t.is_alive() and t.name != 'MainThread' for t in threading.enumerate())\n    if not alive:\n        break\n    time.sleep(0.1)",
+        "detail": "tmp_headless_export",
+        "documentation": {}
+    },
+    {
+        "label": "DummyRoot",
+        "kind": 6,
+        "importPath": "tmp_headless_tests",
+        "description": "tmp_headless_tests",
+        "peekOfCode": "class DummyRoot:\n    def after(self, ms, func, *args):\n        func(*args)\n    def config(self, **kwargs):\n        pass\nG.root = DummyRoot()\nG.status_bar = type('S', (), {'config': lambda self, **k: None})()\nG.progress_bar = type('P', (), {'start': lambda self, x: print('progress start'), 'stop': lambda self: print('progress stop')})()\n# dummy interactive button\nclass DummyButton:",
+        "detail": "tmp_headless_tests",
+        "documentation": {}
+    },
+    {
+        "label": "DummyButton",
+        "kind": 6,
+        "importPath": "tmp_headless_tests",
+        "description": "tmp_headless_tests",
+        "peekOfCode": "class DummyButton:\n    def __init__(self): self.state = 'normal'\n    def config(self, **k): self.state = k.get('state', self.state)\nbtn = DummyButton()\nG.interactive_buttons.clear()\nG.interactive_buttons.append(btn)\n# Ensure GUI functions use our temp DB\nG.load_all_draws = lambda: app.load_all_draws(path)\n# Run backtest GUI (synchronous)\nprint('Running backtest GUI...')",
+        "detail": "tmp_headless_tests",
+        "documentation": {}
+    },
+    {
+        "label": "f",
+        "kind": 5,
+        "importPath": "tmp_headless_tests",
+        "description": "tmp_headless_tests",
+        "peekOfCode": "f = tempfile.NamedTemporaryFile(delete=False, suffix='.db')\npath = f.name\nf.close()\napp.init_db(path)\ntry:\n    app.set_db_path(path)\nexcept Exception:\n    app.DB_PATH = path\nwith app.open_db(path) as conn:\n    cur = conn.cursor()",
+        "detail": "tmp_headless_tests",
+        "documentation": {}
+    },
+    {
+        "label": "path",
+        "kind": 5,
+        "importPath": "tmp_headless_tests",
+        "description": "tmp_headless_tests",
+        "peekOfCode": "path = f.name\nf.close()\napp.init_db(path)\ntry:\n    app.set_db_path(path)\nexcept Exception:\n    app.DB_PATH = path\nwith app.open_db(path) as conn:\n    cur = conn.cursor()\n    # Insert multiple draws",
+        "detail": "tmp_headless_tests",
+        "documentation": {}
+    },
+    {
+        "label": "G.root",
+        "kind": 5,
+        "importPath": "tmp_headless_tests",
+        "description": "tmp_headless_tests",
+        "peekOfCode": "G.root = DummyRoot()\nG.status_bar = type('S', (), {'config': lambda self, **k: None})()\nG.progress_bar = type('P', (), {'start': lambda self, x: print('progress start'), 'stop': lambda self: print('progress stop')})()\n# dummy interactive button\nclass DummyButton:\n    def __init__(self): self.state = 'normal'\n    def config(self, **k): self.state = k.get('state', self.state)\nbtn = DummyButton()\nG.interactive_buttons.clear()\nG.interactive_buttons.append(btn)",
+        "detail": "tmp_headless_tests",
+        "documentation": {}
+    },
+    {
+        "label": "G.status_bar",
+        "kind": 5,
+        "importPath": "tmp_headless_tests",
+        "description": "tmp_headless_tests",
+        "peekOfCode": "G.status_bar = type('S', (), {'config': lambda self, **k: None})()\nG.progress_bar = type('P', (), {'start': lambda self, x: print('progress start'), 'stop': lambda self: print('progress stop')})()\n# dummy interactive button\nclass DummyButton:\n    def __init__(self): self.state = 'normal'\n    def config(self, **k): self.state = k.get('state', self.state)\nbtn = DummyButton()\nG.interactive_buttons.clear()\nG.interactive_buttons.append(btn)\n# Ensure GUI functions use our temp DB",
+        "detail": "tmp_headless_tests",
+        "documentation": {}
+    },
+    {
+        "label": "G.progress_bar",
+        "kind": 5,
+        "importPath": "tmp_headless_tests",
+        "description": "tmp_headless_tests",
+        "peekOfCode": "G.progress_bar = type('P', (), {'start': lambda self, x: print('progress start'), 'stop': lambda self: print('progress stop')})()\n# dummy interactive button\nclass DummyButton:\n    def __init__(self): self.state = 'normal'\n    def config(self, **k): self.state = k.get('state', self.state)\nbtn = DummyButton()\nG.interactive_buttons.clear()\nG.interactive_buttons.append(btn)\n# Ensure GUI functions use our temp DB\nG.load_all_draws = lambda: app.load_all_draws(path)",
+        "detail": "tmp_headless_tests",
+        "documentation": {}
+    },
+    {
+        "label": "btn",
+        "kind": 5,
+        "importPath": "tmp_headless_tests",
+        "description": "tmp_headless_tests",
+        "peekOfCode": "btn = DummyButton()\nG.interactive_buttons.clear()\nG.interactive_buttons.append(btn)\n# Ensure GUI functions use our temp DB\nG.load_all_draws = lambda: app.load_all_draws(path)\n# Run backtest GUI (synchronous)\nprint('Running backtest GUI...')\nG.run_backtest_gui('weighted')\nprint('Backtest GUI done; button state:', btn.state)\n# Run montecarlo analysis (asynchronous via run_in_thread)",
+        "detail": "tmp_headless_tests",
+        "documentation": {}
+    },
+    {
+        "label": "G.load_all_draws",
+        "kind": 5,
+        "importPath": "tmp_headless_tests",
+        "description": "tmp_headless_tests",
+        "peekOfCode": "G.load_all_draws = lambda: app.load_all_draws(path)\n# Run backtest GUI (synchronous)\nprint('Running backtest GUI...')\nG.run_backtest_gui('weighted')\nprint('Backtest GUI done; button state:', btn.state)\n# Run montecarlo analysis (asynchronous via run_in_thread)\nprint('Running Monte Carlo via run_analysis_gui...')\nG.run_analysis_gui('montecarlo')\n# wait for background thread to finish\nfor _ in range(100):",
+        "detail": "tmp_headless_tests",
+        "documentation": {}
+    },
+    {
+        "label": "StatusBar",
+        "kind": 6,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "class StatusBar:\n    def __init__(self): self.text = ''\n    def config(self, **k): self.text = k.get('text', self.text)\nclass ProgressBar:\n    def __init__(self): self.running=False\n    def start(self, *_): self.running=True\n    def stop(self): self.running=False\nG.status_bar = StatusBar()\nG.progress_bar = ProgressBar()\n# Dummy interactive button",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "ProgressBar",
+        "kind": 6,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "class ProgressBar:\n    def __init__(self): self.running=False\n    def start(self, *_): self.running=True\n    def stop(self): self.running=False\nG.status_bar = StatusBar()\nG.progress_bar = ProgressBar()\n# Dummy interactive button\nclass DummyButton:\n    def __init__(self): self.state='normal'\n    def config(self, **k): self.state = k.get('state', self.state)",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "DummyButton",
+        "kind": 6,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "class DummyButton:\n    def __init__(self): self.state='normal'\n    def config(self, **k): self.state = k.get('state', self.state)\nbtn = DummyButton()\nG.interactive_buttons.clear()\nG.interactive_buttons.append(btn)\n# Ensure GUI uses our temp DB for draw loading\nG.load_all_draws = lambda: app.load_all_draws(path)\n# We'll schedule the test sequence using root.after so mainloop runs on the main thread.\n# This avoids RuntimeError: main thread is not in main loop when worker threads call root.after.",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "run_export_then_next",
+        "kind": 2,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "def run_export_then_next():\n    with patch('gui.simpledialog.askstring', return_value='frequencia'):\n        with patch('gui.filedialog.asksaveasfilename', return_value=tempfile.mktemp(suffix='.csv')):\n            G.export_data_gui(advanced=True)\n    # wait for background threads to finish\n    root.after(50, check_export_completion)\ndef check_export_completion():\n    alive = any(t.is_alive() and t.name!='MainThread' for t in threading.enumerate())\n    if alive:\n        root.after(50, check_export_completion)",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "check_export_completion",
+        "kind": 2,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "def check_export_completion():\n    alive = any(t.is_alive() and t.name!='MainThread' for t in threading.enumerate())\n    if alive:\n        root.after(50, check_export_completion)\n    else:\n        print('Export advanced: status=', G.status_bar.text)\n        root.after(0, run_backtest_then_next)\ndef run_backtest_then_next():\n    G.run_backtest_gui(method='weighted')\n    # run_backtest_gui schedules result display via root.after; give it time",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "run_backtest_then_next",
+        "kind": 2,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "def run_backtest_then_next():\n    G.run_backtest_gui(method='weighted')\n    # run_backtest_gui schedules result display via root.after; give it time\n    root.after(200, check_backtest_completion)\ndef check_backtest_completion():\n    # backtest is generally synchronous but might have scheduled callbacks\n    print('Backtest done; status=', G.status_bar.text)\n    root.after(0, run_monte_then_finish)\ndef run_monte_then_finish():\n    G.run_analysis_gui('montecarlo')",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "check_backtest_completion",
+        "kind": 2,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "def check_backtest_completion():\n    # backtest is generally synchronous but might have scheduled callbacks\n    print('Backtest done; status=', G.status_bar.text)\n    root.after(0, run_monte_then_finish)\ndef run_monte_then_finish():\n    G.run_analysis_gui('montecarlo')\n    root.after(50, check_monte_completion)\ndef check_monte_completion():\n    alive = any(t.is_alive() and t.name!='MainThread' for t in threading.enumerate())\n    if alive:",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "run_monte_then_finish",
+        "kind": 2,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "def run_monte_then_finish():\n    G.run_analysis_gui('montecarlo')\n    root.after(50, check_monte_completion)\ndef check_monte_completion():\n    alive = any(t.is_alive() and t.name!='MainThread' for t in threading.enumerate())\n    if alive:\n        root.after(50, check_monte_completion)\n    else:\n        print('Monte Carlo: status=', G.status_bar.text)\n        # End of sequence",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "check_monte_completion",
+        "kind": 2,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "def check_monte_completion():\n    alive = any(t.is_alive() and t.name!='MainThread' for t in threading.enumerate())\n    if alive:\n        root.after(50, check_monte_completion)\n    else:\n        print('Monte Carlo: status=', G.status_bar.text)\n        # End of sequence\n        root.quit()\n# Start the sequence and enter mainloop so that root.after callbacks work.\nroot.after(0, run_export_then_next)",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "f",
+        "kind": 5,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "f = tempfile.NamedTemporaryFile(delete=False, suffix='.db')\npath = f.name\nf.close()\napp.init_db(path)\ntry:\n    app.set_db_path(path)\nexcept Exception:\n    app.DB_PATH = path\nwith app.open_db(path) as conn:\n    cur = conn.cursor()",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "path",
+        "kind": 5,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "path = f.name\nf.close()\napp.init_db(path)\ntry:\n    app.set_db_path(path)\nexcept Exception:\n    app.DB_PATH = path\nwith app.open_db(path) as conn:\n    cur = conn.cursor()\n    # Insert several sample draws",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "root",
+        "kind": 5,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "root = tk.Tk()\nroot.withdraw()\nG.root = root\n# Minimal status bar and progress bar objects\nclass StatusBar:\n    def __init__(self): self.text = ''\n    def config(self, **k): self.text = k.get('text', self.text)\nclass ProgressBar:\n    def __init__(self): self.running=False\n    def start(self, *_): self.running=True",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "G.root",
+        "kind": 5,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "G.root = root\n# Minimal status bar and progress bar objects\nclass StatusBar:\n    def __init__(self): self.text = ''\n    def config(self, **k): self.text = k.get('text', self.text)\nclass ProgressBar:\n    def __init__(self): self.running=False\n    def start(self, *_): self.running=True\n    def stop(self): self.running=False\nG.status_bar = StatusBar()",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "G.status_bar",
+        "kind": 5,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "G.status_bar = StatusBar()\nG.progress_bar = ProgressBar()\n# Dummy interactive button\nclass DummyButton:\n    def __init__(self): self.state='normal'\n    def config(self, **k): self.state = k.get('state', self.state)\nbtn = DummyButton()\nG.interactive_buttons.clear()\nG.interactive_buttons.append(btn)\n# Ensure GUI uses our temp DB for draw loading",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "G.progress_bar",
+        "kind": 5,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "G.progress_bar = ProgressBar()\n# Dummy interactive button\nclass DummyButton:\n    def __init__(self): self.state='normal'\n    def config(self, **k): self.state = k.get('state', self.state)\nbtn = DummyButton()\nG.interactive_buttons.clear()\nG.interactive_buttons.append(btn)\n# Ensure GUI uses our temp DB for draw loading\nG.load_all_draws = lambda: app.load_all_draws(path)",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "btn",
+        "kind": 5,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "btn = DummyButton()\nG.interactive_buttons.clear()\nG.interactive_buttons.append(btn)\n# Ensure GUI uses our temp DB for draw loading\nG.load_all_draws = lambda: app.load_all_draws(path)\n# We'll schedule the test sequence using root.after so mainloop runs on the main thread.\n# This avoids RuntimeError: main thread is not in main loop when worker threads call root.after.\ndef run_export_then_next():\n    with patch('gui.simpledialog.askstring', return_value='frequencia'):\n        with patch('gui.filedialog.asksaveasfilename', return_value=tempfile.mktemp(suffix='.csv')):",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "G.load_all_draws",
+        "kind": 5,
+        "importPath": "tmp_interactive_test",
+        "description": "tmp_interactive_test",
+        "peekOfCode": "G.load_all_draws = lambda: app.load_all_draws(path)\n# We'll schedule the test sequence using root.after so mainloop runs on the main thread.\n# This avoids RuntimeError: main thread is not in main loop when worker threads call root.after.\ndef run_export_then_next():\n    with patch('gui.simpledialog.askstring', return_value='frequencia'):\n        with patch('gui.filedialog.asksaveasfilename', return_value=tempfile.mktemp(suffix='.csv')):\n            G.export_data_gui(advanced=True)\n    # wait for background threads to finish\n    root.after(50, check_export_completion)\ndef check_export_completion():",
+        "detail": "tmp_interactive_test",
+        "documentation": {}
+    },
+    {
+        "label": "DummyRoot",
+        "kind": 6,
+        "importPath": "tmp_manual_export_run2",
+        "description": "tmp_manual_export_run2",
+        "peekOfCode": "class DummyRoot:\n    def after(self, ms, func, *args):\n        func(*args)\n    def config(self, **kwargs):\n        pass\nG.root = DummyRoot()\nG.status_bar = type('S', (), {'config': lambda self, **k: None})()\nG.progress_bar = type('P', (), {'start': lambda self, x: None, 'stop': lambda self: None})()\n# Ensure the GUI's load_all_draws uses our temp DB path (default parameter capture workaround)\nG.load_all_draws = lambda: app.load_all_draws(path)",
+        "detail": "tmp_manual_export_run2",
+        "documentation": {}
+    },
+    {
+        "label": "f",
+        "kind": 5,
+        "importPath": "tmp_manual_export_run2",
+        "description": "tmp_manual_export_run2",
+        "peekOfCode": "f = tempfile.NamedTemporaryFile(delete=False, suffix='.db')\npath = f.name\nf.close()\napp.init_db(path)\n# Update global DB_PATH in the running app so export uses our temp DB\ntry:\n    app.set_db_path(path)\nexcept Exception:\n    # Backwards compatibility: fall back to assign global\n    app.DB_PATH = path",
+        "detail": "tmp_manual_export_run2",
+        "documentation": {}
+    },
+    {
+        "label": "path",
+        "kind": 5,
+        "importPath": "tmp_manual_export_run2",
+        "description": "tmp_manual_export_run2",
+        "peekOfCode": "path = f.name\nf.close()\napp.init_db(path)\n# Update global DB_PATH in the running app so export uses our temp DB\ntry:\n    app.set_db_path(path)\nexcept Exception:\n    # Backwards compatibility: fall back to assign global\n    app.DB_PATH = path\n# Insert sample draws using open_db context manager",
+        "detail": "tmp_manual_export_run2",
+        "documentation": {}
+    },
+    {
+        "label": "G.root",
+        "kind": 5,
+        "importPath": "tmp_manual_export_run2",
+        "description": "tmp_manual_export_run2",
+        "peekOfCode": "G.root = DummyRoot()\nG.status_bar = type('S', (), {'config': lambda self, **k: None})()\nG.progress_bar = type('P', (), {'start': lambda self, x: None, 'stop': lambda self: None})()\n# Ensure the GUI's load_all_draws uses our temp DB path (default parameter capture workaround)\nG.load_all_draws = lambda: app.load_all_draws(path)\n# Patch dialogs\nwith patch('gui.simpledialog.askstring', return_value='frequencia'):\n    with patch('gui.filedialog.asksaveasfilename', return_value=tempfile.mktemp(suffix='.csv')):\n        # Call export_data_gui(advanced=True) and wait briefly\n        G.export_data_gui(advanced=True)",
+        "detail": "tmp_manual_export_run2",
+        "documentation": {}
+    },
+    {
+        "label": "G.status_bar",
+        "kind": 5,
+        "importPath": "tmp_manual_export_run2",
+        "description": "tmp_manual_export_run2",
+        "peekOfCode": "G.status_bar = type('S', (), {'config': lambda self, **k: None})()\nG.progress_bar = type('P', (), {'start': lambda self, x: None, 'stop': lambda self: None})()\n# Ensure the GUI's load_all_draws uses our temp DB path (default parameter capture workaround)\nG.load_all_draws = lambda: app.load_all_draws(path)\n# Patch dialogs\nwith patch('gui.simpledialog.askstring', return_value='frequencia'):\n    with patch('gui.filedialog.asksaveasfilename', return_value=tempfile.mktemp(suffix='.csv')):\n        # Call export_data_gui(advanced=True) and wait briefly\n        G.export_data_gui(advanced=True)\n        # wait for background thread to finish",
+        "detail": "tmp_manual_export_run2",
+        "documentation": {}
+    },
+    {
+        "label": "G.progress_bar",
+        "kind": 5,
+        "importPath": "tmp_manual_export_run2",
+        "description": "tmp_manual_export_run2",
+        "peekOfCode": "G.progress_bar = type('P', (), {'start': lambda self, x: None, 'stop': lambda self: None})()\n# Ensure the GUI's load_all_draws uses our temp DB path (default parameter capture workaround)\nG.load_all_draws = lambda: app.load_all_draws(path)\n# Patch dialogs\nwith patch('gui.simpledialog.askstring', return_value='frequencia'):\n    with patch('gui.filedialog.asksaveasfilename', return_value=tempfile.mktemp(suffix='.csv')):\n        # Call export_data_gui(advanced=True) and wait briefly\n        G.export_data_gui(advanced=True)\n        # wait for background thread to finish\n        for _ in range(50):",
+        "detail": "tmp_manual_export_run2",
+        "documentation": {}
+    },
+    {
+        "label": "G.load_all_draws",
+        "kind": 5,
+        "importPath": "tmp_manual_export_run2",
+        "description": "tmp_manual_export_run2",
+        "peekOfCode": "G.load_all_draws = lambda: app.load_all_draws(path)\n# Patch dialogs\nwith patch('gui.simpledialog.askstring', return_value='frequencia'):\n    with patch('gui.filedialog.asksaveasfilename', return_value=tempfile.mktemp(suffix='.csv')):\n        # Call export_data_gui(advanced=True) and wait briefly\n        G.export_data_gui(advanced=True)\n        # wait for background thread to finish\n        for _ in range(50):\n            alive = any(t.is_alive() and t.name!='MainThread' for t in threading.enumerate())\n            if not alive:",
+        "detail": "tmp_manual_export_run2",
+        "documentation": {}
+    },
+    {
+        "label": "DummyRoot",
+        "kind": 6,
+        "importPath": "tmp_manual_export_test",
+        "description": "tmp_manual_export_test",
+        "peekOfCode": "class DummyRoot:\n    def after(self, ms, func, *args):\n        func(*args)\n    def config(self, **kwargs):\n        pass\nG.root = DummyRoot()\nG.status_bar = type('S', (), {'config': lambda self, **k: None})()\nG.progress_bar = type('P', (), {'start': lambda self, x: None, 'stop': lambda self: None})()\n# Patch dialogs\nwith patch('gui.simpledialog.askstring', return_value='frequencia'):",
+        "detail": "tmp_manual_export_test",
+        "documentation": {}
+    },
+    {
+        "label": "f",
+        "kind": 5,
+        "importPath": "tmp_manual_export_test",
+        "description": "tmp_manual_export_test",
+        "peekOfCode": "f = tempfile.NamedTemporaryFile(delete=False, suffix='.db')\npath = f.name\nf.close()\napp.init_db(path)\n# Insert sample draws\nwith app.open_db(path) as conn:\n    cur = conn.cursor()\n    cur.execute(\"INSERT OR IGNORE INTO megasena(concurso, data, dez1,dez2,dez3,dez4,dez5,dez6) VALUES (?,?,?,?,?,?,?,?)\", (1, '2025-01-01',1,2,3,4,5,6))\n    conn.commit()\n# Dummy root to execute scheduled UI calls synchronously",
+        "detail": "tmp_manual_export_test",
+        "documentation": {}
+    },
+    {
+        "label": "path",
+        "kind": 5,
+        "importPath": "tmp_manual_export_test",
+        "description": "tmp_manual_export_test",
+        "peekOfCode": "path = f.name\nf.close()\napp.init_db(path)\n# Insert sample draws\nwith app.open_db(path) as conn:\n    cur = conn.cursor()\n    cur.execute(\"INSERT OR IGNORE INTO megasena(concurso, data, dez1,dez2,dez3,dez4,dez5,dez6) VALUES (?,?,?,?,?,?,?,?)\", (1, '2025-01-01',1,2,3,4,5,6))\n    conn.commit()\n# Dummy root to execute scheduled UI calls synchronously\nclass DummyRoot:",
+        "detail": "tmp_manual_export_test",
+        "documentation": {}
+    },
+    {
+        "label": "G.root",
+        "kind": 5,
+        "importPath": "tmp_manual_export_test",
+        "description": "tmp_manual_export_test",
+        "peekOfCode": "G.root = DummyRoot()\nG.status_bar = type('S', (), {'config': lambda self, **k: None})()\nG.progress_bar = type('P', (), {'start': lambda self, x: None, 'stop': lambda self: None})()\n# Patch dialogs\nwith patch('gui.simpledialog.askstring', return_value='frequencia'):\n    with patch('gui.filedialog.asksaveasfilename', return_value=tempfile.mktemp(suffix='.csv')):\n        # Call export_data_gui(advanced=True) and wait briefly\n        G.export_data_gui(advanced=True)\n        # wait for background thread to finish\n        for _ in range(20):",
+        "detail": "tmp_manual_export_test",
+        "documentation": {}
+    },
+    {
+        "label": "G.status_bar",
+        "kind": 5,
+        "importPath": "tmp_manual_export_test",
+        "description": "tmp_manual_export_test",
+        "peekOfCode": "G.status_bar = type('S', (), {'config': lambda self, **k: None})()\nG.progress_bar = type('P', (), {'start': lambda self, x: None, 'stop': lambda self: None})()\n# Patch dialogs\nwith patch('gui.simpledialog.askstring', return_value='frequencia'):\n    with patch('gui.filedialog.asksaveasfilename', return_value=tempfile.mktemp(suffix='.csv')):\n        # Call export_data_gui(advanced=True) and wait briefly\n        G.export_data_gui(advanced=True)\n        # wait for background thread to finish\n        for _ in range(20):\n            alive = any(t.is_alive() and t.name!='MainThread' for t in threading.enumerate())",
+        "detail": "tmp_manual_export_test",
+        "documentation": {}
+    },
+    {
+        "label": "G.progress_bar",
+        "kind": 5,
+        "importPath": "tmp_manual_export_test",
+        "description": "tmp_manual_export_test",
+        "peekOfCode": "G.progress_bar = type('P', (), {'start': lambda self, x: None, 'stop': lambda self: None})()\n# Patch dialogs\nwith patch('gui.simpledialog.askstring', return_value='frequencia'):\n    with patch('gui.filedialog.asksaveasfilename', return_value=tempfile.mktemp(suffix='.csv')):\n        # Call export_data_gui(advanced=True) and wait briefly\n        G.export_data_gui(advanced=True)\n        # wait for background thread to finish\n        for _ in range(20):\n            alive = any(t.is_alive() and t.name!='MainThread' for t in threading.enumerate())\n            if not alive:",
+        "detail": "tmp_manual_export_test",
+        "documentation": {}
+    },
+    {
+        "label": "f",
+        "kind": 5,
+        "importPath": "tmp_test_unlink",
+        "description": "tmp_test_unlink",
+        "peekOfCode": "f = tempfile.NamedTemporaryFile(delete=False)\npath = f.name\nf.close()\nprint('Temp (sqlite raw):', path)\nconn = sqlite3.connect(path)\nconn.execute('CREATE TABLE IF NOT EXISTS test (id INTEGER)')\nconn.commit()\nconn.close()\ntry:\n    os.unlink(path)",
+        "detail": "tmp_test_unlink",
+        "documentation": {}
+    },
+    {
+        "label": "path",
+        "kind": 5,
+        "importPath": "tmp_test_unlink",
+        "description": "tmp_test_unlink",
+        "peekOfCode": "path = f.name\nf.close()\nprint('Temp (sqlite raw):', path)\nconn = sqlite3.connect(path)\nconn.execute('CREATE TABLE IF NOT EXISTS test (id INTEGER)')\nconn.commit()\nconn.close()\ntry:\n    os.unlink(path)\n    print('Removed OK (sqlite raw)')",
+        "detail": "tmp_test_unlink",
+        "documentation": {}
+    },
+    {
+        "label": "conn",
+        "kind": 5,
+        "importPath": "tmp_test_unlink",
+        "description": "tmp_test_unlink",
+        "peekOfCode": "conn = sqlite3.connect(path)\nconn.execute('CREATE TABLE IF NOT EXISTS test (id INTEGER)')\nconn.commit()\nconn.close()\ntry:\n    os.unlink(path)\n    print('Removed OK (sqlite raw)')\nexcept Exception as e:\n    print('Remove failed (sqlite raw):', e)\n    traceback.print_exc()",
+        "detail": "tmp_test_unlink",
+        "documentation": {}
+    },
+    {
+        "label": "f",
+        "kind": 5,
+        "importPath": "tmp_test_unlink",
+        "description": "tmp_test_unlink",
+        "peekOfCode": "f = tempfile.NamedTemporaryFile(delete=False)\npath2 = f.name\nf.close()\nprint('Temp (init_db):', path2)\ninit_db(path2)\nprint('Init done')\nprint('Exists after init:', os.path.exists(path2))\ntry:\n    os.unlink(path2)\n    print('Removed OK (init_db)')",
+        "detail": "tmp_test_unlink",
+        "documentation": {}
+    },
+    {
+        "label": "path2",
+        "kind": 5,
+        "importPath": "tmp_test_unlink",
+        "description": "tmp_test_unlink",
+        "peekOfCode": "path2 = f.name\nf.close()\nprint('Temp (init_db):', path2)\ninit_db(path2)\nprint('Init done')\nprint('Exists after init:', os.path.exists(path2))\ntry:\n    os.unlink(path2)\n    print('Removed OK (init_db)')\nexcept Exception as e:",
+        "detail": "tmp_test_unlink",
+        "documentation": {}
+    },
+    {
+        "label": "DummyBar",
+        "kind": 6,
+        "importPath": "tmp_validate_gui",
+        "description": "tmp_validate_gui",
+        "peekOfCode": "class DummyBar:\n    def __init__(self):\n        self.started = False\n        self.stopped = False\n    def start(self, val=0):\n        print('DummyBar.start called')\n        self.started = True\n    def stop(self):\n        print('DummyBar.stop called')\n        self.stopped = True",
+        "detail": "tmp_validate_gui",
+        "documentation": {}
+    },
+    {
+        "label": "DummyLabel",
+        "kind": 6,
+        "importPath": "tmp_validate_gui",
+        "description": "tmp_validate_gui",
+        "peekOfCode": "class DummyLabel:\n    def __init__(self):\n        self.text = ''\n    def config(self, **kwargs):\n        self.text = kwargs.get('text', self.text)\n        print('DummyLabel.config text=', self.text)\nclass DummyButton:\n    def __init__(self):\n        self.state = 'normal'\n    def config(self, **kwargs):",
+        "detail": "tmp_validate_gui",
+        "documentation": {}
+    },
+    {
+        "label": "DummyButton",
+        "kind": 6,
+        "importPath": "tmp_validate_gui",
+        "description": "tmp_validate_gui",
+        "peekOfCode": "class DummyButton:\n    def __init__(self):\n        self.state = 'normal'\n    def config(self, **kwargs):\n        if 'state' in kwargs:\n            self.state = kwargs['state']\n            print('DummyButton config state=', self.state)\nclass DummyRoot:\n    def __init__(self):\n        self.cursor = ''",
+        "detail": "tmp_validate_gui",
+        "documentation": {}
+    },
+    {
+        "label": "DummyRoot",
+        "kind": 6,
+        "importPath": "tmp_validate_gui",
+        "description": "tmp_validate_gui",
+        "peekOfCode": "class DummyRoot:\n    def __init__(self):\n        self.cursor = ''\n    def after(self, ms, func, *args):\n        # Call immediately for test determinism\n        func(*args)\n    def config(self, cursor=''):\n        self.cursor = cursor\n        print('DummyRoot.cursor=', self.cursor)\n# Inject dummies into module",
+        "detail": "tmp_validate_gui",
+        "documentation": {}
+    },
+    {
+        "label": "G.root",
+        "kind": 5,
+        "importPath": "tmp_validate_gui",
+        "description": "tmp_validate_gui",
+        "peekOfCode": "G.root = DummyRoot()\nG.progress_bar = DummyBar()\nG.status_bar = DummyLabel()\nbtns = [DummyButton() for _ in range(3)]\nG.interactive_buttons[:] = btns\n# Run an analysis that completes quickly\nG.run_analysis_gui('alltime')\n# Wait for worker thread to finish (simple wait)\nfor i in range(20):\n    # check if any thread other than main is alive that is not the interpreter thread",
+        "detail": "tmp_validate_gui",
+        "documentation": {}
+    },
+    {
+        "label": "G.progress_bar",
+        "kind": 5,
+        "importPath": "tmp_validate_gui",
+        "description": "tmp_validate_gui",
+        "peekOfCode": "G.progress_bar = DummyBar()\nG.status_bar = DummyLabel()\nbtns = [DummyButton() for _ in range(3)]\nG.interactive_buttons[:] = btns\n# Run an analysis that completes quickly\nG.run_analysis_gui('alltime')\n# Wait for worker thread to finish (simple wait)\nfor i in range(20):\n    # check if any thread other than main is alive that is not the interpreter thread\n    alive = any(t.is_alive() and t.name != 'MainThread' for t in threading.enumerate())",
+        "detail": "tmp_validate_gui",
+        "documentation": {}
+    },
+    {
+        "label": "G.status_bar",
+        "kind": 5,
+        "importPath": "tmp_validate_gui",
+        "description": "tmp_validate_gui",
+        "peekOfCode": "G.status_bar = DummyLabel()\nbtns = [DummyButton() for _ in range(3)]\nG.interactive_buttons[:] = btns\n# Run an analysis that completes quickly\nG.run_analysis_gui('alltime')\n# Wait for worker thread to finish (simple wait)\nfor i in range(20):\n    # check if any thread other than main is alive that is not the interpreter thread\n    alive = any(t.is_alive() and t.name != 'MainThread' for t in threading.enumerate())\n    if not alive:",
+        "detail": "tmp_validate_gui",
+        "documentation": {}
+    },
+    {
+        "label": "btns",
+        "kind": 5,
+        "importPath": "tmp_validate_gui",
+        "description": "tmp_validate_gui",
+        "peekOfCode": "btns = [DummyButton() for _ in range(3)]\nG.interactive_buttons[:] = btns\n# Run an analysis that completes quickly\nG.run_analysis_gui('alltime')\n# Wait for worker thread to finish (simple wait)\nfor i in range(20):\n    # check if any thread other than main is alive that is not the interpreter thread\n    alive = any(t.is_alive() and t.name != 'MainThread' for t in threading.enumerate())\n    if not alive:\n        break",
+        "detail": "tmp_validate_gui",
+        "documentation": {}
+    },
+    {
+        "label": "G.interactive_buttons[:]",
+        "kind": 5,
+        "importPath": "tmp_validate_gui",
+        "description": "tmp_validate_gui",
+        "peekOfCode": "G.interactive_buttons[:] = btns\n# Run an analysis that completes quickly\nG.run_analysis_gui('alltime')\n# Wait for worker thread to finish (simple wait)\nfor i in range(20):\n    # check if any thread other than main is alive that is not the interpreter thread\n    alive = any(t.is_alive() and t.name != 'MainThread' for t in threading.enumerate())\n    if not alive:\n        break\n    time.sleep(0.1)",
+        "detail": "tmp_validate_gui",
         "documentation": {}
     }
 ]

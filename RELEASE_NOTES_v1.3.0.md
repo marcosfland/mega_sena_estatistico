@@ -51,6 +51,7 @@
 - **Execução em Thread**: Operações longas não bloqueiam a interface
 - **Validação de Dados**: Verificações automáticas de integridade
 - **Logs Detalhados**: Registro completo de ações em `gui_actions.log`
+- **Novas melhorias GUI (Adicionadas recentemente)**: Seletor de arquivo `.db` persistente, painel de resultados com `ttk.Treeview`, gráficos embutidos via Matplotlib (quando disponível) e indicadores de progresso para operações pesadas.
 
 ---
 

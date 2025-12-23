@@ -218,6 +218,114 @@ class TestMegaSenaAnalyzer(unittest.TestCase):
             # dezenas faltando
         }
         self.assertFalse(mega_sena_app.validate_api_data(invalid_data, 'megasena'))
+
+    def test_set_db_path(self):
+        """Testa atualização do caminho do DB em tempo de execução"""
+        if not hasattr(mega_sena_app, 'set_db_path'):
+            self.skipTest("Função set_db_path não está disponível")
+        import tempfile
+        f = tempfile.NamedTemporaryFile(delete=False)
+        path = f.name
+        f.close()
+        try:
+            mega_sena_app.set_db_path(path)
+            self.assertEqual(mega_sena_app.DB_PATH, path)
+        finally:
+            try:
+                os.unlink(path)
+            except Exception:
+                pass
+
+    def test_display_results_table(self):
+        """Testa helper display_results_table com um Treeview dummy"""
+        import gui
+        # Criar dummy minimal para simular Treeview
+        class DummyTree:
+            def __init__(self):
+                self._columns = ()
+                self._rows = []
+            def __setitem__(self, key, value):
+                if key == 'columns':
+                    self._columns = tuple(value)
+            def __getitem__(self, key):
+                if key == 'columns':
+                    return self._columns
+                raise KeyError
+            def heading(self, col, text=''):
+                pass
+            def column(self, col, width=0, anchor=None):
+                pass
+            def get_children(self):
+                return ()
+            def delete(self, *args):
+                pass
+            def insert(self, parent, index, values=None):
+                self._rows.append(tuple(values))
+        dt = DummyTree()
+        gui.results_tree = dt
+        headers = ["A", "B"]
+        rows = [(1, 2), (3, 4)]
+        gui.display_results_table(headers, rows)
+        self.assertEqual(gui.current_results_headers, headers)
+        self.assertEqual(gui.current_results_data, [list(r) for r in rows])
+
+    def test_export_results_empty_and_normal(self):
+        """Testa export_results com dados vazios e com dados normais (CSV/JSON)"""
+        import tempfile, os
+        from mega_sena_app import export_results
+        # JSON com lista vazia
+        tmp_json = tempfile.NamedTemporaryFile(delete=False, suffix='.json')
+        tmp_json.close()
+        try:
+            export_results([], 'json', os.path.splitext(os.path.basename(tmp_json.name))[0])
+            # O arquivo deve existir após a chamada
+            expected = os.path.splitext(tmp_json.name)[0] + '.json'
+            self.assertTrue(os.path.exists(expected))
+            os.unlink(expected)
+        finally:
+            try:
+                if os.path.exists(tmp_json.name):
+                    os.unlink(tmp_json.name)
+            except Exception:
+                pass
+
+        # CSV com dados normais
+        tmp_csv = tempfile.NamedTemporaryFile(delete=False, suffix='.csv')
+        tmp_csv.close()
+        try:
+            export_results([["2025-01-01", 1, 2, 3, 4, 5, 6]], 'csv', os.path.splitext(os.path.basename(tmp_csv.name))[0], header=['Data','D1','D2','D3','D4','D5','D6'])
+            expected_csv = os.path.splitext(tmp_csv.name)[0] + '.csv'
+            self.assertTrue(os.path.exists(expected_csv))
+            os.unlink(expected_csv)
+        finally:
+            try:
+                if os.path.exists(tmp_csv.name):
+                    os.unlink(tmp_csv.name)
+            except Exception:
+                pass
+
+    def test_select_db_gui_persistence(self):
+        """Testa que selecionar DB persiste a configuração e atualiza DB_PATH"""
+        import gui_db, config
+        from unittest.mock import patch
+        import tempfile
+        tmp = tempfile.NamedTemporaryFile(delete=False, suffix='.db')
+        tmp.close()
+        try:
+            with patch('gui_db.filedialog.asksaveasfilename', return_value=tmp.name):
+                ret = gui_db.select_db_gui(label_widget=None)
+                self.assertEqual(ret, tmp.name)
+                # Verificar que a configuração foi atualizada
+                cfg = config.get_config()
+                self.assertEqual(cfg.get('DATABASE', 'path'), tmp.name)
+                # Verificar que o mega_sena_app.DB_PATH foi atualizado
+                import mega_sena_app
+                self.assertEqual(mega_sena_app.DB_PATH, tmp.name)
+        finally:
+            try:
+                os.unlink(tmp.name)
+            except Exception:
+                pass
         
         # Dados inválidos - dezenas incorretas
         invalid_dezenas = {
@@ -322,6 +430,15 @@ class TestMathematicalFunctions(unittest.TestCase):
         # Testa input inválido
         invalid = mega_sena_app.compare_numbers_with_latest_draw([1,2,3])
         self.assertEqual(invalid, {})
+
+    def test_run_backtest_multiple_invalid_method(self):
+        """Testa validação de método em run_backtest_multiple"""
+        if not hasattr(mega_sena_app, 'run_backtest_multiple'):
+            self.skipTest("Função run_backtest_multiple não está disponível")
+
+        result = mega_sena_app.run_backtest_multiple('invalid_method', times=2)
+        self.assertFalse(result.get('success'))
+        self.assertIn('Método inválido', result.get('message', ''))
 
 if __name__ == '__main__':
     # Executar os testes

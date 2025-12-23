@@ -33,9 +33,12 @@ import subprocess
 import re
 import functools
 import hashlib
+import time
+import gc
 from collections import Counter
 from itertools import combinations
 from typing import List, Tuple, Dict, Any, Optional
+from contextlib import contextmanager
 
 # Importar sistema de configuração e logs
 CONFIG_AVAILABLE = False
@@ -125,9 +128,10 @@ else:
 Draw = Tuple[datetime.date, Tuple[int, int, int, int, int, int]]
 
 # Cache para melhorar performance
-_draws_cache = None
-_cache_hash = None
+# Usamos lru_cache para um cache simples e robusto. invalidate_cache() limpa o cache.
+from functools import lru_cache
 
+# Mantemos get_db_hash para invalidar o cache quando o banco muda
 def get_db_hash(path: str = DB_PATH) -> str:
     """Gera hash do arquivo de banco para invalidar cache quando necessário"""
     try:
@@ -136,11 +140,13 @@ def get_db_hash(path: str = DB_PATH) -> str:
     except (FileNotFoundError, IOError):
         return "no_db"
 
+
 def invalidate_cache():
     """Invalida o cache de draws"""
-    global _draws_cache, _cache_hash
-    _draws_cache = None
-    _cache_hash = None
+    try:
+        _load_all_draws_cached.cache_clear()
+    except Exception:
+        pass
 
 
 # --- Banco de Dados ---
@@ -150,26 +156,116 @@ def init_db(path: str = DB_PATH) -> None:
     Adiciona índices para melhor performance.
     """
     try:
-        with sqlite3.connect(path, timeout=20.0) as conn:
-            conn.execute('PRAGMA journal_mode=WAL')  # Write-Ahead Logging reduz locks
-            cursor: sqlite3.Cursor = conn.cursor()
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS megasena (
-                    concurso INTEGER PRIMARY KEY,
-                    data TEXT,
-                    dez1 INTEGER, dez2 INTEGER, dez3 INTEGER,
-                    dez4 INTEGER, dez5 INTEGER, dez6 INTEGER
-                )
-            ''')
-            
-            # Adicionar índices para consultas frequentes
-            cursor.execute('CREATE INDEX IF NOT EXISTS idx_data ON megasena(data)')
-            cursor.execute('CREATE INDEX IF NOT EXISTS idx_concurso ON megasena(concurso)')
-            cursor.execute('CREATE INDEX IF NOT EXISTS idx_numeros ON megasena(dez1, dez2, dez3, dez4, dez5, dez6)')
-            
-            conn.commit()
+        # Se o arquivo existe mas está vazio (criado por NamedTemporaryFile em testes),
+        # removê-lo antes de abrir para evitar locks do descritor do arquivo original no Windows.
+        try:
+            if os.path.exists(path) and os.path.getsize(path) == 0:
+                os.unlink(path)
+        except Exception:
+            pass
+
+        # Criar database em arquivo temporário e mover para o destino final para evitar conflitos com handles
+        tmp_path = f"{path}.tmpdb"
+        try:
+            if os.path.exists(tmp_path):
+                try:
+                    os.unlink(tmp_path)
+                except Exception:
+                    pass
+
+            with sqlite3.connect(tmp_path, timeout=20.0) as conn:
+                conn.execute('PRAGMA journal_mode=WAL')  # Write-Ahead Logging reduz locks
+                cursor: sqlite3.Cursor = conn.cursor()
+                cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS megasena (
+                        concurso INTEGER PRIMARY KEY,
+                        data TEXT,
+                        dez1 INTEGER, dez2 INTEGER, dez3 INTEGER,
+                        dez4 INTEGER, dez5 INTEGER, dez6 INTEGER
+                    )
+                ''')
+
+                # Adicionar índices para consultas frequentes
+                cursor.execute('CREATE INDEX IF NOT EXISTS idx_data ON megasena(data)')
+                cursor.execute('CREATE INDEX IF NOT EXISTS idx_concurso ON megasena(concurso)')
+                cursor.execute('CREATE INDEX IF NOT EXISTS idx_numeros ON megasena(dez1, dez2, dez3, dez4, dez5, dez6)')
+
+                conn.commit()
+                # Em ambientes Windows de teste, o modo WAL pode deixar arquivos -wal/-shm que impedem remoção rápida
+                # Fazer um checkpoint e reverter para journal_mode=DELETE para evitar locks antes de fechar
+                try:
+                    conn.execute('PRAGMA wal_checkpoint(TRUNCATE)')
+                    conn.execute('PRAGMA journal_mode=DELETE')
+                except sqlite3.Error:
+                    pass
+
+            # Substituir o arquivo final de forma atômica
+            moved = False
+            try:
+                os.replace(tmp_path, path)
+                moved = True
+            except Exception:
+                # Fallback para copiar se replace falhar
+                try:
+                    if os.path.exists(path):
+                        os.unlink(path)
+                    os.replace(tmp_path, path)
+                    moved = True
+                except Exception:
+                    moved = False
+
+            # Se por algum motivo o replace não funcionou, tentar uma última vez ao final
+        finally:
+            # Se o arquivo final ainda não existe e o tmp existe, tentar movê-lo
+            try:
+                if not os.path.exists(path) and os.path.exists(tmp_path):
+                    try:
+                        os.replace(tmp_path, path)
+                    except Exception:
+                        try:
+                            import shutil
+                            shutil.move(tmp_path, path)
+                        except Exception:
+                            pass
+            except Exception:
+                pass
+
+            # Limpar qualquer tmp remanescente
+            try:
+                if os.path.exists(tmp_path):
+                    os.unlink(tmp_path)
+            except Exception:
+                pass
     except sqlite3.Error as e:
         logging.error(f"Erro ao inicializar o banco de dados: {e}")
+    finally:
+        # Sinalizar ao GC para liberar quaisquer recursos nativos relacionados ao sqlite
+        try:
+            gc.collect()
+            # Aguardar pequenos instantes para permitir que handles do sistema sejam liberados em Windows
+            time.sleep(0.25)
+        except Exception:
+            pass
+
+
+# Utility to allow updating DB path at runtime
+def set_db_path(path: str) -> None:
+    """Atualiza o caminho do banco de dados usado por padrão nas operações.
+
+    Atualiza a variável global `DB_PATH` e tenta invalidar caches relacionados.
+    """
+    global DB_PATH
+    try:
+        if not path:
+            raise ValueError("Caminho inválido para DB")
+        DB_PATH = path
+        try:
+            invalidate_cache()
+        except Exception:
+            pass
+        logging.info(f"Caminho do DB atualizado para: {path}")
+    except Exception as e:
+        logging.error(f"Falha ao definir novo DB_PATH: {e}")
 
 def get_last_db_concurso(path: str = DB_PATH) -> int:
     """
@@ -193,28 +289,37 @@ API_LOTERIAS: Dict[str, str] = {
     "lotofacil": "https://loteriascaixa-api.herokuapp.com/api/lotofacil"
 }
 
-def fetch_lottery_data(lottery: str = "megasena", concurso: Optional[int] = None) -> Dict[str, Any]:
+def fetch_lottery_data(lottery: str = "megasena", concurso: Optional[int] = None, retries: int = 3, timeout: int = 10) -> Dict[str, Any]:
     """
-    Busca dados de um concurso específico de uma loteria na API.
+    Busca dados de um concurso específico de uma loteria na API com retries e timeout.
     Se 'concurso' for None, busca o último resultado.
     """
     if lottery not in API_LOTERIAS:
         raise ValueError(f"Loteria '{lottery}' não suportada.")
 
     url: str = f"{API_LOTERIAS[lottery]}/{concurso}" if concurso else f"{API_LOTERIAS[lottery]}/latest"
-    try:
-        resp: requests.Response = requests.get(url)
-        resp.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
-        data: Dict[str, Any] = resp.json()
-        if not validate_api_data(data, lottery):
-            raise ValueError(f"Dados inválidos recebidos para o concurso {concurso} da {lottery}.")
-        return data
-    except requests.RequestException as e:
-        logging.error(f"Erro ao buscar dados da API para {lottery} (Concurso: {concurso if concurso else 'latest'}): {e}")
-        raise
-    except ValueError as e:
-        logging.error(e)
-        raise
+    last_exc = None
+    for attempt in range(1, retries + 1):
+        try:
+            resp: requests.Response = requests.get(url, timeout=timeout)
+            resp.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+            data: Dict[str, Any] = resp.json()
+            if not validate_api_data(data, lottery):
+                raise ValueError(f"Dados inválidos recebidos para o concurso {concurso} da {lottery}.")
+            return data
+        except requests.RequestException as e:
+            logging.warning(f"Tentativa {attempt}/{retries} - Erro ao buscar dados da API para {lottery} (Concurso: {concurso if concurso else 'latest'}): {e}")
+            last_exc = e
+            if attempt < retries:
+                time.sleep(1 * attempt)
+                continue
+            logging.error(f"Falha ao buscar dados da API após {retries} tentativas: {e}")
+            raise
+        except ValueError as e:
+            logging.error(e)
+            raise
+    # Caso extremo
+    raise last_exc if last_exc else RuntimeError("Erro desconhecido ao buscar dados da API")
 
 def validate_api_data(data: Dict[str, Any], lottery: str) -> bool:
     """
@@ -280,18 +385,9 @@ def update_db(path: str = DB_PATH) -> None:
         logging.error(f"Erro ao inserir dados no banco de dados: {e}")
 
 # --- Cálculos Estatísticos ---
-def load_all_draws(path: str = DB_PATH) -> List[Draw]:
-    """
-    Carrega todos os sorteios da Mega-Sena do banco de dados com cache.
-    Retorna uma lista de tuplas (data, dezenas).
-    """
-    global _draws_cache, _cache_hash
-    
-    # Verificar se o cache ainda é válido
-    current_hash = get_db_hash(path)
-    if _draws_cache is not None and _cache_hash == current_hash:
-        return _draws_cache
-    
+@lru_cache(maxsize=4)
+def _load_all_draws_cached(path_and_hash: Tuple[str, str]) -> List[Draw]:
+    path, _hash = path_and_hash
     draws: List[Draw] = []
     try:
         with sqlite3.connect(path, timeout=20.0) as conn:
@@ -306,15 +402,16 @@ def load_all_draws(path: str = DB_PATH) -> List[Draw]:
                 except ValueError as e:
                     logging.warning(f"Erro ao parsear data '{data_str}' ou dezenas '{dez}': {e}. Pulando registro.")
                     continue
-            
-            # Atualizar cache
-            _draws_cache = draws
-            _cache_hash = current_hash
-            logging.info(f"Cache de draws atualizado. {len(draws)} sorteios carregados.")
-            
+            logging.info(f"Cache de draws carregado. {len(draws)} sorteios carregados.")
     except sqlite3.Error as e:
         logging.error(f"Erro ao carregar sorteios do banco de dados: {e}")
     return draws
+
+
+def load_all_draws(path: str = DB_PATH) -> List[Draw]:
+    """Carrega todos os sorteios da Mega-Sena do banco de dados com cache baseado em hash do arquivo."""
+    current_hash = get_db_hash(path)
+    return _load_all_draws_cached((path, current_hash))
 
 def get_most_frequent(draws: List[Draw], k: int = NUM_DEZENAS) -> List[int]:
     """
@@ -361,6 +458,32 @@ def get_weighted(draws: List[Draw], k: int = NUM_DEZENAS) -> List[int]:
         chosen.update(picks)
     return sorted(list(chosen)) # Convert set to list and sort
 
+def open_db(path: str, timeout: float = 20.0):
+    """Context manager para abrir conexão com DB garantindo que o modo WAL seja habilitado
+    e que a conexão seja fechada ao sair do contexto.
+
+    Usage:
+        with open_db(path) as conn:
+            # use conn
+    """
+    @contextmanager
+    def _ctx():
+        conn = sqlite3.connect(path, timeout=timeout)
+        try:
+            conn.execute('PRAGMA journal_mode=WAL')
+        except sqlite3.Error:
+            pass
+        try:
+            yield conn
+        finally:
+            try:
+                conn.close()
+            except Exception:
+                pass
+
+    return _ctx()
+
+
 def get_from_backtest_insights(method: str = "weighted", k: int = NUM_DEZENAS) -> List[int]:
     """
     Gera um conjunto de números baseado na análise de resultados de backtest.
@@ -376,10 +499,14 @@ def get_from_backtest_insights(method: str = "weighted", k: int = NUM_DEZENAS) -
     """
     try:
         init_backtest_db()
+        if not isinstance(k, int) or k <= 0 or k > MAX_NUM_MEGA_SENA:
+            logging.warning(f"Parametro 'k' inválido ({k}), usando valor padrão {NUM_DEZENAS}.")
+            k = NUM_DEZENAS
+
         all_nums: List[int] = list(range(1, MAX_NUM_MEGA_SENA + 1))
         number_scores: Dict[int, float] = {n: 0.0 for n in all_nums}
         
-        with sqlite3.connect(BACKTEST_DB_PATH, timeout=20.0) as conn:
+        with open_db(BACKTEST_DB_PATH, timeout=20.0) as conn:
             cursor: sqlite3.Cursor = conn.cursor()
             
             # Buscar todos os backtest results para o método especificado
@@ -436,13 +563,14 @@ def get_from_backtest_insights(method: str = "weighted", k: int = NUM_DEZENAS) -
         draws = load_all_draws()
         return get_weighted(draws, k) if draws else sorted(random.sample(list(range(1, MAX_NUM_MEGA_SENA + 1)), k))
 
-def plot_frequency(draws: List[Draw]) -> None:
+def plot_frequency(draws: List[Draw], return_fig: bool = False):
     """
     Gera um gráfico de barras da frequência de cada número sorteado.
+    Se return_fig=True, retorna o objeto Figure ao invés de chamar plt.show().
     """
     if not plt:
         logging.error("Matplotlib não está instalado. Não é possível gerar o gráfico de frequência.")
-        return
+        return None if return_fig else None
 
     counter: Counter = Counter()
     for _, nums in draws:
@@ -453,16 +581,22 @@ def plot_frequency(draws: List[Draw]) -> None:
     numbers = list(full_data.keys())
     frequencies = list(full_data.values())
 
-    plt.figure(figsize=(12, 6))
-    plt.bar(numbers, frequencies, color='skyblue')
-    plt.title('Frequência dos Números Sorteados na Mega-Sena')
-    plt.xlabel('Número')
-    plt.ylabel('Frequência')
-    plt.xticks(range(1, MAX_NUM_MEGA_SENA + 1, 5)) # Show ticks every 5 numbers
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.tight_layout()
-    plt.show()
+    fig = plt.Figure(figsize=(12, 6))
+    ax = fig.add_subplot(111)
+    ax.bar(numbers, frequencies, color='skyblue')
+    ax.set_title('Frequência dos Números Sorteados na Mega-Sena')
+    ax.set_xlabel('Número')
+    ax.set_ylabel('Frequência')
+    ax.set_xticks(range(1, MAX_NUM_MEGA_SENA + 1, 5))
+    ax.grid(axis='y', linestyle='--', alpha=0.7)
+    fig.tight_layout()
 
+    if return_fig:
+        return fig
+    else:
+        plt.figure(fig.number if hasattr(fig, 'number') else None)
+        plt.show()
+        return None
 def monte_carlo_simulation(draws: List[Draw], simulations: Optional[int] = None) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]]]:
     """
     Realiza uma simulação de Monte Carlo para comparar frequências simuladas com as reais.
@@ -623,8 +757,15 @@ def export_results(data: List[Tuple[Any, Any]], file_format: str = "csv", filena
                     writer.writerow(header)
                 writer.writerows(data)
         elif file_format == "json":
-            # For JSON, if data is a list of tuples, convert to list of lists or dicts
-            json_data = [list(item) for item in data] if isinstance(data[0], tuple) else data
+            # For JSON, handle gracefully listas vazias e tipos de tupla/lista
+            if not data:
+                json_data = []
+            else:
+                first = data[0]
+                if isinstance(first, tuple) or isinstance(first, list):
+                    json_data = [list(item) for item in data]
+                else:
+                    json_data = data
             with open(full_filename, "w", encoding="utf-8") as jsonfile:
                 json.dump(json_data, jsonfile, indent=4, ensure_ascii=False)
         else:
@@ -1077,7 +1218,7 @@ def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, 
     except Exception as e:
         logging.warning(f"Não foi possível buscar o último sorteio da API para comparação: {e}. Tentando usar o último do DB.")
         try:
-            with sqlite3.connect(mega_sena_db_path, timeout=20.0) as conn_db:
+            with open_db(mega_sena_db_path, timeout=20.0) as conn_db:
                 cursor_db = conn_db.cursor()
                 cursor_db.execute('SELECT concurso, dez1, dez2, dez3, dez4, dez5, dez6 FROM megasena ORDER BY concurso DESC LIMIT 1')
                 last_db_row = cursor_db.fetchone()
@@ -1101,7 +1242,7 @@ def compare_user_sets_with_latest_draw(user_sets_path: str = USER_SETS_DB_PATH, 
     comparison_results = []
     
     try:
-        with sqlite3.connect(user_sets_path, timeout=20.0) as conn_user:
+        with open_db(user_sets_path, timeout=20.0) as conn_user:
             cursor_user = conn_user.cursor()
 
             for user_set in user_sets:
@@ -1255,7 +1396,7 @@ def run_backtest(method: str) -> bool:
     date_tested = datetime.date.today().strftime('%Y-%m-%d')
 
     try:
-        with sqlite3.connect(BACKTEST_DB_PATH, timeout=20.0) as conn:
+        with open_db(BACKTEST_DB_PATH, timeout=20.0) as conn:
             cursor: sqlite3.Cursor = conn.cursor()
 
             cursor.execute("DELETE FROM backtest_results WHERE method = ?", (method,))
@@ -1290,6 +1431,12 @@ def run_backtest_multiple(method: str, times: int = 1) -> Dict[str, Any]:
         logging.error("Número de backtests deve ser >= 1")
         return {'success': False, 'message': 'Número inválido', 'times_requested': 0, 'times_successful': 0, 'times_failed': 0}
     
+    # Validar método
+    valid_methods = ("alltime", "lastyear", "weighted")
+    if method not in valid_methods:
+        logging.error(f"Método de backtest inválido: {method}")
+        return {'success': False, 'times_executed': 0, 'message': f"Método inválido: {method}"}
+
     if times == 1:
         # Se for apenas 1, usa a função original mas retorna no mesmo formato
         success = run_backtest(method)
