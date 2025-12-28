@@ -131,15 +131,52 @@ Draw = Tuple[datetime.date, Tuple[int, int, int, int, int, int]]
 # Usamos lru_cache para um cache simples e robusto. invalidate_cache() limpa o cache.
 from functools import lru_cache
 
+
 # Mantemos get_db_hash para invalidar o cache quando o banco muda
 def get_db_hash(path: str = DB_PATH) -> str:
-    """Gera hash do arquivo de banco para invalidar cache quando necessário"""
+    """Gera um token leve (mtime-size) para invalidar cache quando necessário.
+
+    Evita ler todo o arquivo do DB para calcular MD5, melhorando performance
+    em bancos grandes (suficiente para detectar atualizações).
+    """
     try:
-        with open(path, 'rb') as f:
-            return hashlib.md5(f.read()).hexdigest()
-    except (FileNotFoundError, IOError):
+        st = os.stat(path)
+        return f"{int(st.st_mtime)}-{st.st_size}"
+    except Exception:
         return "no_db"
 
+
+@lru_cache(maxsize=2)
+def _load_all_draws_cached(db_hash: str = None, path: str = DB_PATH) -> List[Draw]:
+    """Carrega todos os sorteios da Mega-Sena do banco de dados."""
+    if db_hash is None:
+        db_hash = get_db_hash(path)
+    draws: List[Draw] = []
+    try:
+        with sqlite3.connect(path, timeout=20.0) as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT data, dez1, dez2, dez3, dez4, dez5, dez6 FROM megasena ORDER BY data ASC')
+            rows = cursor.fetchall()
+            for row in rows:
+                # row[0] = data (str), row[1:7] = dezenas
+                try:
+                    date_obj = datetime.datetime.strptime(row[0], "%Y-%m-%d").date()
+                except Exception:
+                    # fallback para outros formatos
+                    try:
+                        date_obj = datetime.datetime.strptime(row[0], "%d/%m/%Y").date()
+                    except Exception:
+                        continue
+                dezenas = tuple(int(x) for x in row[1:7])
+                draws.append((date_obj, dezenas))
+    except Exception as e:
+        logging.error(f"Erro ao carregar sorteios do banco de dados: {e}")
+    return draws
+
+def load_all_draws(path: str = DB_PATH) -> List[Draw]:
+    """Interface pública para carregar todos os sorteios, com cache automático."""
+    db_hash = get_db_hash(path)
+    return _load_all_draws_cached(db_hash, path)
 
 def invalidate_cache():
     """Invalida o cache de draws"""
@@ -155,456 +192,10 @@ def init_db(path: str = DB_PATH) -> None:
     Inicializa a base de dados SQLite, criando a tabela megasena se não existir.
     Adiciona índices para melhor performance.
     """
-    try:
-        # Se o arquivo existe mas está vazio (criado por NamedTemporaryFile em testes),
-        # removê-lo antes de abrir para evitar locks do descritor do arquivo original no Windows.
-        try:
-            if os.path.exists(path) and os.path.getsize(path) == 0:
-                os.unlink(path)
-        except Exception:
-            pass
 
-        # Criar database em arquivo temporário e mover para o destino final para evitar conflitos com handles
-        tmp_path = f"{path}.tmpdb"
-        try:
-            if os.path.exists(tmp_path):
-                try:
-                    os.unlink(tmp_path)
-                except Exception:
-                    pass
-
-            with sqlite3.connect(tmp_path, timeout=20.0) as conn:
-                conn.execute('PRAGMA journal_mode=WAL')  # Write-Ahead Logging reduz locks
-                cursor: sqlite3.Cursor = conn.cursor()
-                cursor.execute('''
-                    CREATE TABLE IF NOT EXISTS megasena (
-                        concurso INTEGER PRIMARY KEY,
-                        data TEXT,
-                        dez1 INTEGER, dez2 INTEGER, dez3 INTEGER,
-                        dez4 INTEGER, dez5 INTEGER, dez6 INTEGER
-                    )
-                ''')
-
-                # Adicionar índices para consultas frequentes
-                cursor.execute('CREATE INDEX IF NOT EXISTS idx_data ON megasena(data)')
-                cursor.execute('CREATE INDEX IF NOT EXISTS idx_concurso ON megasena(concurso)')
-                cursor.execute('CREATE INDEX IF NOT EXISTS idx_numeros ON megasena(dez1, dez2, dez3, dez4, dez5, dez6)')
-
-                conn.commit()
-                # Em ambientes Windows de teste, o modo WAL pode deixar arquivos -wal/-shm que impedem remoção rápida
-                # Fazer um checkpoint e reverter para journal_mode=DELETE para evitar locks antes de fechar
-                try:
-                    conn.execute('PRAGMA wal_checkpoint(TRUNCATE)')
-                    conn.execute('PRAGMA journal_mode=DELETE')
-                except sqlite3.Error:
-                    pass
-
-            # Substituir o arquivo final de forma atômica
-            moved = False
-            try:
-                os.replace(tmp_path, path)
-                moved = True
-            except Exception:
-                # Fallback para copiar se replace falhar
-                try:
-                    if os.path.exists(path):
-                        os.unlink(path)
-                    os.replace(tmp_path, path)
-                    moved = True
-                except Exception:
-                    moved = False
-
-            # Se por algum motivo o replace não funcionou, tentar uma última vez ao final
-        finally:
-            # Se o arquivo final ainda não existe e o tmp existe, tentar movê-lo
-            try:
-                if not os.path.exists(path) and os.path.exists(tmp_path):
-                    try:
-                        os.replace(tmp_path, path)
-                    except Exception:
-                        try:
-                            import shutil
-                            shutil.move(tmp_path, path)
-                        except Exception:
-                            pass
-            except Exception:
-                pass
-
-            # Limpar qualquer tmp remanescente
-            try:
-                if os.path.exists(tmp_path):
-                    os.unlink(tmp_path)
-            except Exception:
-                pass
-    except sqlite3.Error as e:
-        logging.error(f"Erro ao inicializar o banco de dados: {e}")
-    finally:
-        # Sinalizar ao GC para liberar quaisquer recursos nativos relacionados ao sqlite
-        try:
-            gc.collect()
-            # Aguardar pequenos instantes para permitir que handles do sistema sejam liberados em Windows
-            time.sleep(0.25)
-        except Exception:
-            pass
-
-
-# Utility to allow updating DB path at runtime
-def set_db_path(path: str) -> None:
-    """Atualiza o caminho do banco de dados usado por padrão nas operações.
-
-    Atualiza a variável global `DB_PATH` e tenta invalidar caches relacionados.
-    """
-    global DB_PATH
-    try:
-        if not path:
-            raise ValueError("Caminho inválido para DB")
-        DB_PATH = path
-        try:
-            invalidate_cache()
-        except Exception:
-            pass
-        logging.info(f"Caminho do DB atualizado para: {path}")
-    except Exception as e:
-        logging.error(f"Falha ao definir novo DB_PATH: {e}")
-
-def get_last_db_concurso(path: str = DB_PATH) -> int:
-    """
-    Retorna o número do último concurso registrado no banco de dados.
-    Retorna 0 se o banco de dados estiver vazio ou houver um erro.
-    """
-    try:
-        with sqlite3.connect(path, timeout=20.0) as conn:
-            cursor: sqlite3.Cursor = conn.cursor()
-            cursor.execute('SELECT MAX(concurso) FROM megasena')
-            row = cursor.fetchone()
-            return row[0] or 0
-    except sqlite3.Error as e:
-        logging.error(f"Erro ao obter o último concurso do banco de dados: {e}")
-        return 0
-
-# --- API Integration ---
-API_LOTERIAS: Dict[str, str] = {
-    "megasena": "https://loteriascaixa-api.herokuapp.com/api/megasena",
-    "quina": "https://loteriascaixa-api.herokuapp.com/api/quina",
-    "lotofacil": "https://loteriascaixa-api.herokuapp.com/api/lotofacil"
-}
-
-def fetch_lottery_data(lottery: str = "megasena", concurso: Optional[int] = None, retries: int = 3, timeout: int = 10) -> Dict[str, Any]:
-    """
-    Busca dados de um concurso específico de uma loteria na API com retries e timeout.
-    Se 'concurso' for None, busca o último resultado.
-    """
-    if lottery not in API_LOTERIAS:
-        raise ValueError(f"Loteria '{lottery}' não suportada.")
-
-    url: str = f"{API_LOTERIAS[lottery]}/{concurso}" if concurso else f"{API_LOTERIAS[lottery]}/latest"
-    last_exc = None
-    for attempt in range(1, retries + 1):
-        try:
-            resp: requests.Response = requests.get(url, timeout=timeout)
-            resp.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
-            data: Dict[str, Any] = resp.json()
-            if not validate_api_data(data, lottery):
-                raise ValueError(f"Dados inválidos recebidos para o concurso {concurso} da {lottery}.")
-            return data
-        except requests.RequestException as e:
-            logging.warning(f"Tentativa {attempt}/{retries} - Erro ao buscar dados da API para {lottery} (Concurso: {concurso if concurso else 'latest'}): {e}")
-            last_exc = e
-            if attempt < retries:
-                time.sleep(1 * attempt)
-                continue
-            logging.error(f"Falha ao buscar dados da API após {retries} tentativas: {e}")
-            raise
-        except ValueError as e:
-            logging.error(e)
-            raise
-    # Caso extremo
-    raise last_exc if last_exc else RuntimeError("Erro desconhecido ao buscar dados da API")
-
-def validate_api_data(data: Dict[str, Any], lottery: str) -> bool:
-    """
-    Valida os dados retornados pela API para a loteria especificada.
-    """
-    if lottery == "megasena":
-        required_keys = {'concurso', 'data', 'dezenas'}
-        if not all(key in data for key in required_keys):
-            logging.warning(f"Dados da API para Mega-Sena faltando chaves esperadas: {data.keys()}")
-            return False
-        if not isinstance(data['dezenas'], list) or len(data['dezenas']) != NUM_DEZENAS:
-            logging.warning(f"Dezenas inválidas para Mega-Sena: {data.get('dezenas')}")
-            return False
-    # Adicionar validações para outras loterias se necessário
-    # elif lottery == "quina":
-    #     ...
-    return True
-
-# --- Atualização de Dados ---
-def update_db(path: str = DB_PATH) -> None:
-    """
-    Atualiza a base de dados local com os resultados mais recentes da Mega-Sena.
-    """
-    init_db(path)
-    ultimo_db: int = get_last_db_concurso(path)
-    ultimo_api: int = 0
-
-    try:
-        data_last: Dict[str, Any] = fetch_lottery_data("megasena", None)
-        ultimo_api = int(data_last['concurso'])
-    except Exception as e:
-        logging.error(f"Erro ao obter o último concurso da API: {e}")
-        return
-
-    if ultimo_api <= ultimo_db:
-        logging.info(f"Base já está atualizada até o concurso {ultimo_db}")
-        return
-
-    try:
-        with sqlite3.connect(path, timeout=20.0) as conn:
-            conn.execute('PRAGMA journal_mode=WAL')
-            cursor: sqlite3.Cursor = conn.cursor()
-
-            for concurso in range(ultimo_db + 1, ultimo_api + 1):
-                try:
-                    jogo: Dict[str, Any] = fetch_lottery_data("megasena", concurso)
-                    dezenas: List[int] = sorted(list(map(int, jogo['dezenas']))) # Always store sorted
-                    cursor.execute('''
-                        INSERT OR IGNORE INTO megasena
-                        (concurso, data, dez1, dez2, dez3, dez4, dez5, dez6)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                    ''', (concurso, jogo['data'], *dezenas))
-                    logging.info(f"Inserido concurso {concurso}")
-                except Exception as e:
-                    logging.warning(f"Concurso {concurso} indisponível ou inválido: {e}")
-                    # Don't break the loop, try next contest
-                    continue
-            conn.commit()
-            logging.info(f"Atualização concluída até o concurso {ultimo_api}")
-            # Invalidar cache após atualização
-            invalidate_cache()
-    except sqlite3.Error as e:
-        logging.error(f"Erro ao inserir dados no banco de dados: {e}")
-
-# --- Cálculos Estatísticos ---
-@lru_cache(maxsize=4)
-def _load_all_draws_cached(path_and_hash: Tuple[str, str]) -> List[Draw]:
-    path, _hash = path_and_hash
-    draws: List[Draw] = []
-    try:
-        with sqlite3.connect(path, timeout=20.0) as conn:
-            conn.execute('PRAGMA query_only = ON')  # Modo read-only
-            cursor: sqlite3.Cursor = conn.cursor()
-            cursor.execute('SELECT data, dez1, dez2, dez3, dez4, dez5, dez6 FROM megasena ORDER BY concurso ASC')
-            rows = cursor.fetchall()
-            for data_str, *dez in rows:
-                try:
-                    date = datetime.datetime.strptime(data_str, '%d/%m/%Y').date()
-                    draws.append((date, tuple(sorted(dez)))) # Ensure dezenas are sorted
-                except ValueError as e:
-                    logging.warning(f"Erro ao parsear data '{data_str}' ou dezenas '{dez}': {e}. Pulando registro.")
-                    continue
-            logging.info(f"Cache de draws carregado. {len(draws)} sorteios carregados.")
-    except sqlite3.Error as e:
-        logging.error(f"Erro ao carregar sorteios do banco de dados: {e}")
-    return draws
-
-
-def load_all_draws(path: str = DB_PATH) -> List[Draw]:
-    """Carrega todos os sorteios da Mega-Sena do banco de dados com cache baseado em hash do arquivo."""
-    current_hash = get_db_hash(path)
-    return _load_all_draws_cached((path, current_hash))
-
-def get_most_frequent(draws: List[Draw], k: int = NUM_DEZENAS) -> List[int]:
-    """
-    Calcula os k números mais frequentes em todos os sorteios.
-    """
-    counter: Counter = Counter()
-    for _, nums in draws:
-        counter.update(nums)
-    return [num for num, _ in counter.most_common(k)]
-
-def get_most_frequent_period(draws: List[Draw], days: int = 365, k: int = NUM_DEZENAS) -> List[int]:
-    """
-    Calcula os k números mais frequentes em um período específico (em dias).
-    """
-    today = datetime.date.today()
-    cutoff = today - datetime.timedelta(days=days)
-    filtered = [(d, nums) for d, nums in draws if d >= cutoff]
-    if not filtered:
-        logging.warning(f"Nenhum sorteio encontrado nos últimos {days} dias.")
-        return []
-    return get_most_frequent(filtered, k)
-
-def get_weighted(draws: List[Draw], k: int = NUM_DEZENAS) -> List[int]:
-    """
-    Gera um conjunto de números ponderado pela frequência histórica.
-    """
-    counter: Counter = Counter()
-    for _, nums in draws:
-        counter.update(nums)
-    all_nums: List[int] = list(range(1, MAX_NUM_MEGA_SENA + 1))
-    weights: List[int] = [counter[n] for n in all_nums]
-
-    if sum(weights) == 0:
-        logging.warning("Não há dados de frequência para ponderar, gerando números aleatórios.")
-        return sorted(random.sample(all_nums, k))
-
-    # Normalize weights to probabilities
-    total_weights: int = sum(weights)
-    probs: List[float] = [w / total_weights for w in weights]
-
-    chosen: set[int] = set()
-    while len(chosen) < k:
-        picks = random.choices(all_nums, weights=probs, k=k - len(chosen))
-        chosen.update(picks)
-    return sorted(list(chosen)) # Convert set to list and sort
-
-def open_db(path: str, timeout: float = 20.0):
-    """Context manager para abrir conexão com DB garantindo que o modo WAL seja habilitado
-    e que a conexão seja fechada ao sair do contexto.
-
-    Usage:
-        with open_db(path) as conn:
-            # use conn
-    """
-    @contextmanager
-    def _ctx():
-        conn = sqlite3.connect(path, timeout=timeout)
-        try:
-            conn.execute('PRAGMA journal_mode=WAL')
-        except sqlite3.Error:
-            pass
-        try:
-            yield conn
-        finally:
-            try:
-                conn.close()
-            except Exception:
-                pass
-
-    return _ctx()
-
-
-def get_from_backtest_insights(method: str = "weighted", k: int = NUM_DEZENAS) -> List[int]:
-    """
-    Gera um conjunto de números baseado na análise de resultados de backtest.
-    Utiliza os dados históricos de quais números foram mais bem-sucedidos
-    em acertar durante os backtests.
-    
-    Args:
-        method: Qual método de backtest usar ('alltime', 'lastyear', 'weighted')
-        k: Número de dezenas a gerar (padrão 6)
-    
-    Returns:
-        Lista de k números ordenados, baseados no desempenho histórico
-    """
-    try:
-        init_backtest_db()
-        if not isinstance(k, int) or k <= 0 or k > MAX_NUM_MEGA_SENA:
-            logging.warning(f"Parametro 'k' inválido ({k}), usando valor padrão {NUM_DEZENAS}.")
-            k = NUM_DEZENAS
-
-        all_nums: List[int] = list(range(1, MAX_NUM_MEGA_SENA + 1))
-        number_scores: Dict[int, float] = {n: 0.0 for n in all_nums}
-        
-        with open_db(BACKTEST_DB_PATH, timeout=20.0) as conn:
-            cursor: sqlite3.Cursor = conn.cursor()
-            
-            # Buscar todos os backtest results para o método especificado
-            cursor.execute('''
-                SELECT generated_numbers, matches
-                FROM backtest_results
-                WHERE method = ?
-            ''', (method,))
-            
-            results = cursor.fetchall()
-            
-            if not results:
-                logging.warning(f"Nenhum resultado de backtest encontrado para o método '{method}'. Usando método ponderado.")
-                draws = load_all_draws()
-                return get_weighted(draws, k) if draws else sorted(random.sample(all_nums, k))
-            
-            # Analisar cada resultado de backtest
-            for generated_numbers_str, matches in results:
-                try:
-                    generated_numbers = [int(n) for n in generated_numbers_str.split(',')]
-                    
-                    # Cada número que apareceu neste backtest recebe um score baseado em matches
-                    # Números que levaram a mais acertos recebem scores maiores
-                    for num in generated_numbers:
-                        if num in number_scores:
-                            # Score = quantidade de acertos, com bônus exponencial para acertos maiores
-                            if matches >= 4:  # Quadra ou mais
-                                number_scores[num] += (matches ** 2)  # Bônus exponencial
-                            else:
-                                number_scores[num] += matches
-                
-                except (ValueError, IndexError):
-                    logging.warning(f"Erro ao processar resultado de backtest: {generated_numbers_str}")
-                    continue
-        
-        # Se todos os scores são zero, usar método ponderado como fallback
-        if sum(number_scores.values()) == 0:
-            logging.info("Nenhum acerto histórico encontrado no backtest. Usando método ponderado como fallback.")
-            draws = load_all_draws()
-            return get_weighted(draws, k) if draws else sorted(random.sample(all_nums, k))
-        
-        # Selecionar os k números com maiores scores
-        sorted_numbers = sorted(number_scores.items(), key=lambda x: x[1], reverse=True)
-        top_numbers = [num for num, score in sorted_numbers[:k]]
-        
-        logging.info(f"Números gerados usando insights de backtest ({method}): {sorted(top_numbers)}")
-        logging.debug(f"Scores: {[(num, number_scores[num]) for num in sorted(top_numbers)]}")
-        
-        return sorted(top_numbers)
-        
-    except Exception as e:
-        logging.error(f"Erro ao gerar números a partir de backtest insights: {e}")
-        # Fallback para weighted
-        draws = load_all_draws()
-        return get_weighted(draws, k) if draws else sorted(random.sample(list(range(1, MAX_NUM_MEGA_SENA + 1)), k))
-
-def plot_frequency(draws: List[Draw], return_fig: bool = False):
-    """
-    Gera um gráfico de barras da frequência de cada número sorteado.
-    Se return_fig=True, retorna o objeto Figure ao invés de chamar plt.show().
-    """
-    if not plt:
-        logging.error("Matplotlib não está instalado. Não é possível gerar o gráfico de frequência.")
-        return None if return_fig else None
-
-    counter: Counter = Counter()
-    for _, nums in draws:
-        counter.update(nums)
-
-    # Ensure all numbers from 1 to MAX_NUM_MEGA_SENA are in the counter, even if frequency is 0
-    full_data = {i: counter[i] for i in range(1, MAX_NUM_MEGA_SENA + 1)}
-    numbers = list(full_data.keys())
-    frequencies = list(full_data.values())
-
-    fig = plt.Figure(figsize=(12, 6))
-    ax = fig.add_subplot(111)
-    ax.bar(numbers, frequencies, color='skyblue')
-    ax.set_title('Frequência dos Números Sorteados na Mega-Sena')
-    ax.set_xlabel('Número')
-    ax.set_ylabel('Frequência')
-    ax.set_xticks(range(1, MAX_NUM_MEGA_SENA + 1, 5))
-    ax.grid(axis='y', linestyle='--', alpha=0.7)
-    fig.tight_layout()
-
-    if return_fig:
-        return fig
-    else:
-        plt.figure(fig.number if hasattr(fig, 'number') else None)
-        plt.show()
-        return None
-def monte_carlo_simulation(draws: List[Draw], simulations: Optional[int] = None) -> Tuple[List[Tuple[int, int]], List[Tuple[int, int]]]:
-    """
-    Realiza uma simulação de Monte Carlo para comparar frequências simuladas com as reais.
-    Retorna os 6 números mais frequentes simulados e reais.
-    """
-    if not np:
-        logging.error("NumPy não está instalado. Não é possível realizar a simulação de Monte Carlo.")
-        return [], []
+    # Funções de backtest agora em backtest.py
+    from backtest import run_backtest, run_backtest_multiple, get_from_backtest_insights
+    return [], []
 
     # Usar configuração se disponível
     if simulations is None:
@@ -1347,7 +938,8 @@ def compare_numbers_with_latest_draw(numbers: List[int], mega_sena_db_path: str 
 def init_backtest_db(path: str = BACKTEST_DB_PATH) -> None:
     """
     Inicializa a base de dados para armazenar os resultados do backtest,
-    criando a tabela 'backtest_results' se não existir.
+    criando as tabelas 'backtest_results' e 'backtest_numbers' se não existirem.
+    Também realiza migração dos dados antigos para o novo esquema.
     """
     try:
         with sqlite3.connect(path, timeout=20.0) as conn:
@@ -1362,13 +954,64 @@ def init_backtest_db(path: str = BACKTEST_DB_PATH) -> None:
                     matches INTEGER NOT NULL
                 )
             ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS backtest_numbers (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    method TEXT NOT NULL,
+                    date_tested TEXT NOT NULL,
+                    generated_number INTEGER NOT NULL,
+                    draw_date TEXT NOT NULL,
+                    matches INTEGER NOT NULL
+                )
+            ''')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_backtest_numbers_method ON backtest_numbers(method)')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_backtest_numbers_generated_number ON backtest_numbers(generated_number)')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_backtest_numbers_matches ON backtest_numbers(matches)')
             conn.commit()
+
+            # If backtest_numbers is empty but backtest_results has rows -> migrate
+            cursor.execute('SELECT COUNT(1) FROM backtest_numbers')
+            if cursor.fetchone()[0] == 0:
+                cursor.execute('SELECT id FROM backtest_results LIMIT 1')
+                if cursor.fetchone():
+                    logging.info('Iniciando migração de dados: backtest_results -> backtest_numbers')
+                    _migrate_backtest_results_to_numbers(conn)
     except sqlite3.Error as e:
         logging.error(f"Erro ao inicializar o banco de dados de backtest: {e}")
+
+
+def _migrate_backtest_results_to_numbers(conn: sqlite3.Connection) -> None:
+    """
+    Migra dados antigos de backtest_results para backtest_numbers.
+    """
+    try:
+        cursor: sqlite3.Cursor = conn.cursor()
+        cursor.execute('SELECT method, date_tested, generated_numbers, draw_date, matches FROM backtest_results')
+        rows = cursor.fetchall()
+        inserts = []
+        for method, date_tested, generated_numbers_str, draw_date, matches in rows:
+            try:
+                numbers = [int(n) for n in generated_numbers_str.split(',') if n.strip()]
+                for num in numbers:
+                    inserts.append((method, date_tested, num, draw_date, matches))
+            except Exception:
+                logging.warning(f'Ignorando row inválida durante migração: {generated_numbers_str}')
+                continue
+        if inserts:
+            cursor.executemany('''
+                INSERT INTO backtest_numbers (method, date_tested, generated_number, draw_date, matches)
+                VALUES (?, ?, ?, ?, ?)
+            ''', inserts)
+            conn.commit()
+            logging.info(f'Migração concluída: {len(inserts)} linhas inseridas em backtest_numbers')
+    except sqlite3.Error as e:
+        logging.error(f'Erro na migração de backtest: {e}')
 
 def run_backtest(method: str) -> bool:
     """
     Executa o backtest para um método de geração de números e salva os resultados.
+    Otimizado para inserir em lote na tabela `backtest_numbers` (uma linha por número gerado)
+    mantendo `backtest_results` para compatibilidade.
     """
     init_backtest_db()
     draws = load_all_draws()
@@ -1399,18 +1042,36 @@ def run_backtest(method: str) -> bool:
         with open_db(BACKTEST_DB_PATH, timeout=20.0) as conn:
             cursor: sqlite3.Cursor = conn.cursor()
 
+            # Limpar dados antigos para este método em ambas as tabelas
             cursor.execute("DELETE FROM backtest_results WHERE method = ?", (method,))
-            
+            cursor.execute("DELETE FROM backtest_numbers WHERE method = ?", (method,))
+            conn.commit()
+
+            results_inserts = []
+            numbers_inserts = []
+
             for draw_date, draw_numbers in draws:
                 draw_set = set(draw_numbers)
                 matches = len(generated_set.intersection(draw_set))
-                cursor.execute('''
+                # linha por sorteio (compatibilidade)
+                results_inserts.append((method, date_tested, generated_numbers_str, str(draw_date), matches))
+                # linhas por número gerado
+                for num in generated_numbers:
+                    numbers_inserts.append((method, date_tested, num, str(draw_date), matches))
+
+            if results_inserts:
+                cursor.executemany('''
                     INSERT INTO backtest_results (method, date_tested, generated_numbers, draw_date, matches)
                     VALUES (?, ?, ?, ?, ?)
-                ''', (method, date_tested, generated_numbers_str, str(draw_date), matches))
+                ''', results_inserts)
+            if numbers_inserts:
+                cursor.executemany('''
+                    INSERT INTO backtest_numbers (method, date_tested, generated_number, draw_date, matches)
+                    VALUES (?, ?, ?, ?, ?)
+                ''', numbers_inserts)
 
             conn.commit()
-            logging.info(f"Backtest para o método '{method}' concluído com sucesso. Resultados salvos.")
+            logging.info(f"Backtest para o método '{method}' concluído com sucesso. Resultados salvos ({len(results_inserts)} linhas).")
             return True
     except sqlite3.Error as e:
         logging.error(f"Erro ao salvar os resultados do backtest: {e}")
@@ -1419,18 +1080,12 @@ def run_backtest(method: str) -> bool:
 def run_backtest_multiple(method: str, times: int = 1) -> Dict[str, Any]:
     """
     Executa o backtest múltiplas vezes para um método e retorna resumo consolidado.
-    
-    Args:
-        method: Método de geração ('alltime', 'lastyear', 'weighted')
-        times: Número de vezes a executar o backtest (padrão: 1)
-    
-    Returns:
-        Dicionário com resumo consolidado dos backtests
+    Implementado para inserir em lote e reduzir commits para melhor desempenho.
     """
     if times < 1:
         logging.error("Número de backtests deve ser >= 1")
         return {'success': False, 'message': 'Número inválido', 'times_requested': 0, 'times_successful': 0, 'times_failed': 0}
-    
+
     # Validar método
     valid_methods = ("alltime", "lastyear", "weighted")
     if method not in valid_methods:
@@ -1438,7 +1093,6 @@ def run_backtest_multiple(method: str, times: int = 1) -> Dict[str, Any]:
         return {'success': False, 'times_executed': 0, 'message': f"Método inválido: {method}"}
 
     if times == 1:
-        # Se for apenas 1, usa a função original mas retorna no mesmo formato
         success = run_backtest(method)
         return {
             'success': success,
@@ -1451,78 +1105,83 @@ def run_backtest_multiple(method: str, times: int = 1) -> Dict[str, Any]:
             'consolidated_numbers': [],
             'consolidated_frequency': {}
         }
-    
+
     init_backtest_db()
     draws = load_all_draws()
     if not draws:
         logging.error('Base de dados vazia para backtest. Execute --update primeiro.')
         return {'success': False, 'times_executed': 0, 'message': 'Base de dados vazia'}
-    
+
     logging.info(f"Iniciando {times} execuções de backtest para o método '{method}'...")
-    
-    total_results: Dict[str, int] = {}  # Armazenar resultados consolidados
+
+    total_results: Dict[str, Any] = {}
     successful_runs = 0
     failed_runs = 0
-    
+
+    all_results_inserts = []
+    all_numbers_inserts = []
+
+    for i in range(times):
+        try:
+            generated_numbers: Optional[List[int]] = []
+
+            # Re-gerar números a cada iteração
+            if method == "alltime":
+                generated_numbers = get_most_frequent(draws)
+            elif method == "lastyear":
+                generated_numbers = get_most_frequent_period(draws)
+            elif method == "weighted":
+                generated_numbers = get_weighted(draws)
+            else:
+                logging.error(f"Método de backtest '{method}' não suportado.")
+                failed_runs += 1
+                continue
+
+            if not generated_numbers:
+                logging.warning(f"Execução {i+1}: Não foi possível gerar números.")
+                failed_runs += 1
+                continue
+
+            generated_set = set(generated_numbers)
+            generated_numbers_str = ','.join(map(str, generated_numbers))
+            date_tested = datetime.date.today().strftime('%Y-%m-%d')
+
+            for draw_date, draw_numbers in draws:
+                draw_set = set(draw_numbers)
+                matches = len(generated_set.intersection(draw_set))
+                all_results_inserts.append((method, date_tested, generated_numbers_str, str(draw_date), matches))
+                for num in generated_numbers:
+                    all_numbers_inserts.append((method, date_tested, num, str(draw_date), matches))
+
+            logging.info(f"Execução {i+1}/{times} concluída com sucesso para método '{method}'")
+            successful_runs += 1
+            total_results[f"exec_{successful_runs}_numbers"] = generated_numbers
+
+        except Exception as e:
+            logging.error(f"Erro na execução {i+1} do backtest: {e}")
+            failed_runs += 1
+            continue
+
+    # Persistir resultados em lote
     try:
         with sqlite3.connect(BACKTEST_DB_PATH, timeout=20.0) as conn:
             cursor: sqlite3.Cursor = conn.cursor()
-            
             # Limpar dados anteriores
             cursor.execute("DELETE FROM backtest_results WHERE method = ?", (method,))
+            cursor.execute("DELETE FROM backtest_numbers WHERE method = ?", (method,))
+
+            if all_results_inserts:
+                cursor.executemany('''
+                    INSERT INTO backtest_results (method, date_tested, generated_numbers, draw_date, matches)
+                    VALUES (?, ?, ?, ?, ?)
+                ''', all_results_inserts)
+            if all_numbers_inserts:
+                cursor.executemany('''
+                    INSERT INTO backtest_numbers (method, date_tested, generated_number, draw_date, matches)
+                    VALUES (?, ?, ?, ?, ?)
+                ''', all_numbers_inserts)
             conn.commit()
-        
-        for i in range(times):
-            try:
-                generated_numbers: Optional[List[int]] = []
-                
-                # Re-gerar números a cada iteração (para que sejam diferentes)
-                if method == "alltime":
-                    generated_numbers = get_most_frequent(draws)
-                elif method == "lastyear":
-                    generated_numbers = get_most_frequent_period(draws)
-                elif method == "weighted":
-                    generated_numbers = get_weighted(draws)
-                else:
-                    logging.error(f"Método de backtest '{method}' não suportado.")
-                    failed_runs += 1
-                    continue
-                
-                if not generated_numbers:
-                    logging.warning(f"Execução {i+1}: Não foi possível gerar números.")
-                    failed_runs += 1
-                    continue
-                
-                generated_set = set(generated_numbers)
-                generated_numbers_str = ','.join(map(str, generated_numbers))
-                date_tested = datetime.date.today().strftime('%Y-%m-%d')
-                
-                with sqlite3.connect(BACKTEST_DB_PATH, timeout=20.0) as conn:
-                    cursor: sqlite3.Cursor = conn.cursor()
-                    
-                    # Inserir resultados desta execução
-                    for draw_date, draw_numbers in draws:
-                        draw_set = set(draw_numbers)
-                        matches = len(generated_set.intersection(draw_set))
-                        cursor.execute('''
-                            INSERT INTO backtest_results (method, date_tested, generated_numbers, draw_date, matches)
-                            VALUES (?, ?, ?, ?, ?)
-                        ''', (method, date_tested, generated_numbers_str, str(draw_date), matches))
-                    
-                    conn.commit()
-                
-                logging.info(f"Execução {i+1}/{times} concluída com sucesso para método '{method}'")
-                successful_runs += 1
-                
-                # Armazenar informação de quais números foram gerados
-                key = f"exec_{i+1}_numbers"
-                total_results[key] = generated_numbers
-                
-            except Exception as e:
-                logging.error(f"Erro na execução {i+1} do backtest: {e}")
-                failed_runs += 1
-                continue
-        
+
         # Consolidar números mais frequentes
         if successful_runs > 0:
             number_frequency: Dict[int, int] = {}
@@ -1531,23 +1190,21 @@ def run_backtest_multiple(method: str, times: int = 1) -> Dict[str, Any]:
                 if key in total_results:
                     for num in total_results[key]:
                         number_frequency[num] = number_frequency.get(num, 0) + 1
-            
-            # Ordenar por frequência e pegar top 6
+
             consolidated = sorted(number_frequency.items(), key=lambda x: (-x[1], x[0]))[:6]
             total_results['consolidated_numbers'] = [num for num, _ in consolidated]
             total_results['consolidated_frequency'] = dict(consolidated)
-        
+
         total_results['method'] = method
         total_results['times_requested'] = times
         total_results['times_successful'] = successful_runs
         total_results['times_failed'] = failed_runs
         total_results['success'] = successful_runs > 0
         total_results['message'] = f"Execução de backtests concluída: {successful_runs} sucesso(s), {failed_runs} falha(s) de {times}"
-        
+
         logging.info(f"Backtests múltiplos concluídos: {successful_runs} sucesso(s), {failed_runs} falha(s)")
-        
         return total_results
-        
+
     except Exception as e:
         logging.error(f"Erro ao executar backtests múltiplos: {e}")
         return {

@@ -10,6 +10,11 @@ import sqlite3
 import os
 import logging
 from typing import Tuple
+from contextlib import contextmanager
+
+# Caminhos padrão dos bancos de dados
+DB_PATH = 'megasena.db'
+BACKTEST_DB_PATH = 'backtest.db'
 
 def check_db_integrity(db_path: str) -> Tuple[bool, str]:
     """
@@ -162,6 +167,89 @@ def cleanup_databases() -> dict:
         results[db_name]['info'] = get_db_info(db_name)
     
     return results
+
+@contextmanager
+def open_db(path: str, timeout: float = 20.0):
+    """Context manager para abrir conexão SQLite com WAL e fechamento seguro."""
+    conn = sqlite3.connect(path, timeout=timeout)
+    try:
+        conn.execute('PRAGMA journal_mode=WAL')
+    except sqlite3.Error:
+        pass
+    try:
+        yield conn
+    finally:
+        try:
+            conn.close()
+        except Exception:
+            pass
+
+def init_backtest_db(path: str = 'backtest.db') -> None:
+    """
+    Inicializa a base de dados para armazenar os resultados do backtest,
+    criando as tabelas 'backtest_results' e 'backtest_numbers' se não existirem.
+    Também realiza migração dos dados antigos para o novo esquema.
+    """
+    try:
+        with sqlite3.connect(path, timeout=20.0) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS backtest_results (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    method TEXT NOT NULL,
+                    date_tested TEXT NOT NULL,
+                    generated_numbers TEXT NOT NULL,
+                    draw_date TEXT NOT NULL,
+                    matches INTEGER NOT NULL
+                )
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS backtest_numbers (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    method TEXT NOT NULL,
+                    date_tested TEXT NOT NULL,
+                    generated_number INTEGER NOT NULL,
+                    draw_date TEXT NOT NULL,
+                    matches INTEGER NOT NULL
+                )
+            ''')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_backtest_numbers_method ON backtest_numbers(method)')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_backtest_numbers_generated_number ON backtest_numbers(generated_number)')
+            cursor.execute('CREATE INDEX IF NOT EXISTS idx_backtest_numbers_matches ON backtest_numbers(matches)')
+            conn.commit()
+            # Migração automática
+            cursor.execute('SELECT COUNT(1) FROM backtest_numbers')
+            if cursor.fetchone()[0] == 0:
+                cursor.execute('SELECT id FROM backtest_results LIMIT 1')
+                if cursor.fetchone():
+                    logging.info('Iniciando migração de dados: backtest_results -> backtest_numbers')
+                    _migrate_backtest_results_to_numbers(conn)
+    except sqlite3.Error as e:
+        logging.error(f"Erro ao inicializar o banco de dados de backtest: {e}")
+
+def _migrate_backtest_results_to_numbers(conn: sqlite3.Connection) -> None:
+    try:
+        cursor = conn.cursor()
+        cursor.execute('SELECT method, date_tested, generated_numbers, draw_date, matches FROM backtest_results')
+        rows = cursor.fetchall()
+        inserts = []
+        for method, date_tested, generated_numbers_str, draw_date, matches in rows:
+            try:
+                numbers = [int(n) for n in generated_numbers_str.split(',') if n.strip()]
+                for num in numbers:
+                    inserts.append((method, date_tested, num, draw_date, matches))
+            except Exception:
+                logging.warning(f'Ignorando row inválida durante migração: {generated_numbers_str}')
+                continue
+        if inserts:
+            cursor.executemany('''
+                INSERT INTO backtest_numbers (method, date_tested, generated_number, draw_date, matches)
+                VALUES (?, ?, ?, ?, ?)
+            ''', inserts)
+            conn.commit()
+            logging.info(f'Migração concluída: {len(inserts)} linhas inseridas em backtest_numbers')
+    except sqlite3.Error as e:
+        logging.error(f'Erro na migração de backtest: {e}')
 
 if __name__ == '__main__':
     # Configurar logging
