@@ -1,3 +1,173 @@
+class TestCLI(unittest.TestCase):
+    """Testes para parsing de argumentos do CLI (cli.py)"""
+
+    def test_argparse_alltime(self):
+        import cli
+        sys_argv_backup = sys.argv.copy()
+        sys.argv = ['cli.py', '--alltime']
+        try:
+            cli.main()
+        finally:
+            sys.argv = sys_argv_backup
+
+    def test_argparse_lastyear(self):
+        import cli
+        sys_argv_backup = sys.argv.copy()
+        sys.argv = ['cli.py', '--lastyear']
+        try:
+            cli.main()
+        finally:
+            sys.argv = sys_argv_backup
+
+    def test_argparse_stat(self):
+        import cli
+        sys_argv_backup = sys.argv.copy()
+        sys.argv = ['cli.py', '--stat']
+        try:
+            cli.main()
+        finally:
+            sys.argv = sys_argv_backup
+
+    def test_argparse_backtest_insights(self):
+        import cli
+        sys_argv_backup = sys.argv.copy()
+        sys.argv = ['cli.py', '--backtest-insights', 'weighted']
+        try:
+            cli.main()
+        finally:
+            sys.argv = sys_argv_backup
+import types
+import sys
+class TestGuiUtils(unittest.TestCase):
+    """Testes para funções utilitárias da interface gráfica (gui_utils.py)"""
+
+    def setUp(self):
+        import gui_utils
+        # Mock status_bar e root
+        gui_utils.status_bar = types.SimpleNamespace(config=lambda text=None: None)
+        gui_utils.root = None
+
+    def test_show_message_info(self):
+        import gui_utils
+        # Mock messagebox
+        gui_utils.messagebox = types.SimpleNamespace(showinfo=lambda t, m: True, showerror=lambda t, m: False)
+        gui_utils.show_message("Info", "Mensagem de teste", is_error=False)
+
+    def test_show_message_error(self):
+        import gui_utils
+        gui_utils.messagebox = types.SimpleNamespace(showinfo=lambda t, m: True, showerror=lambda t, m: True)
+        gui_utils.show_message("Erro", "Mensagem de erro", is_error=True)
+
+    def test_ask_on_main_thread(self):
+        import gui_utils
+        result = gui_utils.ask_on_main_thread(lambda x: x + 1, 2)
+        self.assertEqual(result, 3)
+
+    def test_tooltip(self):
+        import gui_utils
+        # Mock widget
+        widget = types.SimpleNamespace(bind=lambda *a, **k: None, winfo_rootx=lambda: 0, winfo_rooty=lambda: 0, winfo_height=lambda: 0)
+        tip = gui_utils.Tooltip(widget, text="Teste")
+        tip.set_text("Novo texto")
+        self.assertEqual(tip.text, "Novo texto")
+
+    def test_open_file_location(self):
+        import gui_utils
+        gui_utils.os = types.SimpleNamespace(name='nt', path=gui_utils.os.path, startfile=lambda x: True)
+        gui_utils.show_message = lambda t, m, e=False: None
+        gui_utils.open_file_location(__file__)
+
+    def test_run_in_thread(self):
+        import gui_utils
+        gui_utils.status_bar = types.SimpleNamespace(config=lambda text=None: None)
+        called = []
+        def func():
+            called.append(True)
+        gui_utils.run_in_thread(func)
+        import time
+        time.sleep(0.1)
+        self.assertTrue(called)
+
+    def test_start_processing(self):
+        import gui_utils
+        gui_utils.status_bar = types.SimpleNamespace(config=lambda text=None: None)
+        gui_utils.progress_bar = types.SimpleNamespace(start=lambda x: None)
+        gui_utils.root = types.SimpleNamespace(config=lambda cursor=None: None)
+        gui_utils.interactive_buttons = [types.SimpleNamespace(config=lambda state=None: None)]
+        gui_utils.start_processing()
+class TestAnalysis(unittest.TestCase):
+    """Testes para funções estatísticas de analysis.py"""
+
+    def setUp(self):
+        self.draws = [
+            (datetime.date(2023, 1, 1), (1, 2, 3, 4, 5, 6)),
+            (datetime.date(2023, 1, 2), (2, 3, 4, 5, 6, 7)),
+            (datetime.date(2023, 1, 3), (3, 4, 5, 6, 7, 8)),
+        ]
+
+    def test_get_most_frequent(self):
+        import analysis
+        result = analysis.get_most_frequent(self.draws, k=3)
+        self.assertEqual(len(result), 3)
+        self.assertTrue(all(isinstance(n, int) for n in result))
+
+    def test_get_most_frequent_period(self):
+        import analysis
+        result = analysis.get_most_frequent_period(self.draws, days=365, k=3)
+        self.assertEqual(len(result), 3)
+        self.assertTrue(all(isinstance(n, int) for n in result))
+
+    def test_get_weighted(self):
+        import analysis
+        result = analysis.get_weighted(self.draws, k=6)
+        self.assertEqual(len(result), 6)
+        self.assertTrue(all(isinstance(n, int) for n in result))
+class TestBacktest(unittest.TestCase):
+    """Testes para funções de backtest.py"""
+
+    def setUp(self):
+        # Cria banco temporário para backtest
+        self.temp_db_file = tempfile.NamedTemporaryFile(delete=False)
+        self.temp_db_path = self.temp_db_file.name
+        self.temp_db_file.close()
+        # Inicializa banco de backtest
+        import db_utils
+        db_utils.init_backtest_db(self.temp_db_path)
+        # Mock simples para load_all_draws
+        self.sample_draws = [
+            (datetime.date(2023, 1, 1), (1, 2, 3, 4, 5, 6)),
+            (datetime.date(2023, 1, 2), (7, 8, 9, 10, 11, 12)),
+        ]
+        import mega_sena_app
+        mega_sena_app.load_all_draws = lambda: self.sample_draws
+
+        # Patch caminho do banco
+        import backtest
+        backtest.BACKTEST_DB_PATH = self.temp_db_path
+
+    def tearDown(self):
+        if os.path.exists(self.temp_db_path):
+            os.unlink(self.temp_db_path)
+
+    def test_run_backtest_alltime(self):
+        import backtest
+        result = backtest.run_backtest("alltime")
+        self.assertTrue(result)
+
+    def test_run_backtest_multiple(self):
+        import backtest
+        res = backtest.run_backtest_multiple("alltime", times=2)
+        self.assertTrue(res['success'])
+        self.assertEqual(res['times_requested'], 2)
+        self.assertGreaterEqual(res['times_successful'], 1)
+
+    def test_get_from_backtest_insights(self):
+        import backtest
+        # Executa um backtest para popular o banco
+        backtest.run_backtest("alltime")
+        nums = backtest.get_from_backtest_insights("alltime", k=6)
+        self.assertIsInstance(nums, list)
+        self.assertEqual(len(nums), 6)
 #!/usr/bin/env python3
 """
 Testes Unitários para Mega-Sena Analyzer - Versão Corrigida
@@ -297,3 +467,91 @@ class TestMathematicalFunctions(unittest.TestCase):
 if __name__ == '__main__':
     # Executar os testes
     unittest.main(verbosity=2)
+
+
+class TestDbUtils(unittest.TestCase):
+    """Testes para utilitários de banco de dados (db_utils.py)"""
+
+    def setUp(self):
+        # Cria banco temporário
+        self.temp_db_file = tempfile.NamedTemporaryFile(delete=False)
+        self.temp_db_path = self.temp_db_file.name
+        self.temp_db_file.close()
+        # Inicializa banco simples
+        with sqlite3.connect(self.temp_db_path) as conn:
+            conn.execute('CREATE TABLE test (id INTEGER PRIMARY KEY, val TEXT)')
+            conn.execute('INSERT INTO test (val) VALUES ("abc")')
+            conn.commit()
+
+    def tearDown(self):
+        if os.path.exists(self.temp_db_path):
+            os.unlink(self.temp_db_path)
+
+    def test_check_db_integrity(self):
+        ok, msg = db_utils.check_db_integrity(self.temp_db_path)
+        self.assertTrue(ok)
+        self.assertIn("íntegro", msg)
+
+    def test_vacuum_db(self):
+        success, msg = db_utils.vacuum_db(self.temp_db_path)
+        self.assertTrue(success)
+        self.assertIn("otimizado", msg)
+
+    def test_enable_wal_mode(self):
+        success, msg = db_utils.enable_wal_mode(self.temp_db_path)
+        self.assertTrue(success)
+        self.assertIn("WAL", msg)
+
+    def test_analyze_db(self):
+        success, msg = db_utils.analyze_db(self.temp_db_path)
+        self.assertTrue(success)
+        self.assertIn("Análise", msg)
+
+    def test_get_db_info(self):
+        info = db_utils.get_db_info(self.temp_db_path)
+        self.assertIn('size_bytes', info)
+        self.assertIn('table_count', info)
+        self.assertEqual(info['table_count'], 1)
+
+    def test_open_db_context(self):
+        with db_utils.open_db(self.temp_db_path) as conn:
+            cur = conn.cursor()
+            cur.execute('SELECT COUNT(*) FROM test')
+            count = cur.fetchone()[0]
+        self.assertEqual(count, 1)
+
+    def test_init_backtest_db_and_migration(self):
+        # Cria banco temporário para backtest
+        temp_backtest = tempfile.NamedTemporaryFile(delete=False)
+        temp_backtest_path = temp_backtest.name
+        temp_backtest.close()
+        try:
+            db_utils.init_backtest_db(temp_backtest_path)
+            # Verifica tabelas
+            with sqlite3.connect(temp_backtest_path) as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='backtest_results'")
+                self.assertIsNotNone(cur.fetchone())
+                cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='backtest_numbers'")
+                self.assertIsNotNone(cur.fetchone())
+        finally:
+            if os.path.exists(temp_backtest_path):
+                os.unlink(temp_backtest_path)
+
+    def test_cleanup_databases(self):
+        # Cria banco temporário com nome padrão
+        temp_db_path = 'megasena.db'
+        with sqlite3.connect(temp_db_path) as conn:
+            conn.execute('CREATE TABLE test (id INTEGER)')
+            conn.commit()
+        try:
+            results = db_utils.cleanup_databases()
+            self.assertIn('megasena.db', results)
+            self.assertIn('wal_mode', results['megasena.db'])
+            self.assertIn('integrity', results['megasena.db'])
+            self.assertIn('analyze', results['megasena.db'])
+            self.assertIn('vacuum', results['megasena.db'])
+            self.assertIn('info', results['megasena.db'])
+        finally:
+            if os.path.exists(temp_db_path):
+                os.unlink(temp_db_path)

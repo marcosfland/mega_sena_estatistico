@@ -56,7 +56,48 @@ def vacuum_db(db_path: str) -> Tuple[bool, str]:
             conn.execute('VACUUM')
         return True, "Banco de dados otimizado com sucesso"
     except Exception as e:
+        logging.error(f"Erro ao otimizar banco: {e}\n{traceback.format_exc()}")
         return False, f"Erro ao otimizar banco: {e}"
+
+# Função utilitária para retry automático em caso de lock
+def safe_execute(db_path, query, params=None, retries=3, delay=0.5):
+    """
+    Executa uma query SQLite com retry automático em caso de database is locked.
+    Retorna (success, resultado ou mensagem de erro)
+    """
+    attempt = 0
+    while attempt < retries:
+        try:
+            with sqlite3.connect(db_path, timeout=20.0) as conn:
+                cursor = conn.cursor()
+                if params:
+                    cursor.execute(query, params)
+                else:
+                    cursor.execute(query)
+                result = cursor.fetchall()
+            return True, result
+        except sqlite3.OperationalError as e:
+            if "database is locked" in str(e):
+                time.sleep(delay)
+                attempt += 1
+                continue
+            logging.error(f"Erro operacional: {e}\n{traceback.format_exc()}")
+            return False, f"Erro operacional: {e}"
+        except Exception as e:
+            logging.error(f"Erro ao executar query: {e}\n{traceback.format_exc()}")
+            return False, f"Erro ao executar query: {e}"
+    return False, "Falha após múltiplas tentativas de lock"
+
+# Exemplo de cache simples para consultas de leitura
+_query_cache = {}
+def cached_query(db_path, query, params=None):
+    key = (db_path, query, tuple(params) if params else None)
+    if key in _query_cache:
+        return _query_cache[key]
+    success, result = safe_execute(db_path, query, params)
+    if success:
+        _query_cache[key] = result
+    return result if success else []
 
 def enable_wal_mode(db_path: str) -> Tuple[bool, str]:
     """

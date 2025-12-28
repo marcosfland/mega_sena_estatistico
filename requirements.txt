@@ -5,3 +5,6 @@ pandas
 scipy
 flask
 pillow
+setuptools
+pytest
+# tkinter e unittest já vêm com o Python padrão, mas são necessários para rodar a interface e os testes.
