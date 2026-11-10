@@ -15,8 +15,14 @@ pytest.importorskip("customtkinter")
 
 
 def _has_display() -> bool:
-    """Verifica se dá para abrir uma janela."""
-    if os.name != "nt" and not os.environ.get("DISPLAY"):
+    """Verifica se dá para abrir uma janela.
+
+    No Windows sempre há área de trabalho; não criamos um Tk descartável porque
+    reinicializar o Tcl no mesmo processo falha no Python 3.10 dos runners do GitHub.
+    """
+    if os.name == "nt":
+        return True
+    if not os.environ.get("DISPLAY"):
         return False
     try:
         root = tk.Tk()
