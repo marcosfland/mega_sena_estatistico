@@ -1,10 +1,8 @@
-requests
-matplotlib
-numpy
-pandas
-scipy
-flask
-pillow
-setuptools
-pytest
-# tkinter e unittest já vêm com o Python padrão, mas são necessários para rodar a interface e os testes.
+# Execução
+customtkinter>=5.2      # interface gráfica (requer o tkinter que vem com o Python)
+matplotlib>=3.7         # gráficos da aba Estatísticas
+requests>=2.31          # download dos resultados
+pillow>=10.0            # ícones da barra lateral (já vem com o matplotlib)
+
+# Desenvolvimento
+pytest>=8.0             # python -m pytest

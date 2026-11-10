@@ -1,4 +1,12 @@
-output/
-__pycache__
+__pycache__/
+*.pyc
 .vscode/
+.pytest_cache/
+.ruff_cache/
 logs/
+data/
+_legado/
+build/
+dist/
+*.spec
+output/

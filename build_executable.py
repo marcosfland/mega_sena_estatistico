@@ -1,61 +1,47 @@
-import sys
-import os
+"""Gera um executável da interface com PyInstaller.
+
+Uso::
+
+    pip install pyinstaller
+    python build_executable.py
+
+O resultado fica em ``dist/LoteriasEstatistico/``. A pasta ``data/`` é criada ao
+lado do executável na primeira execução e as bases são baixadas automaticamente.
+"""
+
+from __future__ import annotations
+
+import logging
 import subprocess
-from cx_Freeze import setup, Executable
+import sys
+from pathlib import Path
 
-def get_git_version():
-    """Obtém versão do Git se disponível"""
+ROOT = Path(__file__).resolve().parent
+
+
+def build() -> int:
+    """Executa o PyInstaller e devolve o código de saída."""
     try:
-        # Tenta obter a tag mais recente
-        result = subprocess.run(['git', 'describe', '--tags', '--abbrev=0'], 
-                              capture_output=True, text=True, cwd=os.path.dirname(__file__))
-        if result.returncode == 0:
-            return result.stdout.strip()
-    except:
-        pass
-    
-    # Fallback para versão manual
-    return "1.3.0"
-
-def get_build_info():
-    """Obtém informações de build"""
+        import customtkinter
+    except ImportError:
+        logging.error("Instale as dependências antes: pip install -r requirements.txt")
+        return 1
+    ctk_path = Path(customtkinter.__file__).parent
+    sep = ";" if sys.platform == "win32" else ":"
+    cmd = [
+        sys.executable, "-m", "PyInstaller", "--noconfirm", "--windowed",
+        "--name", "LoteriasEstatistico",
+        "--add-data", f"{ctk_path}{sep}customtkinter",
+        str(ROOT / "main.py"),
+    ]
+    logging.info("Executando: %s", " ".join(cmd))
     try:
-        # Hash do commit atual
-        result = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], 
-                              capture_output=True, text=True)
-        if result.returncode == 0:
-            commit_hash = result.stdout.strip()
-            return f"build-{commit_hash}"
-    except:
-        pass
-    
-    from datetime import datetime
-    return f"build-{datetime.now().strftime('%Y%m%d')}"
+        return subprocess.run(cmd, cwd=ROOT, check=False).returncode
+    except OSError as exc:
+        logging.error("PyInstaller não encontrado (pip install pyinstaller): %s", exc)
+        return 1
 
-VERSION = get_git_version()
-BUILD_INFO = get_build_info()
-FULL_VERSION = f"{VERSION}-{BUILD_INFO}"
 
-print(f"🔨 Versão detectada: {FULL_VERSION}")
-
-# Nome do arquivo principal do seu projeto
-main_script = "main.py"
-
-# Dependências adicionais (se houver)
-build_exe_options = {
-    "packages": [],
-    "excludes": [],
-    "include_files": []
-}
-
-# Informações do executável
-setup(
-    name="MegaSenaEstatistico",
-    version="1.0",
-    description="Ferramenta estatística para Mega Sena",
-    options={"build_exe": build_exe_options},
-    executables=[Executable(main_script, base=None)]
-)
-
-# Para gerar o executável, execute no terminal:
-# python build_executable.py build
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    sys.exit(build())
