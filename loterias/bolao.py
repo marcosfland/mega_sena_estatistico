@@ -65,8 +65,7 @@ class Bolao:
 
     def total_cost(self, spec: GameSpec) -> float:
         """Custo de todos os jogos."""
-        return round(sum(spec.bet_cost(len(b.numbers), len(b.trevos) or 2)
-                         for b in self.bets), 2)
+        return round(sum(spec.cost_of(b.numbers, len(b.trevos)) for b in self.bets), 2)
 
     def cota_value(self, spec: GameSpec) -> float:
         """Valor de uma cota, arredondado para cima no centavo."""
@@ -203,7 +202,7 @@ def share_text(spec: GameSpec, bolao: Bolao) -> str:
     lines += [f"• {p.name}: {p.cotas} cota(s) = {brl(bolao.amount_due(spec, p))}"
               + (" ✅" if p.paid else "") for p in bolao.participants]
     lines += ["", "*Jogos*"]
-    lines += [f"{i:02d}) {bet.as_text()}" for i, bet in enumerate(bolao.bets, start=1)]
+    lines += [f"{i:02d}) {bet.as_text(spec)}" for i, bet in enumerate(bolao.bets, start=1)]
     return "\n".join(lines)
 
 
@@ -214,7 +213,7 @@ def result_text(spec: GameSpec, bolao: Bolao, check: BolaoCheck) -> str:
     if not winners:
         lines.append("Nenhum jogo premiado desta vez.")
     for res in winners:
-        lines.append(f"• {res.bet.as_text()} → {res.summary()}")
+        lines.append(f"• {res.bet.as_text(spec)} → {res.summary()}")
     if winners:
         lines.append(f"Prêmio total: {brl(check.total_prize)}"
                      + (" (há faixas com rateio ainda não divulgado)" if check.pending else ""))

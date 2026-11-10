@@ -16,6 +16,7 @@ import datetime as dt
 import re
 from typing import Any, Optional
 
+from loterias import columns
 from loterias.games import MONTHS, GameSpec
 from loterias.models import Draw, PrizeTier
 
@@ -75,6 +76,15 @@ def _split_double(spec: GameSpec, ordered: tuple[int, ...],
     return tuple(sorted(source[: spec.draw_size])), tuple(sorted(source[spec.draw_size:]))
 
 
+def _column_codes(spec: GameSpec, ordered: tuple[int, ...],
+                  fallback: tuple[int, ...]) -> tuple[int, ...]:
+    """Super Sete: dígitos na ordem das colunas viram códigos ``coluna*10 + dígito``."""
+    digits = ordered or fallback
+    if len(digits) != spec.columns or any(d < 0 or d > 9 for d in digits):
+        raise ParseError(f"Super Sete: esperados {spec.columns} dígitos, veio {digits!r}")
+    return tuple(columns.encode(i, d) for i, d in enumerate(digits))
+
+
 def _check(spec: GameSpec, draw: Draw) -> Draw:
     """Valida tamanho e faixa das dezenas antes de aceitar o sorteio."""
     for numbers in draw.number_sets():
@@ -99,9 +109,12 @@ def parse_official(spec: GameSpec, data: dict[str, Any]) -> Draw:
     if date is None:
         raise ParseError("resposta oficial sem data")
     first = _ints(data.get("listaDezenas"))
-    numbers, numbers2 = _split_double(
-        spec, _ints(data.get("dezenasSorteadasOrdemSorteio")), first,
-        _ints(data.get("listaDezenasSegundoSorteio")))
+    ordered = _ints(data.get("dezenasSorteadasOrdemSorteio"))
+    if spec.is_columns:
+        numbers, numbers2 = _column_codes(spec, ordered, first), ()
+    else:
+        numbers, numbers2 = _split_double(
+            spec, ordered, first, _ints(data.get("listaDezenasSegundoSorteio")))
     prizes = tuple(
         PrizeTier(int(p.get("faixa", i + 1)), str(p.get("descricaoFaixa", "")),
                   int(p.get("numeroDeGanhadores") or 0), float(p.get("valorPremio") or 0.0))
@@ -130,8 +143,11 @@ def parse_community(spec: GameSpec, data: dict[str, Any]) -> Draw:
         raise ParseError(f"resposta comunitária incompleta: {exc}") from exc
     if date is None:
         raise ParseError("resposta comunitária sem data")
-    numbers, numbers2 = _split_double(
-        spec, _ints(data.get("dezenasOrdemSorteio")), _ints(data.get("dezenas")), ())
+    ordered, plain = _ints(data.get("dezenasOrdemSorteio")), _ints(data.get("dezenas"))
+    if spec.is_columns:
+        numbers, numbers2 = _column_codes(spec, ordered, plain), ()
+    else:
+        numbers, numbers2 = _split_double(spec, ordered, plain, ())
     extra_raw = data.get("mesSorte") if spec.extra_options else data.get("timeCoracao")
     prizes = tuple(
         PrizeTier(int(p.get("faixa", i + 1)), str(p.get("descricao", "")),

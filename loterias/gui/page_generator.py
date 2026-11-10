@@ -107,6 +107,7 @@ class GeneratorPage(Page):
         self.strategy_menu.set(current if current in self._labels else options[0].label)
         self.size_menu.configure(values=[str(n) for n in spec.bet_sizes])
         self.size_menu.set(str(spec.bet_min))
+        self._update_cost_hint()
         self.size_menu.configure(state="disabled" if spec.bet_min == spec.bet_max else "normal")
         recolor_primary(self.generate_btn, spec.color)
         self._describe()
@@ -188,17 +189,17 @@ class GeneratorPage(Page):
             self._set_actions_state("disabled")
             return
         spec = self.spec
-        total = sum(spec.bet_cost(len(b.numbers), len(b.trevos) or 2) for b in bets)
+        total = sum(spec.cost_of(b.numbers, len(b.trevos)) for b in bets)
         self.summary.configure(text=f"{len(bets)} jogo(s) · {brl(total)}")
         for row, bet in enumerate(bets):
             label(self.list_frame, f"{row + 1:02d}", 12, "bold", t.SUBTLE, width=34).grid(
                 row=row, column=0, sticky="nw", padx=(12, 6), pady=8)
-            strip = BallStrip(self.list_frame, bet.numbers, spec.color, square=bet.trevos)
+            strip = BallStrip(self.list_frame, bet.numbers, spec.color, square=bet.trevos,
+                              fmt=spec.format_number)
             strip.grid(row=row, column=1, sticky="ew", pady=6)
             self._strips.append(strip)
             extra = f"{bet.extra}   " if bet.extra else ""
-            label(self.list_frame, extra + brl(spec.bet_cost(len(bet.numbers),
-                                                             len(bet.trevos) or 2)),
+            label(self.list_frame, extra + brl(spec.cost_of(bet.numbers, len(bet.trevos))),
                   12, color=t.MUTED, anchor="e").grid(row=row, column=2, sticky="ne",
                                                       padx=(8, 12), pady=8)
         self._set_actions_state("normal")
@@ -225,7 +226,8 @@ class GeneratorPage(Page):
 
     def copy(self) -> None:
         """Copia os jogos como texto."""
-        text = "\n".join(f"{i:02d}) {b.as_text()}" for i, b in enumerate(self._bets, start=1))
+        text = "\n".join(f"{i:02d}) {b.as_text(self.spec)}"
+                         for i, b in enumerate(self._bets, start=1))
         self.clipboard_clear()
         self.clipboard_append(f"{self.spec.name}\n{text}")
         self.notice.show("Jogos copiados para a área de transferência.", "ok")

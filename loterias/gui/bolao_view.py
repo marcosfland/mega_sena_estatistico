@@ -112,7 +112,8 @@ class BolaoView(Card):
             line.grid_columnconfigure(1, weight=1)
             label(line, f"{i - row:02d}", 12, "bold", t.SUBTLE, width=30).grid(row=0, column=0,
                                                                                 sticky="nw")
-            strip = BallStrip(line, bet.numbers, spec.color, size=28, square=bet.trevos)
+            strip = BallStrip(line, bet.numbers, spec.color, size=28, square=bet.trevos,
+                              fmt=spec.format_number)
             strip.grid(row=0, column=1, sticky="ew")
             self._strips.append(strip)
 

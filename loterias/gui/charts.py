@@ -91,6 +91,12 @@ class ChartView(ctk.CTkFrame):
                 low, high = summary.sum_band
                 ax.axvspan(low, high, color=strong, alpha=0.12, linewidth=0)
                 title = f"Soma das dezenas · 80% entre {low:.0f} e {high:.0f}"
+            if spec.is_columns:  # Super Sete: barras agrupadas por coluna (dígitos 0–9)
+                ax.set_xticks([c * 10 + 4.5 for c in range(spec.columns)],
+                              [f"Coluna {c + 1}" for c in range(spec.columns)])
+                for c in range(1, spec.columns):
+                    ax.axvline(c * 10 - 0.5, color=t.resolve(t.BORDER), linewidth=1)
+                title += " (dígitos 0–9 em cada coluna)"
             ax.set_title(title, color=text, fontsize=10, loc="left", pad=12)
             self.figure.tight_layout(pad=1.2)
             self.canvas.draw_idle()

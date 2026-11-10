@@ -82,6 +82,10 @@ class StatsPage(Page):
         for seg in self._segmented:
             seg.configure(selected_color=t.accent_soft(self.spec.color),
                           selected_hover_color=t.accent_soft(self.spec.color))
+        kinds = CHARTS[:2] if self.spec.is_columns else CHARTS
+        self.chart_kind.configure(values=list(kinds))
+        if self.chart_kind.get() not in kinds:
+            self.chart_kind.set(CHARTS[0])
         self._dirty = True
         if self.winfo_ismapped():
             self.refresh()
@@ -143,7 +147,8 @@ class StatsPage(Page):
     def _balls(self, row: int, title: str, numbers: list[int], caption: str) -> int:
         """Bloco com bolinhas e legenda."""
         row = self._section(row, title)
-        strip = BallStrip(self.panel, numbers, self.spec.color, size=28)
+        strip = BallStrip(self.panel, numbers, self.spec.color, size=28,
+                          fmt=self.spec.format_number)
         strip.grid(row=row - 1, column=0, sticky="ew", padx=14)
         self._strips.append(strip)
         if caption:
@@ -160,21 +165,24 @@ class StatsPage(Page):
         if s is None:
             return
         spec = self.spec
+        unit = "dígito em cada coluna (coluna·dígito)" if spec.is_columns else "dezena"
         row = self._balls(0, "Mais sorteadas", s.hot[:8],
-                          f"Esperado por dezena: {s.expected:.0f} vezes")
+                          f"Esperado por {unit}: {s.expected:.0f} vezes")
         row = self._balls(row, "Menos sorteadas", s.cold[:8], "")
         row = self._balls(row, "Mais atrasadas", s.overdue[:8],
                           "Maior atraso: " + f"{s.delay[s.overdue[0]]} concursos")
-        common = max(s.parity, key=s.parity.get) if s.parity else 0
-        row = self._section(row, "Par / ímpar",
-                            f"O mais comum é {common} ímpares e {spec.draw_size - common} "
-                            f"pares.")
-        row = self._section(row, "Soma das dezenas",
-                            f"Média {s.sum_mean:.0f}; 80% dos sorteios ficam entre "
-                            f"{s.sum_band[0]:.0f} e {s.sum_band[1]:.0f}.")
+        if not spec.is_columns:
+            common = max(s.parity, key=s.parity.get) if s.parity else 0
+            row = self._section(row, "Par / ímpar",
+                                f"O mais comum é {common} ímpares e {spec.draw_size - common} "
+                                f"pares.")
+            row = self._section(row, "Soma das dezenas",
+                                f"Média {s.sum_mean:.0f}; 80% dos sorteios ficam entre "
+                                f"{s.sum_band[0]:.0f} e {s.sum_band[1]:.0f}.")
         if s.repeats:
             usual = max(s.repeats, key=s.repeats.get)
-            row = self._section(row, "Repetição", f"Normalmente {usual} dezena(s) repetem "
+            what = "coluna(s) repetem o dígito" if spec.is_columns else "dezena(s) repetem"
+            row = self._section(row, "Repetição", f"Normalmente {usual} {what} "
                                                   "do concurso anterior.")
         pairs = ", ".join(f"{spec.format_number(a)}-{spec.format_number(b)} ({c})"
                           for (a, b), c in s.pairs[:4])

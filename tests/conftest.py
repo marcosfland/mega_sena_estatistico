@@ -24,7 +24,10 @@ def make_draws(spec: GameSpec, n: int, seed: int = 1, start: int = 1) -> list[Dr
     draws = []
     for contest in range(start, start + n):
         pool = list(spec.numbers)
-        numbers = tuple(sorted(rng.sample(pool, spec.draw_size)))
+        if spec.is_columns:  # Super Sete: um dígito por coluna, como no sorteio real
+            numbers = tuple(c * 10 + rng.randrange(10) for c in range(spec.columns))
+        else:
+            numbers = tuple(sorted(rng.sample(pool, spec.draw_size)))
         numbers2 = tuple(sorted(rng.sample(pool, spec.draw_size))) if spec.double_draw else ()
         trevos = tuple(sorted(rng.sample(range(1, spec.trevo_max + 1), spec.trevo_draw))) \
             if spec.has_trevos else ()

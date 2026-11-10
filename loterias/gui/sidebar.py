@@ -54,7 +54,7 @@ class Sidebar(ctk.CTkFrame):
     def _build_brand(self) -> None:
         """Título do app."""
         box = ctk.CTkFrame(self, fg_color="transparent")
-        box.grid(row=0, column=0, sticky="ew", padx=20, pady=(24, 18))
+        box.grid(row=0, column=0, sticky="ew", padx=20, pady=(20, 12))
         label(box, "Loterias", 20, "bold").pack(anchor="w")
         label(box, "estatística & bolões", 12, color=t.MUTED, height=16).pack(anchor="w")
 
@@ -65,7 +65,7 @@ class Sidebar(ctk.CTkFrame):
         for spec in GAMES.values():
             button = ctk.CTkButton(
                 box, text=f"  {spec.name}", image=_dot(spec.color), compound="left",
-                anchor="w", height=36, corner_radius=t.RADIUS_SM,
+                anchor="w", height=32, corner_radius=t.RADIUS_SM,
                 font=t.font(13), fg_color="transparent", hover_color=t.SURFACE_ALT,
                 text_color=t.TEXT, command=lambda s=spec.slug: self._on_select(s))
             button.pack(fill="x", pady=1)
@@ -103,9 +103,15 @@ class Sidebar(ctk.CTkFrame):
         self.auto_switch = ctk.CTkSwitch(
             box, text="Atualização automática", font=t.font(12), text_color=t.MUTED,
             switch_width=32, switch_height=16, command=self._toggle_auto)
-        self.auto_switch.grid(row=6, column=0, sticky="w", padx=14, pady=(6, 4))
+        self.auto_switch.grid(row=6, column=0, sticky="w", padx=14, pady=(6, 2))
         if self.app.services.settings.auto_update:
             self.auto_switch.select()
+        self.notify_switch = ctk.CTkSwitch(
+            box, text="Avisar prêmios", font=t.font(12), text_color=t.MUTED,
+            switch_width=32, switch_height=16, command=self._toggle_notify)
+        self.notify_switch.grid(row=8, column=0, sticky="w", padx=14, pady=(0, 4))
+        if self.app.services.settings.notifications:
+            self.notify_switch.select()
         self.appearance = ctk.CTkSegmentedButton(
             box, values=["Sistema", "Claro", "Escuro"], font=t.font(11), height=26,
             fg_color=t.BORDER, unselected_color=t.BORDER, unselected_hover_color=t.SURFACE,
@@ -113,7 +119,7 @@ class Sidebar(ctk.CTkFrame):
             command=self._change_appearance)
         mode = {"system": "Sistema", "light": "Claro", "dark": "Escuro"}
         self.appearance.set(mode.get(self.app.services.settings.appearance, "Sistema"))
-        self.appearance.grid(row=7, column=0, sticky="ew", padx=14, pady=(4, 14))
+        self.appearance.grid(row=9, column=0, sticky="ew", padx=14, pady=(4, 14))
 
     def _toggle_auto(self) -> None:
         """Liga/desliga a atualização automática e salva a preferência."""
@@ -121,6 +127,12 @@ class Sidebar(ctk.CTkFrame):
         settings.auto_update = bool(self.auto_switch.get())
         settings.save()
         self.app.schedule_auto_sync()
+
+    def _toggle_notify(self) -> None:
+        """Liga/desliga as notificações de prêmio e salva a preferência."""
+        settings = self.app.services.settings
+        settings.notifications = bool(self.notify_switch.get())
+        settings.save()
 
     def _change_appearance(self, value: str) -> None:
         """Alterna claro/escuro."""
@@ -141,6 +153,7 @@ class Sidebar(ctk.CTkFrame):
                                   text_color=("#FFFFFF", "#0E1014"))
         self.progress.configure(progress_color=t.accent(spec.color))
         self.auto_switch.configure(progress_color=t.accent(spec.color))
+        self.notify_switch.configure(progress_color=t.accent(spec.color))
         self.appearance.configure(selected_color=t.accent_soft(spec.color),
                                   selected_hover_color=t.accent_soft(spec.color))
 

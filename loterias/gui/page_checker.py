@@ -109,7 +109,13 @@ class CheckerPage(Page):
     def on_game_changed(self) -> None:
         """Recria a grade de dezenas e a lista salva para a loteria."""
         spec = self.spec
-        self.picker.configure_numbers(spec.numbers, spec.bet_max, spec.color)
+        if spec.is_columns:
+            self.picker.configure_numbers(
+                spec.numbers, spec.bet_max, spec.color, columns=10,
+                labeler=lambda code: str(code % 10), fixed=True,
+                row_labels=[f"Col {i}" for i in range(1, spec.columns + 1)])
+        else:
+            self.picker.configure_numbers(spec.numbers, spec.bet_max, spec.color)
         for widget in (self.trevo_title, self.trevo_picker, self.extra_menu, self.extra_entry):
             widget.grid_forget()
         if spec.has_trevos:
@@ -144,6 +150,14 @@ class CheckerPage(Page):
     def _on_pick(self, _selected: Optional[list[int]]) -> None:
         """Atualiza o contador e o custo da aposta marcada."""
         spec, n = self.spec, len(self.picker.selected)
+        if spec.is_columns:
+            try:
+                numbers = spec.validate_numbers(self.picker.selected)
+                text = f"{n} números · {brl(spec.cost_of(numbers))}"
+            except ValueError:
+                text = f"{n} marcados · 1 a 3 números em cada uma das 7 colunas"
+            self.counter.configure(text=text)
+            return
         text = f"{n} de {spec.bet_min}" + (f"–{spec.bet_max}" if spec.bet_max != spec.bet_min
                                             else "") + " dezenas"
         if spec.bet_min <= n <= spec.bet_max:
@@ -208,7 +222,8 @@ class CheckerPage(Page):
         row = 1
         for numbers in draw.number_sets():
             strip = BallStrip(box, numbers, self.spec.color, highlight=bet.numbers,
-                              bg=t.SURFACE_ALT, square=draw.trevos if row == 1 else ())
+                              bg=t.SURFACE_ALT, square=draw.trevos if row == 1 else (),
+                              fmt=self.spec.format_number)
             strip.grid(row=row, column=0, sticky="ew", padx=16, pady=2)
             self._strips.append(strip)
             row += 1
@@ -272,7 +287,8 @@ class CheckerPage(Page):
                       hover_color=t.BORDER, text_color=t.MUTED, font=t.font(12),
                       command=lambda i=item.id: self._delete(i)).grid(row=0, column=1, padx=6)
         strip = BallStrip(box, item.bet.numbers, self.spec.color, highlight=hits, size=26,
-                          bg=t.SURFACE_ALT, square=item.bet.trevos)
+                          bg=t.SURFACE_ALT, square=item.bet.trevos,
+                          fmt=self.spec.format_number)
         strip.grid(row=1, column=0, columnspan=2, sticky="ew", padx=12)
         self._strips.append(strip)
         if result:

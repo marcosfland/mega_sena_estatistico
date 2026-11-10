@@ -14,6 +14,7 @@ from collections import Counter, deque
 from dataclasses import dataclass
 from typing import Callable, Optional, Sequence
 
+from loterias import columns
 from loterias.games import GameSpec
 from loterias.models import Bet, Draw
 from loterias.stats import percentile
@@ -51,6 +52,8 @@ STRATEGIES: dict[str, Strategy] = {s.key: s for s in (
 
 def strategies_for(spec: GameSpec) -> list[Strategy]:
     """Estratégias que fazem sentido para a loteria (ex.: sem "menos populares" até 31)."""
+    if spec.is_columns:  # soma/par-ímpar e "datas" não fazem sentido por coluna
+        return [s for s in STRATEGIES.values() if s.key not in ("equilibrado", "menos_populares")]
     return [s for s in STRATEGIES.values()
             if s.key != "menos_populares" or spec.max_number > 31]
 
@@ -133,6 +136,31 @@ def _weighted_sample(weights: dict[int, float], k: int, rng: random.Random) -> t
     return tuple(sorted(keyed[:k]))
 
 
+def _sample(spec: GameSpec, weights: dict[int, float], k: int,
+            rng: random.Random) -> tuple[int, ...]:
+    """Amostra dezenas; na Super Sete sorteia dentro de cada coluna."""
+    if not spec.is_columns:
+        return _weighted_sample(weights, k, rng)
+    counts = columns.balanced_counts(spec, k)
+    rng.shuffle(counts)  # marcações extras caem em colunas aleatórias
+    picked: list[int] = []
+    for column, count in enumerate(counts):
+        codes = {c: weights[c] for c in range(column * 10, column * 10 + 10)}
+        picked.extend(_weighted_sample(codes, count, rng))
+    return tuple(sorted(picked))
+
+
+def _top(spec: GameSpec, ctx: "StrategyContext", k: int) -> tuple[int, ...]:
+    """As ``k`` dezenas mais sorteadas (na Super Sete, as mais sorteadas de cada coluna)."""
+    def rank(pool: range, size: int) -> list[int]:
+        return sorted(pool, key=lambda n: (-ctx.freq[n], n))[:size]
+    if not spec.is_columns:
+        return tuple(sorted(rank(spec.numbers, k)))
+    counts = columns.balanced_counts(spec, k)
+    return tuple(sorted(c for col, size in enumerate(counts)
+                        for c in rank(range(col * 10, col * 10 + 10), size)))
+
+
 def _longest_run(numbers: Sequence[int]) -> int:
     """Maior sequência de dezenas consecutivas."""
     best = run = 1
@@ -211,6 +239,9 @@ def generate_games(spec: GameSpec, ctx: StrategyContext, strategy: str, n_number
     """
     if strategy not in STRATEGIES:
         raise ValueError(f"Estratégia desconhecida: {strategy}")
+    if strategy not in {s.key for s in strategies_for(spec)}:
+        raise ValueError(f"A estratégia '{STRATEGIES[strategy].label}' não se aplica à "
+                         f"{spec.name}.")
     spec.bet_cost(n_numbers, n_trevos)  # valida limites de dezenas e trevos
     if not 1 <= n_games <= 500:
         raise ValueError("Gere de 1 a 500 jogos por vez.")
@@ -221,7 +252,7 @@ def generate_games(spec: GameSpec, ctx: StrategyContext, strategy: str, n_number
     seen: set[tuple[int, ...]] = set()
 
     if strategy == "mais_sorteados":
-        top = tuple(sorted(sorted(spec.numbers, key=lambda n: (-ctx.freq[n], n))[:n_numbers]))
+        top = _top(spec, ctx, n_numbers)
         games.append(Bet(top, _pick_trevos(strategy, ctx, n_trevos, rng),
                          _pick_extra(strategy, ctx, rng)))
         seen.add(top)
@@ -233,7 +264,7 @@ def generate_games(spec: GameSpec, ctx: StrategyContext, strategy: str, n_number
             overlap += 1  # relaxa a diversidade se estiver difícil encontrar jogos
         if attempts > 20000:
             raise ValueError("Não foi possível gerar tantos jogos distintos; reduza a quantidade.")
-        candidate = _weighted_sample(weights, n_numbers, rng)
+        candidate = _sample(spec, weights, n_numbers, rng)
         if candidate in seen:
             continue
         if attempts % 300 < 250 and not _accept(strategy, candidate, ctx):

@@ -86,6 +86,34 @@ def _subbet_count(spec: GameSpec, n: int, h: int, j: int) -> int:
     return comb(h, j) * comb(n - h, k - j)
 
 
+def _column_counts(spec: GameSpec, bet: tuple[int, ...], drawn: tuple[int, ...]) -> list[int]:
+    """Super Sete: apostas simples com exatamente ``j`` colunas certas (índice = ``j``).
+
+    Cada coluna com ``n`` marcações, das quais ``a`` (0 ou 1) é o dígito sorteado,
+    contribui com o fator ``(n − a) + a·x``; o coeficiente de ``x^j`` do produto
+    é a quantidade de combinações com ``j`` acertos.
+    """
+    poly = [1]
+    hit_codes = set(drawn)
+    for digits_codes in _codes_by_column(spec, bet):
+        a = sum(1 for code in digits_codes if code in hit_codes)
+        b = len(digits_codes) - a
+        nxt = [0] * (len(poly) + 1)
+        for power, coef in enumerate(poly):
+            nxt[power] += coef * b
+            nxt[power + 1] += coef * a
+        poly = nxt
+    return poly
+
+
+def _codes_by_column(spec: GameSpec, bet: tuple[int, ...]) -> list[list[int]]:
+    """Códigos da aposta agrupados por coluna."""
+    groups: list[list[int]] = [[] for _ in range(spec.columns)]
+    for code in bet:
+        groups[code // 10].append(code)
+    return groups
+
+
 def _trevo_count(spec: GameSpec, n_trevos: int, th: int, t: int) -> int:
     """Combinações de 2 trevos com exatamente ``t`` acertos."""
     k = spec.trevo_draw
@@ -114,8 +142,12 @@ def check_bet(spec: GameSpec, bet: Bet, draw: Draw) -> CheckResult:
         result.hits.append(h)
         result.matched.append(matched)
         offset = (index - 1) * len(spec.prizes)
+        by_hits = _column_counts(spec, bet.numbers, numbers) if spec.is_columns else None
         for rule in spec.prizes:
-            count = _subbet_count(spec, len(bet.numbers), h, rule.hits)
+            if by_hits is not None:
+                count = by_hits[rule.hits] if rule.hits < len(by_hits) else 0
+            else:
+                count = _subbet_count(spec, len(bet.numbers), h, rule.hits)
             if rule.trevos is not None:
                 count *= sum(_trevo_count(spec, len(bet.trevos), result.trevo_hits, t)
                              for t in rule.trevos)

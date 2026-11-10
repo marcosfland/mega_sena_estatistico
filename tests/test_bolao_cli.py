@@ -13,7 +13,7 @@ from loterias.cli import main as cli_main
 from loterias.export import export_bets_csv, export_draws_csv
 from loterias.games import GameSpec, get_game
 from loterias.generator import StrategyContext
-from loterias.models import Draw, PrizeTier
+from loterias.models import Bet, Draw, PrizeTier
 from loterias.services import Services, build_services
 
 
@@ -110,6 +110,17 @@ def test_cli_commands(services: Services, capsys: pytest.CaptureFixture[str]) ->
     assert cli_main(["backtest", "--concursos", "50", "--semente", "1"], services) == 0
     assert cli_main(["jogos"], services) == 0
     assert "base vazia" in capsys.readouterr().out
+
+
+def test_cli_update_alerts(services: Services, capsys: pytest.CaptureFixture[str],
+                           monkeypatch: pytest.MonkeyPatch) -> None:
+    """Após atualizar, um jogo salvo premiado gera aviso no terminal e no sistema."""
+    sent: list[str] = []
+    monkeypatch.setattr("loterias.cli.notify", lambda title, _msg: sent.append(title))
+    latest = services.updater.source.fetch_latest(get_game("megasena"))
+    services.storage.save_bet("megasena", Bet(latest.numbers), "Meu jogo", latest.contest)
+    assert cli_main(["atualizar", "-j", "megasena"], services) == 0
+    assert "🏆" in capsys.readouterr().out and len(sent) == 1
 
 
 def test_cli_errors(services: Services, capsys: pytest.CaptureFixture[str]) -> None:

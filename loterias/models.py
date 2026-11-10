@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import datetime as dt
 from dataclasses import dataclass, field
-from typing import Iterator, Optional
+from typing import TYPE_CHECKING, Iterator, Optional
+
+if TYPE_CHECKING:
+    from loterias.game_spec import GameSpec
 
 
 @dataclass(frozen=True)
@@ -75,9 +78,16 @@ class Bet:
     trevos: tuple[int, ...] = ()
     extra: str = ""
 
-    def as_text(self) -> str:
-        """Representação curta, ex.: ``"05 12 23 34 45 56 | trevos 1 4"``."""
-        text = " ".join(f"{n:02d}" for n in self.numbers)
+    def as_text(self, spec: Optional["GameSpec"] = None) -> str:
+        """Representação curta, ex.: ``"05 12 23 34 45 56 | trevos 1 4"``.
+
+        Args:
+            spec: Regras da loteria (necessário para a Super Sete, por colunas).
+        """
+        if spec is not None:
+            text = spec.format_bet(self.numbers)
+        else:
+            text = " ".join(f"{n:02d}" for n in self.numbers)
         if self.trevos:
             text += " | trevos " + " ".join(str(t) for t in self.trevos)
         if self.extra:

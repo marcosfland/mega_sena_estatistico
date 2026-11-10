@@ -36,6 +36,7 @@ class Settings:
 
     Attributes:
         auto_update: Atualiza as bases ao abrir o app e periodicamente.
+        notifications: Avisa (notificação do sistema) quando um jogo salvo ou bolão ganha.
         update_interval_min: Intervalo entre verificações com o app aberto.
         appearance: ``"system"``, ``"light"`` ou ``"dark"``.
         last_game: Última loteria aberta.
@@ -43,6 +44,7 @@ class Settings:
     """
 
     auto_update: bool = True
+    notifications: bool = True
     update_interval_min: int = 30
     appearance: str = "system"
     last_game: str = "megasena"

@@ -19,13 +19,15 @@ import sys
 from typing import Optional, Sequence
 
 from loterias import bolao as bolao_mod
+from loterias.alerts import check_new_results
 from loterias.backtest import expected_hits, run_backtest
 from loterias.checker import check_bet
 from loterias.export import export_draws_csv
 from loterias.formatting import brl, brl_compact, date_br, thousands
 from loterias.games import GAMES, get_game
-from loterias.generator import STRATEGIES, StrategyContext, generate_games
+from loterias.generator import STRATEGIES, StrategyContext, generate_games, strategies_for
 from loterias.models import Bet, parse_numbers
+from loterias.notifier import notify
 from loterias.scheduler import schedule_daily, unschedule
 from loterias.services import Services, build_services
 from loterias.stats import last_n, summarize
@@ -49,8 +51,13 @@ def cmd_atualizar(services: Services, args: argparse.Namespace) -> None:
     def progress(slug: str, done: int, total: int) -> None:
         print(f"\r  {get_game(slug).name}: {done}/{total}", end="", flush=True)
 
-    for result in services.updater.sync_all(slugs, progress=progress):
+    results = services.updater.sync_all(slugs, progress=progress)
+    for result in results:
         print("\r" + result.message() + " " * 10)
+    for alert in check_new_results(services.storage, results):
+        print(f"🏆 {alert.title()} {alert.message()}")
+        if services.settings.notifications:
+            notify(alert.title(), alert.message())
 
 
 def cmd_gerar(services: Services, args: argparse.Namespace) -> None:
@@ -62,7 +69,7 @@ def cmd_gerar(services: Services, args: argparse.Namespace) -> None:
     games = generate_games(spec, ctx, args.estrategia, n, args.quantidade)
     print(f"{spec.name} · {STRATEGIES[args.estrategia].label} · {n} dezenas")
     for i, bet in enumerate(games, start=1):
-        print(f"  {i:02d}) {bet.as_text()}")
+        print(f"  {i:02d}) {bet.as_text(spec)}")
     print(f"Custo: {brl(spec.bet_cost(n) * len(games))}")
 
 
@@ -84,7 +91,7 @@ def cmd_estatisticas(services: Services, args: argparse.Namespace) -> None:
 def cmd_conferir(services: Services, args: argparse.Namespace) -> None:
     """Confere uma aposta."""
     spec = get_game(args.jogo)
-    bet = Bet(spec.validate_numbers(parse_numbers(args.numeros)),
+    bet = Bet(spec.validate_numbers(spec.parse_input(args.numeros)),
               spec.validate_trevos(parse_numbers(args.trevos or "")))
     storage = services.storage
     draw = storage.get_draw(spec.slug, args.concurso) if args.concurso \
@@ -93,7 +100,7 @@ def cmd_conferir(services: Services, args: argparse.Namespace) -> None:
         raise SystemExit("Concurso não encontrado na base. Atualize primeiro.")
     result = check_bet(spec, bet, draw)
     print(f"Concurso {draw.contest} ({date_br(draw.date)}): "
-          + " | ".join(" ".join(spec.format_number(n) for n in s) for s in draw.number_sets()))
+          + " | ".join(spec.format_bet(s) for s in draw.number_sets()))
     print(result.summary())
     if result.won:
         print("Prêmio: valor do rateio não disponível para este concurso"
@@ -122,8 +129,7 @@ def cmd_backtest(services: Services, args: argparse.Namespace) -> None:
     spec = get_game(args.jogo)
     draws = _need_draws(services, spec.slug)
     n = args.dezenas or spec.bet_min
-    results = run_backtest(spec, draws, list(STRATEGIES) if spec.max_number > 31 else
-                           [k for k in STRATEGIES if k != "menos_populares"],
+    results = run_backtest(spec, draws, [s.key for s in strategies_for(spec)],
                            args.concursos, n, seed=args.semente)
     print(f"{spec.name}: {args.concursos} concursos, {n} dezenas por jogo. "
           f"Média teórica do acaso: {expected_hits(spec, n):.3f} acertos")
@@ -175,7 +181,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--ultimos", type=int, help="usar só os N concursos mais recentes")
     p.set_defaults(func=cmd_estatisticas)
     p = sub.add_parser("conferir", parents=[jogo], help="confere uma aposta")
-    p.add_argument("numeros", help='dezenas, ex.: "05 12 23 34 45 56"')
+    p.add_argument("numeros", help='dezenas, ex.: "05 12 23 34 45 56" '
+                   '(Super Sete, por coluna: "5 3/8 7 1 4 0 6")')
     p.add_argument("-c", "--concurso", type=int)
     p.add_argument("-t", "--trevos", help="+Milionária, ex.: \"1 4\"")
     p.set_defaults(func=cmd_conferir)

@@ -81,9 +81,11 @@ class BallStrip(tk.Canvas):
 
     def __init__(self, master: tk.Misc, numbers: Sequence[int] = (), color: str = "#209869",
                  highlight: Iterable[int] = (), size: int = 30, bg: t.Color = t.SURFACE,
-                 square: Sequence[int] = ()) -> None:
+                 square: Sequence[int] = (),
+                 fmt: Optional[Callable[[int], str]] = None) -> None:
         super().__init__(master, height=size, highlightthickness=0, bd=0,
                          bg=t.resolve(bg))
+        self._fmt = fmt or (lambda n: f"{n:02d}")
         self._numbers = list(numbers)
         self._square = list(square)
         self._color = color
@@ -131,8 +133,10 @@ class BallStrip(tk.Canvas):
                                       fill=fill, outline="")
             else:
                 self.create_oval(x, y, x + size, y + size, fill=fill, outline="")
-            self.create_text(x + size / 2, y + size / 2, text=f"{number:02d}",
-                             fill=on_strong if hot or is_square else strong, font=typeface)
+            text = str(number) if is_square else self._fmt(number)
+            font = typeface if len(text) <= 2 else (typeface[0], max(8, size // 4), "bold")
+            self.create_text(x + size / 2, y + size / 2, text=text,
+                             fill=on_strong if hot or is_square else strong, font=font)
 
 
 class NumberPicker(ctk.CTkFrame):
@@ -153,10 +157,30 @@ class NumberPicker(ctk.CTkFrame):
         self._color = "#209869"
         self._columns = 10
         self._max_columns = 10
+        self._fixed = False
+        self._row_widgets: list[ctk.CTkLabel] = []
 
     def configure_numbers(self, numbers: range, limit: int, color: str,
-                          columns: int = 10) -> None:
-        """Recria a grade para uma nova faixa de dezenas."""
+                          columns: int = 10, labeler: Optional[Callable[[int], str]] = None,
+                          fixed: bool = False,
+                          row_labels: Optional[Sequence[str]] = None) -> None:
+        """Recria a grade para uma nova faixa de dezenas.
+
+        Args:
+            numbers: Dezenas exibidas.
+            limit: Máximo de seleções.
+            color: Cor de destaque.
+            columns: Colunas da grade.
+            labeler: Texto de cada botão (padrão: dois dígitos).
+            fixed: Mantém as colunas mesmo com pouco espaço (grade da Super Sete).
+            row_labels: Rótulo à esquerda de cada linha (ex.: "Col 1").
+        """
+        self._fixed = fixed
+        for widget in getattr(self, "_row_widgets", []):
+            widget.destroy()
+        self._row_widgets = [
+            ctk.CTkLabel(self, text=text, font=t.font(11), text_color=t.MUTED, width=44,
+                         anchor="w") for text in (row_labels or [])]
         for button in self._buttons.values():
             button.destroy()
         self._buttons.clear()
@@ -165,7 +189,8 @@ class NumberPicker(ctk.CTkFrame):
         self._max_columns = self._columns = columns
         for number in numbers:
             button = ctk.CTkButton(
-                self, text=f"{number:02d}", width=36, height=32, corner_radius=t.RADIUS_SM,
+                self, text=labeler(number) if labeler else f"{number:02d}", width=36, height=32,
+                corner_radius=t.RADIUS_SM,
                 font=t.font(12), border_width=0, command=lambda n=number: self.toggle(n))
             self._buttons[number] = button
             self._paint(number)
@@ -173,11 +198,17 @@ class NumberPicker(ctk.CTkFrame):
 
     def _layout(self) -> None:
         """Posiciona os botões na quantidade atual de colunas."""
+        offset = 1 if self._row_widgets else 0
+        for row, widget in enumerate(self._row_widgets):
+            widget.grid(row=row, column=0, padx=(0, 4))
         for i, button in enumerate(self._buttons.values()):
-            button.grid(row=i // self._columns, column=i % self._columns, padx=2, pady=2)
+            button.grid(row=i // self._columns, column=i % self._columns + offset,
+                        padx=2, pady=2)
 
     def reflow(self, width: int) -> None:
         """Ajusta as colunas à largura disponível (mínimo 5, máximo o configurado)."""
+        if self._fixed:
+            return
         columns = max(5, min(self._max_columns, width // 40))
         if columns != self._columns:
             self._columns = columns

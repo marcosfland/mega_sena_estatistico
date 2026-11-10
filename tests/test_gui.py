@@ -87,6 +87,18 @@ def test_gui_smoke(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         app.show_page("Estatísticas")
         _pump(app, 800)
         assert app.pages["Estatísticas"]._summary is not None
+        from loterias.alerts import PrizeAlert
+        from loterias.gui.toast import Toast
+        from loterias.updater import SyncResult
+        services.settings.notifications = False
+        alert = PrizeAlert("megasena", 200, "jogo", "Teste", "6 acertos", 1000.0)
+        app._game_synced(SyncResult("megasena"), [alert])
+        assert len(Toast._stack) == 1
+        Toast._stack[0].dismiss()
+        assert Toast._stack == []
+        app.set_game("supersete")
+        _pump(app, 100)
+        assert app.pages["Conferir"].picker._fixed
         app.set_appearance("dark")
         _pump(app, 200)
     finally:

@@ -7,6 +7,7 @@ from typing import Callable, Optional
 
 import customtkinter as ctk
 
+from loterias.alerts import PrizeAlert, check_new_results
 from loterias.formatting import brl
 from loterias.games import DEFAULT_GAME, GAMES, GameSpec, get_game
 from loterias.gui import theme as t
@@ -18,8 +19,10 @@ from loterias.gui.page_generator import GeneratorPage
 from loterias.gui.page_stats import StatsPage
 from loterias.gui.runner import TaskRunner
 from loterias.gui.sidebar import Sidebar
+from loterias.gui.toast import Toast
 from loterias.gui.widgets import label
 from loterias.models import Draw
+from loterias.notifier import notify
 from loterias.services import Services, build_services
 from loterias.updater import SyncResult
 
@@ -111,10 +114,14 @@ class App(ctk.CTk):
         bet = (f"{spec.bet_min}" if spec.bet_min == spec.bet_max
                else f"{spec.bet_min} a {spec.bet_max}")
         self.title_label.configure(text=spec.name, text_color=t.accent(spec.color))
+        if spec.is_columns:
+            drawn = f"1 dígito (0 a 9) sorteado em cada uma das {spec.columns} colunas"
+        else:
+            drawn = (f"{spec.draw_size} dezenas sorteadas de "
+                     f"{spec.format_number(spec.min_number)} a "
+                     f"{spec.format_number(spec.max_number)}")
         self.subtitle_label.configure(
-            text=f"{spec.draw_size} dezenas sorteadas de {spec.format_number(spec.min_number)}"
-                 f" a {spec.format_number(spec.max_number)} · aposte {bet} · "
-                 f"a partir de {brl(spec.price)}")
+            text=f"{drawn} · aposte {bet} · a partir de {brl(spec.price)}")
         self.nav.configure(selected_color=t.accent_soft(spec.color),
                            selected_hover_color=t.accent_soft(spec.color),
                            text_color=t.TEXT)
@@ -142,13 +149,14 @@ class App(ctk.CTk):
             results = []
             for slug in slugs or list(GAMES):
                 result = self.services.updater.sync_game(slug, progress=progress)
-                progress(result)  # avisa a interface assim que cada loteria termina
+                alerts = check_new_results(self.services.storage, [result])
+                progress(result, alerts)  # avisa a interface assim que cada loteria termina
                 results.append(result)
             return results
 
         def on_progress(*args: object) -> None:
-            if len(args) == 1 and isinstance(args[0], SyncResult):
-                self._game_synced(args[0])
+            if isinstance(args[0], SyncResult):
+                self._game_synced(args[0], args[1])  # type: ignore[arg-type]
                 return
             slug, done, total = args
             self.sidebar.set_progress(done / total if total else 0,
@@ -158,8 +166,13 @@ class App(ctk.CTk):
                            on_success=self._sync_finished, on_error=self._sync_failed,
                            on_done=self._sync_done)
 
-    def _game_synced(self, result: SyncResult) -> None:
-        """Uma loteria terminou: atualiza a tela se for a ativa e recebeu dados novos."""
+    def _game_synced(self, result: SyncResult, alerts: list[PrizeAlert]) -> None:
+        """Uma loteria terminou: avisa prêmios e atualiza a tela se for a ativa."""
+        for alert in alerts:
+            Toast(self, alert.title(), alert.message(), get_game(alert.game).color,
+                  duration_ms=0)
+            if self.services.settings.notifications:
+                self.runner.submit(notify, alert.title(), alert.message())
         if result.game == self.spec.slug and result.added:
             self.refresh_base_status()
             for page in self.pages.values():
