@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.1.0] - 2026-11-10
+
+### Novidades
+- **Super Sete:** 9ª loteria, com modelo por colunas (códigos `coluna·dígito`). Inclui custo exato por coluna, conferência combinatória, gerador que sorteia dentro de cada coluna, grade de 7 linhas na aba Conferir e gráficos agrupados por coluna.
+- **Avisos de prêmio:** jogos salvos e bolões são conferidos a cada concurso novo, com aviso no app e notificação nativa do sistema, também pela tarefa agendada. Pode ser desligado no interruptor *Avisar prêmios*.
+- **GitHub Actions:** lint e testes a cada push/PR (Linux e Windows, Python 3.10 e 3.13). Uma tag `v*` gera o executável do Windows e publica o Release.
+- `ruff.toml` com as regras de qualidade do projeto.
+
+### Remoções
+- Código da versão 1.x (`mega_sena_app.py`, `gui_main.py`, testes temporários, bancos antigos e documentos soltos) removido do repositório. O histórico continua no git.
+
 ## [2.0.0] - 2026-10-19
 Reescrita completa: o projeto deixa de ser só da Mega-Sena e vira **Loterias Estatístico**.
 
@@ -21,7 +32,7 @@ Reescrita completa: o projeto deixa de ser só da Mega-Sena e vira **Loterias Es
 
 ### Migração
 - `megasena.db` e `user_sets.db` antigos são importados automaticamente para `data/loterias.db`.
-- `python scripts/limpar_legado.py` move os arquivos da 1.x para `_legado/`.
+- (2.1.0: os arquivos da 1.x foram removidos do repositório.)
 
 ## [1.4.0] - 2025-12-28
 - Modularização inicial, gráficos na GUI, retry de banco.

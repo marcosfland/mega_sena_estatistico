@@ -1,0 +1,8 @@
+# Regras de qualidade alinhadas ao ai_guidelines.md / ai_qa_checklist.md:
+# imports não usados (F), exceções silenciosas (BLE, E722, S110), docstrings (D1) e type hints (ANN).
+line-length = 100
+target-version = "py310"
+
+[lint]
+select = ["F", "E", "W", "B", "BLE", "E722", "S110", "D1", "ANN001", "ANN201", "ANN202"]
+ignore = ["D107"]
