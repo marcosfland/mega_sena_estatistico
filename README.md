@@ -21,7 +21,12 @@ Os preços podem ser ajustados em `data/settings.json` (`"prices": {"megasena": 
 
 ## Download (Windows)
 
-Baixe o `.zip` da [última versão](https://github.com/marcosfland/mega_sena_estatistico/releases/latest), extraia e abra `LoteriasEstatistico.exe`. Não precisa ter Python instalado.
+Baixe o instalador `LoteriasEstatistico-Setup-<versão>.exe` e execute. Não precisa de Python nem de permissão de administrador.
+
+- **[Versão estável](https://github.com/marcosfland/mega_sena_estatistico/releases/latest)**, publicada a cada tag `v*`;
+- **[Última versão da main](https://github.com/marcosfland/mega_sena_estatistico/releases/tag/main-build)**, refeita automaticamente a cada alteração no código.
+
+O instalador cria atalhos no menu Iniciar (e, se você quiser, na área de trabalho) e já traz a base de sorteios. Banco, preferências e logs ficam em `%LOCALAPPDATA%\LoteriasEstatistico` e são preservados ao atualizar ou desinstalar.
 
 ## Instalação pelo código
 
@@ -39,7 +44,19 @@ Requer Python 3.10 ou superior (testado em 3.10, 3.12 e 3.13, no Linux e no Wind
 - **Com o app aberto:** verifica todas as loterias ao abrir e a cada 30 minutos (interruptor *Atualização automática* na barra lateral).
 - **Com o app fechado:** `python main.py agendar --hora 21:30` cria uma tarefa diária no Agendador do Windows (no Linux/macOS mostra a linha do `crontab`). Para remover, use `python main.py agendar --remover`.
 - **Avisos de prêmio:** quando sai um concurso novo, o app confere seus jogos salvos e bolões e mostra uma notificação do Windows (ou do macOS/Linux) se algum ganhou. Isso também vale para a tarefa agendada, com o app fechado. Para desligar, use o interruptor *Avisar prêmios*.
-- **Fontes:** API oficial da Caixa (`servicebus2.caixa.gov.br`), com a API comunitária `loteriascaixa-api` como reserva. Em base vazia, o histórico completo vem numa única requisição. Depois disso só os concursos novos são baixados, gravados em lotes.
+- **Fontes:** API oficial da Caixa (`servicebus2.caixa.gov.br`), depois a API comunitária `loteriascaixa-api` e, por último, a base deste repositório. Em base vazia, o histórico completo vem de uma vez, primeiro da base do repositório (um arquivo por loteria). Depois disso só os concursos novos são baixados, gravados em lotes.
+
+## Base de dados no GitHub
+
+A pasta [`dados/`](dados) guarda todos os concursos de cada loteria em `dados/<loteria>.jsonl`, com um concurso por linha. O workflow **Atualizar base de dados** roda todo dia às 22:30 e às 09:00 (horário de Brasília) e faz o seguinte:
+
+1. carrega a base atual;
+2. baixa só os concursos novos, da API oficial com a comunitária de reserva;
+3. faz commit dos arquivos que mudaram, como `Atualiza base de dados: Mega-Sena 3072, Quina 6890`.
+
+Cada execução mostra um resumo por loteria na aba *Actions*. Se todas as loterias falharem, a execução fica vermelha e o GitHub avisa por e-mail. Para forçar uma atualização, use *Run workflow* nessa mesma aba. Os commits da base **não** geram instalador novo.
+
+Quem clona o repositório ou instala pelo instalador já começa com essa base, e o app também a usa como fonte de reserva pela internet.
 
 ## Interface
 
@@ -103,13 +120,18 @@ loterias/
   checker.py            conferência com combinatória de apostas múltiplas
   backtest.py           backtest walk-forward
   bolao.py              cotas, orçamento, rateio, texto de compartilhamento
+  dump.py               base versionada dados/*.jsonl (exportar, importar)
   alerts.py             avisos de prêmio de jogos salvos e bolões
   notifier.py           notificação nativa do sistema (Windows/macOS/Linux)
   cli.py · export.py · scheduler.py · services.py · settings.py · formatting.py
   gui/                  app, barra lateral, páginas, gráficos, widgets, avisos, runner de threads
-tests/                  90 testes (pytest), ver TESTES.md
-.github/workflows/      testes.yml (CI) e release.yml (executável Windows)
-data/                   loterias.db e settings.json (criados automaticamente)
+tests/                  104 testes (pytest), ver TESTES.md
+dados/                  base de sorteios versionada (atualizada pelo GitHub Actions)
+scripts/atualizar_base.py  rotina de atualização da base (usada pelo workflow)
+instalador/loterias.iss    script do instalador (Inno Setup)
+.github/workflows/      testes.yml, instalador.yml e atualizar-base.yml
+data/                   loterias.db e settings.json (criados automaticamente; no instalador,
+                        ficam em %LOCALAPPDATA%\LoteriasEstatistico)
 ```
 
 ## Testes
@@ -120,14 +142,19 @@ python -m pytest
 
 Veja [TESTES.md](TESTES.md) para o mapa completo do que cada teste cobre. A cada push ou pull request, o GitHub Actions roda o lint (`ruff check`, com as regras em `ruff.toml`) e os testes no Linux e no Windows, com Python 3.10 e 3.13.
 
-## Publicar uma versão
+## Instalador e versões
+
+O workflow **Instalador** roda os testes, gera o executável com PyInstaller e monta o instalador com Inno Setup:
+
+- **a cada push na `main`**, exceto quando só `dados/` mudou: atualiza o pre-release [Última versão da main](https://github.com/marcosfland/mega_sena_estatistico/releases/tag/main-build), com versão `2.2.0-build.<n>`;
+- **a cada tag `v*`**: publica um Release oficial com o instalador e notas geradas a partir dos commits.
 
 ```bash
-git tag v2.1.0
-git push origin v2.1.0
+git tag v2.2.0
+git push origin v2.2.0
 ```
 
-O workflow `release.yml` roda os testes, gera o executável do Windows com PyInstaller e publica um Release com o `.zip` e as notas geradas a partir dos commits. Para gerar o executável sem publicar, rode o workflow manualmente na aba *Actions*: o `.zip` fica disponível como artefato da execução. Localmente:
+O instalador também fica como artefato de cada execução. Para gerar só o executável localmente:
 
 ```bash
 pip install pyinstaller

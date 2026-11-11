@@ -1,0 +1,90 @@
+name: Instalador
+
+# Gera o instalador do Windows (Inno Setup):
+# - a cada push na main, exceto quando só a base de dados (dados/) mudou:
+#   publica o pre-release "Última versão da main" (tag main-build);
+# - a cada tag v* (ex.: git tag v2.2.0 && git push origin v2.2.0): Release oficial.
+# Filtros de caminho não se aplicam a tags, então toda tag v* gera release.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+    paths-ignore:
+      - "dados/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: instalador-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  instalador:
+    name: Instalador Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Dependências
+        run: pip install -r requirements.txt pyinstaller
+
+      - name: Testes antes de empacotar
+        run: python -m pytest
+
+      - name: Versão
+        id: versao
+        shell: pwsh
+        run: |
+          $base = python -c "import loterias; print(loterias.__version__)"
+          if ($env:GITHUB_REF_TYPE -eq 'tag') { $v = $env:GITHUB_REF_NAME.TrimStart('v') }
+          else { $v = "$base-build.$env:GITHUB_RUN_NUMBER" }
+          "versao=$v" >> $env:GITHUB_OUTPUT
+          Write-Host "Versão: $v"
+
+      - name: Executável (PyInstaller)
+        run: python build_executable.py
+
+      - name: Instalador (Inno Setup)
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            Write-Host "Inno Setup não encontrado no runner; instalando via Chocolatey..."
+            choco install innosetup -y --no-progress
+          }
+          & $iscc "/DAppVersion=${{ steps.versao.outputs.versao }}" `
+                  "/DSourceDir=$pwd\dist\LoteriasEstatistico" `
+                  "/DOutputDir=$pwd\saida" instalador\loterias.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Get-ChildItem saida
+
+      - name: Guardar como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: LoteriasEstatistico-Setup-${{ steps.versao.outputs.versao }}
+          path: saida/*.exe
+
+      - name: Atualizar pre-release "Última versão da main"
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete main-build --yes --cleanup-tag || true
+          gh release create main-build saida/*.exe --prerelease --target "$GITHUB_SHA" \
+            --title "Última versão da main (${{ steps.versao.outputs.versao }})" \
+            --notes "Instalador gerado automaticamente a partir do commit ${GITHUB_SHA::7}: $(git log -1 --format=%s)."
+
+      - name: Publicar release oficial
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: saida/*.exe
+          generate_release_notes: true

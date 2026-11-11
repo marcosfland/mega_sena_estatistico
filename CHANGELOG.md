@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.2.0] - 2026-11-10
+
+### Novidades
+- **Instalador Windows** (Inno Setup, em português, sem pedir administrador) gerado pelo GitHub Actions a cada push na `main`, exceto quando só a base mudou. Vai para o pre-release "Última versão da main"; tags `v*` publicam o Release oficial.
+- **Base de dados no GitHub:** `dados/<loteria>.jsonl` atualizado automaticamente duas vezes por dia pelo workflow *Atualizar base de dados*.
+- O app usa essa base para começar com o histórico pronto (repositório e instalador) e como terceira fonte de dados pela internet, depois da API oficial e da comunitária.
+- No executável instalado, banco, preferências e logs ficam em `%LOCALAPPDATA%\LoteriasEstatistico`.
+
+### Alterações
+- `release.yml` substituído por `instalador.yml`.
+
 ## [2.1.0] - 2026-11-10
 
 ### Novidades

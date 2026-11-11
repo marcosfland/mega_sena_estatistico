@@ -5,8 +5,10 @@ Uso::
     pip install pyinstaller
     python build_executable.py
 
-O resultado fica em ``dist/LoteriasEstatistico/``. A pasta ``data/`` é criada ao
-lado do executável na primeira execução e as bases são baixadas automaticamente.
+O resultado fica em ``dist/LoteriasEstatistico/``. A base versionada em ``dados/``
+vai junto, então o app já abre com o histórico; banco e preferências ficam em
+``%LOCALAPPDATA%\\LoteriasEstatistico``. O instalador (Inno Setup) é montado a
+partir dessa pasta pelo workflow ``instalador.yml``.
 """
 
 from __future__ import annotations
@@ -32,8 +34,11 @@ def build() -> int:
         sys.executable, "-m", "PyInstaller", "--noconfirm", "--windowed",
         "--name", "LoteriasEstatistico",
         "--add-data", f"{ctk_path}{sep}customtkinter",
-        str(ROOT / "main.py"),
     ]
+    dados = ROOT / "dados"
+    if any(dados.glob("*.jsonl")):  # base pronta: o app abre com o histórico já carregado
+        cmd += ["--add-data", f"{dados}{sep}dados"]
+    cmd.append(str(ROOT / "main.py"))
     logging.info("Executando: %s", " ".join(cmd))
     try:
         return subprocess.run(cmd, cwd=ROOT, check=False).returncode

@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="loterias-estatistico",
-    version="2.1.0",
+    version="2.2.0",
     description="Estatística, geração de jogos e bolões para as loterias da Caixa (GUI e CLI).",
     author="marcosfland",
     packages=find_packages(include=["loterias", "loterias.*"]),

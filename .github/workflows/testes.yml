@@ -3,7 +3,11 @@ name: Testes
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "dados/**"
   pull_request:
+    paths-ignore:
+      - "dados/**"
   workflow_dispatch:
 
 jobs:
@@ -16,7 +20,7 @@ jobs:
         with:
           python-version: "3.13"
       - run: pip install ruff
-      - run: ruff check loterias tests main.py build_executable.py setup.py
+      - run: ruff check loterias tests scripts main.py build_executable.py setup.py
 
   testes:
     name: pytest · ${{ matrix.os }} · Python ${{ matrix.python }}
