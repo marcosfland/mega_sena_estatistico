@@ -125,8 +125,9 @@ def test_routine_updates_files(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) 
     monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary))
     assert atualizar_base.main(["--dados", str(folder)]) == 0
     assert len(dump.loads(mega, dump.dump_path(folder, mega).read_text("utf-8"))) == 60
-    assert "alterou=true" in output.read_text() and "Mega-Sena 60" in output.read_text()
-    assert "| Mega-Sena | 60 | 10 | ✅ atualizada |" in summary.read_text()
+    text = output.read_text(encoding="utf-8")
+    assert "alterou=true" in text and "Mega-Sena 60" in text
+    assert "| Mega-Sena | 60 | 10 | ✅ atualizada |" in summary.read_text(encoding="utf-8")
     assert not dump.dump_path(folder, get_game("quina")).exists()  # falhou: nada gravado
 
 
