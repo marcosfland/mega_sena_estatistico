@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import Callable
 
 import pytest
 from conftest import FakeSource, make_draws
@@ -44,6 +45,18 @@ def _pump(app: "tk.Misc", ms: int = 400) -> None:
         time.sleep(0.02)
 
 
+def _wait_for(app: "tk.Misc", condition: Callable[[], bool], what: str,
+              timeout: float = 20.0) -> None:
+    """Processa eventos até ``condition()`` ser verdadeira (tarefas rodam em threads)."""
+    import time
+    end = time.time() + timeout
+    while not condition():
+        if time.time() > end:
+            raise AssertionError(f"esperando há {timeout:.0f}s: {what}")
+        app.update()
+        time.sleep(0.02)
+
+
 def test_gui_smoke(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """Abre o app, troca de loteria, gera jogos, confere, monta bolão e fecha."""
     monkeypatch.setenv("LOTERIAS_DATA_DIR", str(tmp_path))
@@ -57,8 +70,8 @@ def test_gui_smoke(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     app = App(services)
     try:
         app.start_sync(["megasena"])
-        _pump(app, 1500)
-        assert services.storage.count_draws("megasena") == 200
+        _wait_for(app, lambda: services.storage.count_draws("megasena") == 200
+                  and not app._syncing, "sincronização")
         for slug in GAMES:
             app.set_game(slug)
             _pump(app, 50)
@@ -71,12 +84,11 @@ def test_gui_smoke(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         gen.count_entry.delete(0, "end")
         gen.count_entry.insert(0, "4")
         gen.generate()
-        _pump(app, 1000)
-        assert len(gen._bets) == 4
+        _wait_for(app, lambda: len(gen._bets) == 4, "jogos gerados")
         gen.save()
-        _pump(app, 300)
+        _wait_for(app, lambda: len(services.storage.list_bets("megasena")) == 4,
+                  "jogos salvos")
         checker = app.pages["Conferir"]
-        assert len(services.storage.list_bets("megasena")) == 4
         checker.picker.set_selected(services.storage.latest_draw("megasena").numbers)
         checker.check()
         import customtkinter as ctk
@@ -86,13 +98,13 @@ def test_gui_smoke(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         bolao = app.pages["Bolão"]
         bolao.budget_entry.insert(0, "60")
         bolao.build()
-        _pump(app, 1000)
-        assert bolao.bolao is not None and len(bolao.bolao.bets) == 10
+        _wait_for(app, lambda: bolao.bolao is not None, "bolão montado")
+        assert len(bolao.bolao.bets) == 10
         bolao.view.save()
         assert services.storage.list_boloes("megasena")
         app.show_page("Estatísticas")
-        _pump(app, 800)
-        assert app.pages["Estatísticas"]._summary is not None
+        _wait_for(app, lambda: app.pages["Estatísticas"]._summary is not None,
+                  "estatísticas")
         from loterias.alerts import PrizeAlert
         from loterias.gui.toast import Toast
         from loterias.updater import SyncResult

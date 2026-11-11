@@ -5,6 +5,7 @@ Cores são pares ``(claro, escuro)``, o formato aceito pelo CustomTkinter.
 
 from __future__ import annotations
 
+import tkinter
 import tkinter.font as tkfont
 from functools import lru_cache
 
@@ -83,11 +84,34 @@ def mono_family() -> str:
     return "TkFixedFont"
 
 
+_FONTS: dict[tuple[int, str, int, str], ctk.CTkFont] = {}
+
+
+def _cached_font(family: str, size: int, weight: str) -> ctk.CTkFont:
+    """Reaproveita fontes em vez de criar uma por widget.
+
+    Além de economizar memória, isso evita um travamento: fontes descartadas
+    viram lixo, e o coletor do Python pode destruí-las dentro de uma thread de
+    trabalho, cujo ``__del__`` chama o Tcl fora da thread principal. Mantidas
+    no cache, elas só são liberadas junto com a janela.
+    """
+    root = tkinter._default_root  # fontes pertencem ao interpretador Tcl da janela
+    key = (id(root), size, weight, family)
+    if key not in _FONTS:
+        _FONTS[key] = ctk.CTkFont(family=family, size=size, weight=weight)
+    return _FONTS[key]
+
+
+def release_fonts() -> None:
+    """Descarta o cache (chamar na thread principal ao fechar a janela)."""
+    _FONTS.clear()
+
+
 def font(size: int = 13, weight: str = "normal") -> ctk.CTkFont:
     """Fonte da interface no tamanho pedido."""
-    return ctk.CTkFont(family=font_family(), size=size, weight=weight)
+    return _cached_font(font_family(), size, weight)
 
 
 def mono(size: int = 12) -> ctk.CTkFont:
     """Fonte monoespaçada."""
-    return ctk.CTkFont(family=mono_family(), size=size)
+    return _cached_font(mono_family(), size, "normal")

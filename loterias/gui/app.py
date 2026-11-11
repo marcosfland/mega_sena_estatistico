@@ -237,6 +237,7 @@ class App(ctk.CTk):
         self.services.close()
         self.quit()
         self.destroy()
+        t.release_fonts()
 
 
 def launch() -> None:
