@@ -12,15 +12,25 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-if getattr(sys, "frozen", False):  # executável PyInstaller: dados ao lado do .exe
+FROZEN = bool(getattr(sys, "frozen", False))
+"""``True`` quando rodando como executável (PyInstaller/instalador)."""
+
+if FROZEN:
     PROJECT_ROOT = Path(sys.executable).resolve().parent
+    # Instalado: o programa pode estar numa pasta sem permissão de escrita, então
+    # banco, configurações e logs ficam no perfil do usuário.
+    APP_HOME = Path(os.getenv("LOCALAPPDATA") or Path.home() / ".local" / "share") \
+        / "LoteriasEstatistico"
+    BUNDLED_DUMPS = Path(getattr(sys, "_MEIPASS", PROJECT_ROOT)) / "dados"
 else:
     PROJECT_ROOT = Path(__file__).resolve().parent.parent
+    APP_HOME = PROJECT_ROOT
+    BUNDLED_DUMPS = PROJECT_ROOT / "dados"
 
 
 def data_dir() -> Path:
     """Pasta de dados (banco, configurações). Pode ser trocada por ``LOTERIAS_DATA_DIR``."""
-    path = Path(os.getenv("LOTERIAS_DATA_DIR", PROJECT_ROOT / "data"))
+    path = Path(os.getenv("LOTERIAS_DATA_DIR", APP_HOME / "data"))
     path.mkdir(parents=True, exist_ok=True)
     return path
 

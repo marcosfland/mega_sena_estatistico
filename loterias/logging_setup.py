@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from logging.handlers import RotatingFileHandler
 
-from loterias.settings import PROJECT_ROOT
+from loterias.settings import APP_HOME
 
 _FORMAT = "%(asctime)s %(levelname)-7s %(name)s:%(lineno)d %(funcName)s() - %(message)s"
 _configured = False
@@ -21,12 +21,12 @@ def setup_logging(level: int = logging.INFO, console: bool = True) -> None:
     global _configured
     if _configured:
         return
-    log_dir = PROJECT_ROOT / "logs"
+    log_dir = APP_HOME / "logs"
     root = logging.getLogger()
     root.setLevel(level)
     formatter = logging.Formatter(_FORMAT, "%Y-%m-%d %H:%M:%S")
     try:
-        log_dir.mkdir(exist_ok=True)
+        log_dir.mkdir(parents=True, exist_ok=True)
         file_handler = RotatingFileHandler(
             log_dir / "loterias.log", maxBytes=1_000_000, backupCount=3, encoding="utf-8"
         )

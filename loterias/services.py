@@ -10,7 +10,8 @@ from typing import Optional
 from loterias.api_client import LotteryApiClient
 from loterias.games import apply_price_overrides
 from loterias.migration import run_migrations
-from loterias.settings import PROJECT_ROOT, Settings, default_db_path
+from loterias.dump import seed_storage
+from loterias.settings import BUNDLED_DUMPS, PROJECT_ROOT, Settings, default_db_path
 from loterias.storage import Storage
 from loterias.updater import ResultSource, Updater
 
@@ -40,13 +41,14 @@ def build_services(db_path: Optional[Path] = None,
     Args:
         db_path: Banco alternativo (padrão: ``data/loterias.db``).
         source: Fonte de resultados alternativa (testes); padrão: APIs públicas.
-        migrate: Importa a base antiga da Mega-Sena, se existir.
+        migrate: Importa a base antiga da Mega-Sena e a base pronta (`dados/`), se existirem.
     """
     settings = Settings.load()
     apply_price_overrides(settings.prices)
     storage = Storage(db_path or default_db_path())
     if migrate:
         run_migrations(storage, PROJECT_ROOT)
+        seed_storage(storage, BUNDLED_DUMPS)  # base pronta do repositório/instalador
     client = None
     if source is None:
         client = LotteryApiClient()

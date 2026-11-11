@@ -1,0 +1,47 @@
+name: Atualizar base de dados
+
+# Mantém dados/<loteria>.jsonl em dia com os concursos sorteados.
+# Horários em UTC: 01:30 = 22:30 em Brasília (depois dos sorteios das 21h)
+# e 12:00 = 09:00 (pega resultados e rateios publicados mais tarde).
+on:
+  schedule:
+    - cron: "30 1 * * *"
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atualizar-base
+  cancel-in-progress: false
+
+jobs:
+  atualizar:
+    name: Baixar concursos novos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Dependências
+        run: pip install requests
+
+      - name: Atualizar dados/
+        id: base
+        run: python scripts/atualizar_base.py
+
+      - name: Commit da base
+        if: steps.base.outputs.alterou == 'true'
+        env:
+          MENSAGEM: ${{ steps.base.outputs.mensagem }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dados
+          git commit -m "$MENSAGEM"
+          git pull --rebase origin main
+          git push origin HEAD:main
